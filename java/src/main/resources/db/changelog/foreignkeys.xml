@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="20230107_FK02" author="erivoo">
+        <addForeignKeyConstraint
+                baseTableName="t_requirement"
+                baseColumnNames="topic"
+                constraintName="t_requirement_topic"
+                referencedTableName="t_topic"
+                referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                baseTableName="t_exam_question"
+                baseColumnNames="exam"
+                constraintName="t_exam_question_exam"
+                referencedTableName="t_exam"
+                referencedColumnNames="id"/>
+        <addForeignKeyConstraint
+                baseTableName="t_exam_question"
+                baseColumnNames="question"
+                constraintName="t_exam_question_question"
+                referencedTableName="t_question"
+                referencedColumnNames="id"/>
+        <addForeignKeyConstraint
+                baseTableName="t_exam_question"
+                baseColumnNames="topic"
+                constraintName="t_exam_question_topic"
+                referencedTableName="t_topic"
+                referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                baseTableName="t_question"
+                baseColumnNames="topic"
+                constraintName="t_question_topic"
+                referencedTableName="t_topic"
+                referencedColumnNames="id"/>
+        <addForeignKeyConstraint
+                baseTableName="t_question"
+                baseColumnNames="requirement"
+                constraintName="t_question_requirement"
+                referencedTableName="t_requirement"
+                referencedColumnNames="id"/>
+        <addForeignKeyConstraint
+                baseTableName="t_question"
+                baseColumnNames="picture"
+                constraintName="t_question_picture"
+                referencedTableName="t_picture"
+                referencedColumnNames="id"/>
+
+    </changeSet>
+</databaseChangeLog>

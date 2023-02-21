@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="change_V05" author="erivoo">
+        <createTable tableName="t_change">
+            <column name="changed_by" type="integer">
+                <constraints primaryKey="true" primaryKeyName="t_change_pk" />
+            </column>
+            <column name="changed_at" type="bigint">
+                <constraints primaryKey="true" primaryKeyName="t_change_pk" />
+            </column>
+            <column name="question" type="integer">
+                <constraints primaryKey="true" primaryKeyName="t_change_pk" />
+            </column>
+            <column name="field" type="varchar(255)">
+                <constraints primaryKey="true" primaryKeyName="t_change_pk" />
+            </column>
+            <column name="old_value" type="nvarchar(2000)"/>
+            <column name="new_value" type="nvarchar(2000)"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="t_change"
+                baseColumnNames="changed_by"
+                constraintName="t_change_changed_by"
+                referencedTableName="t_user"
+                referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                baseTableName="t_change"
+                baseColumnNames="question"
+                constraintName="t_change_question"
+                referencedTableName="t_question"
+                referencedColumnNames="id"/>
+
+    </changeSet>
+</databaseChangeLog>

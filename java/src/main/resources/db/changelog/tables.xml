@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="20230107_T01" author="erivoo">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="t_text"/></not>
+        </preConditions>
+
+        <createTable tableName="t_text">
+            <column name="id" type="varchar(255)">
+                <constraints primaryKey="true" primaryKeyName="t_text_pk" />
+            </column>
+            <column name="label" type="nvarchar(2000)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20230107_T02" author="erivoo">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="t_topic"/></not>
+        </preConditions>
+
+        <createTable tableName="t_topic">
+            <column name="id" type="integer">
+                <constraints primaryKey="true" primaryKeyName="t_topic_pk" />
+            </column>
+            <column name="label" type="nvarchar(255)"/>
+            <column name="num_questions" type="integer"/>
+        </createTable>
+
+        <createTable tableName="t_requirement">
+            <column name="id" type="integer">
+                <constraints primaryKey="true" primaryKeyName="t_requirement_pk" />
+            </column>
+            <column name="label" type="nvarchar(255)"/>
+            <column name="topic" type="integer"/>
+            <column name="domain" type="integer"/>
+            <column name="domain_title" type="nvarchar(255)"/>
+            <column name="subdomain" type="nvarchar(255)"/>
+            <column name="level_b2" type="nvarchar(255)"/>
+            <column name="level_b3" type="nvarchar(255)"/>
+        </createTable>
+
+        <createTable tableName="t_picture">
+            <column name="id" type="integer">
+                <constraints primaryKey="true" primaryKeyName="t_picture_pk" />
+            </column>
+            <column name="filename" type="nvarchar(255)"/>
+            <column name="filesize" type="integer"/>
+            <column name="filedata" type="bytea"/>
+        </createTable>
+
+        <createTable tableName="t_exam">
+            <column name="id" type="integer">
+                <constraints primaryKey="true" primaryKeyName="t_exam_pk" />
+            </column>
+            <column name="label" type="nvarchar(255)"/>
+            <column name="certificate" type="integer"/>
+            <column name="filesize" type="integer"/>
+            <column name="file_pdf" type="bytea"/>
+        </createTable>
+
+        <createTable tableName="t_exam_question">
+            <column name="id" type="integer">
+                <constraints primaryKey="true" primaryKeyName="t_exam_question_pk" />
+            </column>
+            <column name="exam" type="integer"/>
+            <column name="question" type="integer"/>
+            <column name="topic" type="integer"/>
+            <column name="question_index" type="integer"/>
+        </createTable>
+
+        <createTable tableName="t_question">
+            <column name="id" type="integer">
+                <constraints primaryKey="true" primaryKeyName="t_question_pk" />
+            </column>
+            <column name="topic" type="integer"/>
+            <column name="requirement" type="integer"/>
+            <column name="question" type="nvarchar(2000)"/>
+            <column name="answer_a" type="nvarchar(2000)"/>
+            <column name="answer_b" type="nvarchar(2000)"/>
+            <column name="answer_c" type="nvarchar(2000)"/>
+            <column name="answer_d" type="nvarchar(2000)"/>
+            <column name="answer" type="char(1)"/>
+            <column name="picture" type="integer"/>
+            <column name="ignore" type="boolean"/>
+            <column name="allow_b2" type="boolean"/>
+            <column name="allow_b3" type="boolean"/>
+            <column name="discuss" type="boolean"/>
+            <column name="remarks" type="nvarchar(2000)"/>
+            <column name="exam_group" type="nvarchar(255)"/>
+        </createTable>
+
+    </changeSet>
+</databaseChangeLog>

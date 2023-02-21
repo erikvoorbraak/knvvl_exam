@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="users_V03" author="erivoo">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="t_user"/></not>
+        </preConditions>
+        <createTable tableName="t_user">
+            <column name="id" type="integer">
+                <constraints primaryKey="true" primaryKeyName="t_user_pk" />
+            </column>
+            <column name="username" type="nvarchar(255)"/>
+            <column name="password" type="nvarchar(255)"/>
+            <!-- Need room for salted password-->
+            <column name="email" type="nvarchar(255)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
