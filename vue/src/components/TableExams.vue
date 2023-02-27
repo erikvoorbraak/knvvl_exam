@@ -9,7 +9,7 @@
         <a :style="{ cursor: 'pointer'}" @click="this.$router.push('/examQuestions/' + id)">Vragen</a>
       </template>
       <template #item-fileSize="{ url, fileSize }">
-        <a target="_blank" :href="url + '/generate'">Genereer</a><br/>
+        <a target="_blank" :href="url + '/generate'">Genereer</a>&nbsp;<a target="_blank" :href="url + '/generate?withQuestionId=true'">+ID</a><br/>
         <span v-if="fileSize && fileSize != 0"><a target="_blank" :href="url + '/pdf'">Download</a></span>
       </template>
       <template #item-url="{ url }">
