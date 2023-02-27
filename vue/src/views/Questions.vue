@@ -5,7 +5,9 @@ document.title = "Vragen";
 </script>
 <template>
   <main>
-    <RouterLink to="/newquestion">Nieuwe vraag</RouterLink><br/>
+    <RouterLink to="/newquestion">Nieuwe vraag</RouterLink>
+    &nbsp;<a href="/api/questions" target="_blank">Download as json</a>
+    <br/>
     <QuestionFilters 
       @topicSelected="id => topicId = id"
       @examSelected="id => examId = id"
