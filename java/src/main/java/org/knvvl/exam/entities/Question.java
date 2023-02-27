@@ -260,10 +260,11 @@ public class Question
             || tryMatch(answerC, searchLower)
             || tryMatch(answerD, searchLower)
             || tryMatch(remarks, searchLower)
-            // Match keywords (tags)
+            // Match keywords (tags), see QuestionRestService.getTags()
             || tryMatch(examGroup, searchLower)
             || (picture != null && tryMatch(picture.getFilename(), searchLower))
             || (ignore && "negeren".contains(searchLower))
+            || (discuss && "bespreken".contains(searchLower))
             || (allowB2 && "b2".contains(searchLower))
             || (allowB3 && "b3".contains(searchLower));
     }
