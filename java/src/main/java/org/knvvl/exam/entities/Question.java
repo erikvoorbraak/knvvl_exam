@@ -261,15 +261,16 @@ public class Question
             || tryMatch(answerD, searchLower)
             || tryMatch(remarks, searchLower)
             // Match keywords (tags)
+            || tryMatch(examGroup, searchLower)
             || (picture != null && tryMatch(picture.getFilename(), searchLower))
-            || tryMatch(getExamGroup(), searchLower)
+            || (ignore && "negeren".contains(searchLower))
             || (allowB2 && "b2".contains(searchLower))
             || (allowB3 && "b3".contains(searchLower));
     }
 
     private boolean tryMatch(String value, String searchLower)
     {
-        return value.toLowerCase().contains(searchLower);
+        return value != null && value.toLowerCase().contains(searchLower);
     }
 
     public boolean allowForCertificate(int certificate)
