@@ -4,6 +4,11 @@ import static java.util.Objects.requireNonNull;
 
 import static org.apache.commons.lang3.Validate.isTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -245,6 +250,30 @@ public class Question
     public void setExamGroup(String examGroup)
     {
         this.examGroup = examGroup;
+    }
+
+    public String getTags(boolean asHtml)
+    {
+        List<String> keywords = new ArrayList<>();
+        if (isAllowB2())
+            keywords.add("B2");
+        if (isAllowB3())
+            keywords.add("B3");
+        if (isIgnore())
+            keywords.add("Negeren");
+        if (isDiscuss())
+            keywords.add("Bespreken");
+
+        String examGroup = getExamGroup();
+        if (!StringUtils.isBlank(examGroup))
+            keywords.add(examGroup);
+
+        Picture picture = getPicture();
+        if (picture != null)
+            keywords.add(asHtml
+                ? "<a target=\"_blank\" href=\"/api/pictures/" + picture.getId() + "\">" + picture.getFilename() + "</a>"
+                : picture.getFilename());
+        return String.join(", ", keywords);
     }
 
     public boolean applySearch(String searchLower)

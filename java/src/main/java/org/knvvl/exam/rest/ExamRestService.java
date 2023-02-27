@@ -1,5 +1,7 @@
 package org.knvvl.exam.rest;
 
+import static java.lang.Boolean.TRUE;
+
 import static org.knvvl.exam.rest.QuestionRestService.GSON;
 import static org.knvvl.exam.services.Utils.getAsString;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -190,12 +192,13 @@ public class ExamRestService
     }
 
     @GetMapping(value = "/exams/{examId}/generate", produces = APPLICATION_PDF_VALUE)
-    ResponseEntity<byte[]> generatePdf(@PathVariable("examId") int examId)
+    ResponseEntity<byte[]> generatePdf(@PathVariable("examId") int examId,
+        @RequestParam(value = "withQuestionId", defaultValue = "false") boolean withQuestionId)
     {
         try
         {
             Exam exam = examRepositories.getExamRepository().getReferenceById(examId);
-            byte[] bytes = examToPdfService.generatePdf(exam);
+            byte[] bytes = examToPdfService.generatePdf(exam, withQuestionId);
             return ResponseEntity.status(OK).body(bytes);
         }
         catch (ExamException e)

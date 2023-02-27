@@ -78,26 +78,8 @@ public class QuestionRestService
             if (!addDetails && "answer".equals(questionField.getField()))
                 return json;
         }
-        json.addProperty("tagsHtml", getTags(question));
+        json.addProperty("tagsHtml", question.getTags(true));
         return json;
-    }
-
-    private static String getTags(Question question)
-    {
-        List<String> keywords = new ArrayList<>();
-        if (question.isAllowB2()) keywords.add("B2");
-        if (question.isAllowB3()) keywords.add("B3");
-        if (question.isIgnore()) keywords.add("Negeren");
-        if (question.isDiscuss()) keywords.add("Bespreken");
-
-        String examGroup = question.getExamGroup();
-        if (!StringUtils.isBlank(examGroup))
-            keywords.add(examGroup);
-
-        Picture picture = question.getPicture();
-        if (picture != null)
-            keywords.add("<a target=\"_blank\" href=\"/api/pictures/" + picture.getId() + "\">" + picture.getFilename() + "</a>");
-        return String.join(", ", keywords);
     }
 
     @PostMapping(path = "questions", consumes = APPLICATION_JSON_VALUE, produces = TEXT_PLAIN_VALUE)

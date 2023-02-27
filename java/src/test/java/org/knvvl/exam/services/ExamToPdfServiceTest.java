@@ -91,7 +91,7 @@ class ExamToPdfServiceTest
     @Test
     void generatePdf() throws IOException
     {
-        byte[] bytes = service.generatePdf(exam);
+        byte[] bytes = service.generatePdf(exam, true);
         Path path = tempDir.resolve("Exam.pdf");
         Files.write(path, bytes);
         System.out.println(path.toAbsolutePath());

@@ -47,19 +47,23 @@ class ExamGenerator
     private final TextService textService;
     private final Exam exam;
     private final List<ExamQuestion> questions;
+    private final boolean withQuestionId;
     private final Font titleFont;
     private final Font bodyFont;
+    private final Font captionFont;
     private final HeaderFooterPageEvent counter;
     private boolean grayBackground = false;
     private Document document;
 
-    ExamGenerator(TextService textService, Exam exam, List<ExamQuestion> questions)
+    ExamGenerator(TextService textService, Exam exam, List<ExamQuestion> questions, boolean withQuestionId)
     {
         this.textService = textService;
         this.exam = exam;
         this.questions = questions;
+        this.withQuestionId = withQuestionId;
         this.titleFont = getTitleFont();
-        this.bodyFont = getBodyFont();
+        this.bodyFont = getBodyFont(Font.UNDEFINED);
+        this.captionFont = getBodyFont(Font.ITALIC);
         this.counter = new HeaderFooterPageEvent();
     }
 
@@ -138,16 +142,26 @@ class ExamGenerator
 
     private void addQuestion(Question question, int questionTally) throws DocumentException
     {
+        addQuestionCaption(question);
         doInTable(cell -> {
             addQuestion(question, questionTally, cell);
             addAnswers(question, cell);
         });
     }
 
+    private void addQuestionCaption(Question question) throws DocumentException
+    {
+        if (withQuestionId)
+        {
+            String req = question.getRequirement().getSubdomain();
+            String caption = "" + question.getId() + " " + req + ", " + question.getTags(false);
+            doInTable(cell -> cell.addElement(new Paragraph(caption, captionFont)));
+        }
+    }
+
     private void addQuestion(Question question, int questionTally, PdfPCell cell)
     {
-        PdfPTable table = new PdfPTable(new float[]{4, 96});
-        table.setWidthPercentage(FULL_WIDTH);
+        PdfPTable table = createPdfPTable(4, 96);
         int padding = 3;
         table.addCell(getCell("" + questionTally + ".", padding));
         table.addCell(getCell(question.getQuestion(), padding));
@@ -161,8 +175,7 @@ class ExamGenerator
 
     private void addAnswers(Question question, PdfPCell cell)
     {
-        PdfPTable answers = new PdfPTable(new float[]{4, 4, 92});
-        answers.setWidthPercentage(FULL_WIDTH);
+        PdfPTable answers = createPdfPTable(4, 4, 92);
         addAnswer("A.", question.getAnswerA(), answers);
         addAnswer("B.", question.getAnswerB(), answers);
         addAnswer("C.", question.getAnswerC(), answers);
@@ -177,7 +190,7 @@ class ExamGenerator
     {
         String fontsDir = new File("Fonts").getAbsolutePath();
         int registered = FontFactory.registerDirectory(fontsDir);
-        System.out.println("Registered " + registered + " fonts found in " + fontsDir);
+        System.out.println("Registered " + registered + " font(s) found in " + fontsDir);
     }
 
     private Font getTitleFont()
@@ -188,11 +201,13 @@ class ExamGenerator
             Font.BOLD);
     }
 
-    private Font getBodyFont()
+    private Font getBodyFont(int style)
     {
         return FontFactory.getFont(
             textService.get(TextService.EXAM_BODY_FONTNAME),
-            Integer.parseInt(textService.get(TextService.EXAM_BODY_FONTSIZE)));
+            FontFactory.defaultEncoding, FontFactory.defaultEmbedding,
+            Integer.parseInt(textService.get(TextService.EXAM_BODY_FONTSIZE)),
+            style);
     }
 
     private void addBlankCell(PdfPTable answers)
@@ -233,8 +248,7 @@ class ExamGenerator
 
     private void doInTable(Consumer<PdfPCell> cellConsumer) throws DocumentException
     {
-        PdfPTable wrapper = new PdfPTable(new float[]{ FULL_WIDTH });
-        wrapper.setWidthPercentage(WIDTH_PERCENTAGE);
+        PdfPTable wrapper = createPdfPTable(FULL_WIDTH);
         PdfPCell cell = new PdfPCell();
         cell.setBorder(NO_BORDER);
         if (grayBackground)
@@ -244,6 +258,13 @@ class ExamGenerator
 
         wrapper.addCell(cell);
         document.add(wrapper);
+    }
+
+    private static PdfPTable createPdfPTable(float... widths)
+    {
+        PdfPTable answers = new PdfPTable(widths);
+        answers.setWidthPercentage(FULL_WIDTH);
+        return answers;
     }
 
     private PdfPCell getCell(String contents, int paddingBottom)

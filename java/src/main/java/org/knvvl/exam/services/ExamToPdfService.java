@@ -13,9 +13,9 @@ public class ExamToPdfService
     @Autowired ExamService examService;
     @Autowired TextService textService;
 
-    public byte[] generatePdf(Exam exam)
+    public byte[] generatePdf(Exam exam, boolean withQuestionId)
     {
         List<ExamQuestion> questions = examService.getQuestionsForExam(exam.getId());
-        return new ExamGenerator(textService, exam, questions).generatePdf();
+        return new ExamGenerator(textService, exam, questions, withQuestionId).generatePdf();
     }
 }
