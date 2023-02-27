@@ -69,8 +69,8 @@ public class ExamRepositoriesIntegrationTest
     {
         givenTopic();
         examRepositories.addTopic(new Topic("B"));
-        assertEquals("With assigned id", "A", topicRepository.getReferenceById(2).getLabel());
-        assertEquals("Auto-generated id", "B", topicRepository.getReferenceById(3).getLabel());
+        assertEquals("With assigned id", "A", topicRepository.getReferenceById(1).getLabel());
+        assertEquals("Auto-generated id", "B", topicRepository.getReferenceById(2).getLabel());
     }
 
     @Test

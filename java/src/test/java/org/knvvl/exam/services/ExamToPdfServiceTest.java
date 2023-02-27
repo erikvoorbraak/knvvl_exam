@@ -22,6 +22,7 @@ import org.knvvl.exam.entities.Exam;
 import org.knvvl.exam.entities.ExamQuestion;
 import org.knvvl.exam.entities.Picture;
 import org.knvvl.exam.entities.Question;
+import org.knvvl.exam.entities.Requirement;
 import org.knvvl.exam.entities.Text;
 import org.knvvl.exam.entities.Topic;
 
@@ -49,6 +50,7 @@ class ExamToPdfServiceTest
             "Some long text. Some long text. Some long text. Some long text. Some long text.";
     private final Exam exam = new Exam("B2 jan 2023", 2);
     private final Topic topic = new Topic("Materiaalkennis");
+    private final Requirement requirement = new Requirement();
     private final Question question1 = new Question();
     private final Question question2 = new Question();
     private final Picture picture1 = new Picture();
@@ -61,7 +63,11 @@ class ExamToPdfServiceTest
     void setUp()
     {
         int examId = 42;
+        requirement.setLabel("Kennis van...");
+        requirement.setSubdomain("1.01.01");
+
         question1.setTopic(topic);
+        question1.setRequirement(requirement);
         question1.setQuestion(longText);
         question1.setAnswerA(longText);
         question1.setAnswerB("Short B");
@@ -72,6 +78,7 @@ class ExamToPdfServiceTest
         ExamQuestion eq1 = new ExamQuestion(42, question1, topic, 0);
 
         question2.setTopic(topic);
+        question2.setRequirement(requirement);
         question2.setQuestion(longText);
         question2.setAnswerA(longText);
         question2.setAnswerB("Short B");
