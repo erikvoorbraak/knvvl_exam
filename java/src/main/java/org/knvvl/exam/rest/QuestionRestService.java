@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -38,7 +39,7 @@ import com.google.gson.JsonObject;
 @RequestMapping("api")
 public class QuestionRestService
 {
-    static final Gson GSON = new Gson();
+    static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @Autowired private ExamRepositories examRepositories;
     @Autowired private QuestionService questionService;
