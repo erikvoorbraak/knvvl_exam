@@ -1,5 +1,7 @@
 package org.knvvl.exam.services;
 
+import static java.util.function.Predicate.not;
+
 import static org.knvvl.exam.services.ExamRepositories.SORT_BY_ID;
 
 import java.util.ArrayList;
@@ -50,30 +52,31 @@ public class ExamCreationService
 
         List<Question> generate()
         {
-            topicRepository.findAll(SORT_BY_ID).forEach(this::generateForTopic);
+            topicRepository.findAll(SORT_BY_ID).forEach(this::addQuestionsForTopic);
             return examQuestions;
         }
 
-        private void generateForTopic(Topic topic)
+        private void addQuestionsForTopic(Topic topic)
         {
             topicQuestions.clear();
             allQuestions.stream()
-                .filter(q -> topic.equals(q.getTopic()))
+                .filter(not(Question::isIgnore))
+                .filter(topic::hasQuestion)
                 .filter(q -> q.allowForCertificate(certificate))
                 .forEach(topicQuestions::add);
 
             for (int i = 0; i < topic.getNumQuestions(); i++)
             {
-                if (topicQuestions.isEmpty())
-                {
-                    throw new IllegalStateException("Not enough questions for topic " + topic.getLabel() + ", certificate " + certificate);
-                }
-                addQuestionForTopic();
+                addQuestionForTopic(topic);
             }
         }
 
-        private void addQuestionForTopic()
+        private void addQuestionForTopic(Topic topic)
         {
+            if (topicQuestions.isEmpty())
+            {
+                throw new IllegalStateException("Not enough questions for topic " + topic + ", certificate " + certificate);
+            }
             Question newQuestion = topicQuestions.remove(RANDOM.nextInt(topicQuestions.size()));
             examQuestions.add(newQuestion);
             examService.removeSimilarQuestions(newQuestion, topicQuestions);

@@ -118,4 +118,10 @@ public class Requirement implements LabeledEntity
     {
         this.levelB3 = levelB3;
     }
+
+    @Override
+    public String toString()
+    {
+        return label;
+    }
 }

@@ -91,4 +91,10 @@ public class Exam
         this.filePdf = filePdf;
         this.fileSize = filePdf.length;
     }
+
+    @Override
+    public String toString()
+    {
+        return label;
+    }
 }

@@ -59,4 +59,15 @@ public class Topic implements LabeledEntity
     {
         this.numQuestions = numQuestions;
     }
+
+    public boolean hasQuestion(Question question)
+    {
+        return this.equals(question.getTopic());
+    }
+
+    @Override
+    public String toString()
+    {
+        return label;
+    }
 }

@@ -73,4 +73,10 @@ public class Picture implements LabeledEntity
     {
         return fileSize == null ? 0 : fileSize;
     }
+
+    @Override
+    public String toString()
+    {
+        return filename;
+    }
 }

@@ -40,4 +40,10 @@ public class Text
     {
         this.label = label;
     }
+
+    @Override
+    public String toString()
+    {
+        return label;
+    }
 }
