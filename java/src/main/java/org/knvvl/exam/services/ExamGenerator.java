@@ -220,7 +220,11 @@ class ExamGenerator
         try
         {
             Image img = Image.getInstance(question.getPicture().getFileData());
-            img.scaleToFit(500, 160);
+            float targetArea = 80000;
+            float currentArea = img.getWidth() * img.getHeight();
+            float factor = (float)Math.sqrt(targetArea / currentArea);
+            float factorShrinkOnly = Math.min(1, factor); // Don't blow up low-res pictures
+            img.scalePercent(factorShrinkOnly * 100);
             PdfPCell cell = getCell(0);
             cell.addElement(img);
             return cell;
