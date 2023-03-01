@@ -25,6 +25,7 @@ import org.knvvl.exam.entities.Topic;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Image;
@@ -41,7 +42,6 @@ class ExamGenerator
     static final BaseColor BACKGROUND = new BaseColor(240, 240, 240);
     static final String BOX_NAME = "page";
     static final int FULL_WIDTH = 100;
-    static final int WIDTH_PERCENTAGE = 100;
     static final int MARGIN = 52;
 
     private final TextService textService;
@@ -93,31 +93,31 @@ class ExamGenerator
         return outputStream.toByteArray();
     }
 
-    private void addFrontCover() throws DocumentException
+    private void addFrontCover()
     {
         String title = textService.get(exam.getCertificate() == 2 ? EXAM_TITLE_B2 : EXAM_TITLE_B3);
-        document.add(getHeader(title, titleFont));
-        document.add(NEWLINE);
-        document.add(getHeader(exam.getLabel(), bodyFont));
-        document.add(NEWLINE);
-        document.add(NEWLINE);
+        addToDocument(getHeader(title, titleFont));
+        addToDocument(NEWLINE);
+        addToDocument(getHeader(exam.getLabel(), bodyFont));
+        addToDocument(NEWLINE);
+        addToDocument(NEWLINE);
         String cover = textService.get(exam.getCertificate() == 2 ? EXAM_COVER_B2 : EXAM_COVER_B3);
         doInTable(cell -> cell.addElement(new Paragraph(cover, bodyFont)));
     }
 
-    private void addBackCover() throws DocumentException
+    private void addBackCover()
     {
         grayBackground = false;
-        document.add(NEWLINE);
-        document.add(NEWLINE);
-        document.add(NEWLINE);
-        document.add(getHeader(textService.get(EXAM_BACK_TITLE), titleFont));
-        document.add(NEWLINE);
-        document.add(NEWLINE);
+        addToDocument(NEWLINE);
+        addToDocument(NEWLINE);
+        addToDocument(NEWLINE);
+        addToDocument(getHeader(textService.get(EXAM_BACK_TITLE), titleFont));
+        addToDocument(NEWLINE);
+        addToDocument(NEWLINE);
         doInTable(cell -> cell.addElement(new Paragraph(textService.get(EXAM_BACK_COVER), bodyFont)));
     }
 
-    private void addQuestions() throws DocumentException
+    private void addQuestions()
     {
         int tally = 1;
         Topic topic = null;
@@ -130,8 +130,8 @@ class ExamGenerator
                 topic = questionTopic;
                 document.newPage();
                 counter.topic = questionTopic.getLabel(); // after newPage
-                document.add(getHeader(topic.getLabel(), titleFont));
-                document.add(NEWLINE);
+                addToDocument(getHeader(topic.getLabel(), titleFont));
+                addToDocument(NEWLINE);
                 tally = 1; // reset
             }
             addQuestion(question.getQuestion(), tally);
@@ -140,22 +140,24 @@ class ExamGenerator
         }
     }
 
-    private void addQuestion(Question question, int questionTally) throws DocumentException
+    private void addQuestion(Question question, int questionTally)
     {
-        addQuestionCaption(question);
         doInTable(cell -> {
+            addQuestionCaption(question, cell);
             addQuestion(question, questionTally, cell);
             addAnswers(question, cell);
         });
     }
 
-    private void addQuestionCaption(Question question) throws DocumentException
+    private void addQuestionCaption(Question question, PdfPCell cell)
     {
         if (withQuestionId)
         {
             String req = question.getRequirement().getSubdomain();
-            String caption = "" + question.getId() + " " + req + ", " + question.getTags(false);
-            doInTable(cell -> cell.addElement(new Paragraph(caption, captionFont)));
+            String caption = "" + question.getId() + " " + question.getAnswer() + ", " + req + ", " + question.getTags(false);
+            PdfPTable table = createPdfPTable(FULL_WIDTH);
+            table.addCell(getCell(caption, 1, captionFont));
+            cell.addElement(table);
         }
     }
 
@@ -250,7 +252,7 @@ class ExamGenerator
         return titleChunk;
     }
 
-    private void doInTable(Consumer<PdfPCell> cellConsumer) throws DocumentException
+    private void doInTable(Consumer<PdfPCell> cellConsumer)
     {
         PdfPTable wrapper = createPdfPTable(FULL_WIDTH);
         PdfPCell cell = new PdfPCell();
@@ -261,7 +263,19 @@ class ExamGenerator
         cellConsumer.accept(cell);
 
         wrapper.addCell(cell);
-        document.add(wrapper);
+        addToDocument(wrapper);
+    }
+
+    private void addToDocument(Element element)
+    {
+        try
+        {
+            document.add(element);
+        }
+        catch (DocumentException e)
+        {
+            throw new ExamException(e.getMessage());
+        }
     }
 
     private static PdfPTable createPdfPTable(float... widths)
@@ -273,8 +287,13 @@ class ExamGenerator
 
     private PdfPCell getCell(String contents, int paddingBottom)
     {
+        return getCell(contents, paddingBottom, bodyFont);
+    }
+
+    private PdfPCell getCell(String contents, int paddingBottom, Font font)
+    {
         Phrase phrase = new Phrase(contents);
-        phrase.setFont(bodyFont);
+        phrase.setFont(font);
         PdfPCell cell = getCell(paddingBottom);
         cell.addElement(phrase);
         return cell;
@@ -289,3 +308,4 @@ class ExamGenerator
         return cell;
     }
 }
+
