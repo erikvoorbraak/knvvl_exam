@@ -3,6 +3,7 @@ package org.knvvl.exam.services;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.knvvl.exam.services.ExamGenerator.BACKGROUND;
 import static org.knvvl.exam.services.ExamGenerator.FULL_WIDTH;
+import static org.knvvl.exam.services.Languages.LANGUAGE_NL;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -48,7 +49,7 @@ class ExamToPdfServiceTest
     private static final String longText =
         "Some long text. Some long text. Some long text. Some long text. Some long text. Some long text. " +
             "Some long text. Some long text. Some long text. Some long text. Some long text.";
-    private final Exam exam = new Exam("B2 jan 2023", 2);
+    private final Exam exam = new Exam("B2 jan 2023", 2, LANGUAGE_NL);
     private final Topic topic = new Topic("Materiaalkennis");
     private final Requirement requirement = new Requirement();
     private final Question question1 = new Question();

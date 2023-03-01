@@ -3,11 +3,14 @@ package org.knvvl.exam.entities;
 import static java.util.Objects.requireNonNull;
 
 import static org.apache.commons.lang3.Validate.isTrue;
+import static org.knvvl.exam.services.Languages.LANGUAGES;
+import static org.knvvl.exam.services.Languages.LANGUAGE_NL;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.knvvl.exam.services.Languages;
 
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
@@ -22,6 +25,7 @@ import jakarta.persistence.Table;
 @Table(name="t_question")
 public class Question
 {
+    public static final String LANG_PREFIX = "Lang:";
     @Id
     @Column(name = "id")
     private Integer id;
@@ -73,6 +77,9 @@ public class Question
 
     @Column(name = "exam_group")
     private String examGroup;
+
+    @Column(name = "language")
+    private String language = LANGUAGE_NL;
 
     public Integer getId()
     {
@@ -153,6 +160,18 @@ public class Question
     public String getExamGroup()
     {
         return examGroup == null ? "" : examGroup;
+    }
+
+    @Nonnull
+    public String getLanguage()
+    {
+        return language;
+    }
+
+    @Nonnull
+    private String getLanguageKeyword()
+    {
+        return LANG_PREFIX + getLanguage();
     }
 
     public void setId(int id)
@@ -252,6 +271,11 @@ public class Question
         this.examGroup = examGroup;
     }
 
+    public void setLanguage(String language)
+    {
+        this.language = Languages.validate(language);
+    }
+
     public String getTags(boolean asHtml)
     {
         List<String> keywords = new ArrayList<>();
@@ -263,6 +287,7 @@ public class Question
             keywords.add("Negeren");
         if (isDiscuss())
             keywords.add("Bespreken");
+        keywords.add(getLanguageKeyword());
 
         String examGroup = getExamGroup();
         if (!StringUtils.isBlank(examGroup))
@@ -291,6 +316,7 @@ public class Question
             || tryMatch(remarks, searchLower)
             // Match keywords (tags), see QuestionRestService.getTags()
             || tryMatch(examGroup, searchLower)
+            || tryMatch(getLanguageKeyword(), searchLower)
             || (picture != null && tryMatch(picture.getFilename(), searchLower))
             || (ignore && "negeren".contains(searchLower))
             || (discuss && "bespreken".contains(searchLower))

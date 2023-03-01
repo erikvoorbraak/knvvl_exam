@@ -2,6 +2,9 @@ package org.knvvl.exam.services;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 
+import static org.knvvl.exam.services.Languages.LANGUAGE_EN;
+import static org.knvvl.exam.services.Languages.LANGUAGE_NL;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -51,24 +54,57 @@ public class ImportExportService
     public void init()
     {
         textService.saveInitialTexts();
-        if (topicRepository.count() > 0 || !importInitial)
+        if (importInitial && topicRepository.count() == 0)
         {
-            return;
+            importInitial();
         }
-        File importDir = new File("Import");
+        importQuestionTranslations("Questions_en.txt", LANGUAGE_EN);
+    }
+
+    private void importQuestionTranslations(String fileName, String language)
+    {
+        File importDir = new File("ImportTranslations");
+        File importFile = new File(importDir, fileName);
+        System.out.println("Looking for more CSV question translations in: " + importFile.getAbsolutePath());
+
+        if (importFile.exists())
+        {
+            readCSV(importFile).forEach(r -> importQuestionTranslation(r, language));
+            try
+            {
+                Files.delete(importFile.toPath());
+            }
+            catch (IOException e)
+            {
+                System.out.println("Error deleting " + importFile + ": " + e.getMessage());
+            }
+        }
+    }
+
+    private void importQuestionTranslation(List<String> line, String language)
+    {
+        var lineCopy = new ArrayList<>(line);
+        lineCopy.set(0, String.valueOf(questionRepository.findTopByOrderByIdDesc().getId() + 1));
+        lineCopy.set(14, "Translation of " + line.get(0));
+        importQuestion(lineCopy, language);
+    }
+
+    private void importInitial()
+    {
+        File importDir = new File("ImportInitial");
         File filesDir = new File(importDir, "Afbeeldingen");
-        System.out.println("Looking for CSV data files in: " + importDir.getAbsolutePath());
+        System.out.println("Looking for initial CSV data files in: " + importDir.getAbsolutePath());
         System.out.println("Looking for picture files in: " + filesDir.getAbsolutePath());
 
         if (importDir.exists() && importDir.isDirectory())
         {
-            readCSV(importDir, "Afbeeldingen.txt").forEach(r -> importPicture(r, filesDir));
-            readCSV(importDir, "Vakken.txt").forEach(this::importTopic);
-            readCSV(importDir, "Exameneisen.txt").forEach(this::importRequirement);
-            readCSV(importDir, "Vragen.txt").forEach(this::importQuestion);
+            readCSV(new File(importDir, "Afbeeldingen.txt")).forEach(r -> importPicture(r, filesDir));
+            readCSV(new File(importDir, "Vakken.txt")).forEach(this::importTopic);
+            readCSV(new File(importDir, "Exameneisen.txt")).forEach(this::importRequirement);
+            readCSV(new File(importDir, "Vragen.txt")).forEach(l -> importQuestion(l, LANGUAGE_NL));
             List<Topic> topics = topicRepository.findAll();
             List<Question> questions = questionRepository.findAll();
-            readCSV(importDir, "GegenereerdeExamens.txt").forEach(l -> importExam(l, questions, topics));
+            readCSV(new File(importDir, "GegenereerdeExamens.txt")).forEach(l -> importExam(l, questions, topics));
             System.out.println("Import completed");
         }
         else
@@ -131,7 +167,7 @@ public class ImportExportService
         requirementRepository.save(requirement);
     }
 
-    private void importQuestion(List<String> line)
+    private void importQuestion(List<String> line, String language)
     {
         Question question = new Question();
         question.setId(toInt(line.get(0)));
@@ -149,6 +185,7 @@ public class ImportExportService
         question.setAllowB2(!onlyB3);
         question.setAllowB3(true);
         question.setRemarks(line.get(14));
+        question.setLanguage(language);
         questionRepository.save(question);
     }
 
@@ -177,29 +214,28 @@ public class ImportExportService
         return (int)Double.parseDouble(value);
     }
 
-    private List<List<String>> readCSV(File dir, String fileName)
+    private List<List<String>> readCSV(File csvFile)
     {
-        File csvFile = new File(dir, fileName);
         try (CSVReader csvReader = new CSVReader(new FileReader(csvFile, ISO_8859_1));) {
             List<List<String>> records = new ArrayList<>();
             String[] values;
             while ((values = csvReader.readNext()) != null) {
                 records.add(Arrays.asList(values));
             }
-            System.out.println("Read " + records.size() + " rows from " + fileName);
+            System.out.println("Read " + records.size() + " rows from " + csvFile);
             return records;
         }
         catch (FileNotFoundException e)
         {
-            System.out.println("File not found: " + fileName);
+            System.out.println("File not found: " + csvFile);
         }
         catch (IOException e)
         {
-            System.out.println("IO exception reading " + fileName + ": " + e.getMessage());
+            System.out.println("IO exception reading " + csvFile + ": " + e.getMessage());
         }
         catch (CsvValidationException e)
         {
-            System.out.println("CSV validation error reading " + fileName + ": " + e.getMessage());
+            System.out.println("CSV validation error reading " + csvFile + ": " + e.getMessage());
         }
         return Collections.emptyList();
     }

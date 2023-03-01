@@ -62,6 +62,7 @@ public class ExamRestService
             json.addProperty("id", examId);
             json.addProperty("label", exam.getLabel());
             json.addProperty("certificate", exam.getCertificate());
+            json.addProperty("language", exam.getLanguage());
             json.addProperty("fileSize", exam.getFileSize());
             json.addProperty("url", "/api/exams/" + examId);
             all.add(json);
@@ -77,6 +78,7 @@ public class ExamRestService
         json.addProperty("id", examId);
         json.addProperty("label", exam.getLabel());
         json.addProperty("certificate", exam.getCertificate());
+        json.addProperty("language", exam.getLanguage());
         List<ExamQuestion> questions = examService.getQuestionsForExam(examId);
         json.addProperty("questions", printQuestions(questions, q -> String.valueOf(q.getId())));
         json.addProperty("answers", printQuestions(questions, Question::getAnswer));
@@ -111,11 +113,16 @@ public class ExamRestService
         String certificate = json.get("certificate");
         if (StringUtils.isBlank(certificate))
             return ResponseEntity.status(BAD_REQUEST).body("Certificate is mandatory");
+        String language = json.get("language");
+        if (StringUtils.isBlank(language))
+            return ResponseEntity.status(BAD_REQUEST).body("Language is mandatory");
+
         Exam exam = examRepositories.getExamRepository().findByLabel(label);
         if (exam != null)
             return ResponseEntity.status(BAD_REQUEST).body("Exam with this name already exists");
+
         try {
-            examCreationService.createExam(label, Integer.parseInt(certificate));
+            examCreationService.createExam(label, Integer.parseInt(certificate), language);
         }
         catch (RuntimeException e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());

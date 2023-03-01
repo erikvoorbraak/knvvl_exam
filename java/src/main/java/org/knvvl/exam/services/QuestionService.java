@@ -154,6 +154,7 @@ public class QuestionService
             new QuestionField.QuestionFieldBoolean("discuss", Question::isDiscuss, Question::setDiscuss),
             new QuestionField.QuestionFieldString("remarks", Question::getRemarks, Question::setRemarks),
             new QuestionField.QuestionFieldString("examGroup", Question::getExamGroup, Question::setExamGroup),
+            new QuestionField.QuestionFieldString("language", Question::getLanguage, Question::setLanguage),
             new QuestionField.QuestionFieldPicture(pictureRepository));
     }
 }

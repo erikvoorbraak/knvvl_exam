@@ -31,23 +31,25 @@ public class ExamCreationService
     QuestionRepository questionRepository;
 
     @Transactional
-    public void createExam(String label, int certificate)
+    public void createExam(String label, int certificate, String language)
     {
-        Exam exam = new Exam(label, certificate);
-        List<Question> questions = new ExamCreationContext(certificate).generate();
+        Exam exam = new Exam(label, certificate, language);
+        List<Question> questions = new ExamCreationContext(exam).generate();
         examService.addExam(exam, questions);
     }
 
     private class ExamCreationContext
     {
         final int certificate;
+        final String language;
         final List<Question> allQuestions = questionRepository.findAll();
         final List<Question> examQuestions = new ArrayList<>();
         final List<Question> topicQuestions = new ArrayList<>();
 
-        private ExamCreationContext(int certificate)
+        private ExamCreationContext(Exam exam)
         {
-            this.certificate = certificate;
+            this.certificate = exam.getCertificate();
+            this.language = exam.getLanguage();
         }
 
         List<Question> generate()
@@ -62,6 +64,7 @@ public class ExamCreationService
             allQuestions.stream()
                 .filter(not(Question::isIgnore))
                 .filter(topic::hasQuestion)
+                .filter(q -> q.getLanguage().equals(language))
                 .filter(q -> q.allowForCertificate(certificate))
                 .forEach(topicQuestions::add);
 

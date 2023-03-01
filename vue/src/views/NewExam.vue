@@ -1,12 +1,22 @@
 <template>
   <main>
     <form v-on:submit.prevent="submit"> 
-        Naam: <input v-model="form.label"/><br/>
-        Brevet: <select v-model="form.certificate">
-            <option value="2">2</option>
-            <option value="3">3</option>
-        </select><br/>
-        <button class="button is-primary">Submit</button>
+        <table>
+            <tr><td>Naam:</td><td><input v-model="form.label"/></td></tr>
+            <tr><td>Brevet:</td><td>
+                <select v-model="form.certificate">
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+            </td></tr>
+            <tr><td>Taal</td><td>
+                <select v-model="form.language">
+                    <option value="nl">nl</option>
+                    <option value="en">en</option>
+                </select>
+            </td></tr>
+        </table>
+        <button class="button is-primary">Maak examen</button>
     </form>
   </main>
 </template>

@@ -30,6 +30,7 @@
         { text: "ID", value: "id", sortable: true  },
         { text: "Naam", value: "label", sortable: true },
         { text: "Brevet", value: "certificate"},
+        { text: "Taal", value: "language"},
         { text: "Pdf", value: "fileSize" },
         { text: "", value: "url" },
       ];

@@ -5,6 +5,7 @@ import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.knvvl.exam.services.Languages.LANGUAGE_NL;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,6 +24,7 @@ import org.knvvl.exam.repos.RequirementRepository;
 import org.knvvl.exam.repos.TopicRepository;
 import org.knvvl.exam.services.ExamRepositories;
 import org.knvvl.exam.services.ExamService;
+import org.knvvl.exam.services.Languages;
 import org.knvvl.exam.services.QuestionService;
 import org.knvvl.exam.services.QuestionService.QuestionCreateResult;
 import org.knvvl.exam.services.UserService;
@@ -81,10 +83,10 @@ public class ExamRepositoriesIntegrationTest
         Question question1 = givenQuestion("A");
         Question question2 = givenQuestion("B");
 
-        Exam exam = new Exam("Jan 2023", 2);
+        Exam exam = new Exam("Jan 2023", 2, LANGUAGE_NL);
         exam.setId(1);
         examService.addExam(exam, List.of(question1, question2));
-        examService.addExam(new Exam("Feb 2023", 2), emptyList());
+        examService.addExam(new Exam("Feb 2023", 2, LANGUAGE_NL), emptyList());
 
         assertEquals(2, examRepositories.getExamQuestionRepository().findByExamOrderByQuestionIndex(1).size());
         assertEquals(0, examRepositories.getExamQuestionRepository().findByExamOrderByQuestionIndex(2).size());

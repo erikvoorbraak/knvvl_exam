@@ -61,6 +61,12 @@ import TableChanges from "../components/TableChanges.vue";
                 <option v-for="q in pictures" :key="q.id" :value="q.id">{{ q.filename }}</option>
             </select>
         </td></tr>
+        <tr><td>Taal</td><td>
+            <select v-model="form.language">
+                <option value="nl">nl</option>
+                <option value="en">en</option>
+            </select>
+        </td></tr>
       </table>
       <button class="button is-primary">Submit</button>
       </form>

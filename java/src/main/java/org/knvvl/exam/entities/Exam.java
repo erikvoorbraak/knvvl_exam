@@ -1,5 +1,10 @@
 package org.knvvl.exam.entities;
 
+import static org.knvvl.exam.services.Languages.LANGUAGE_NL;
+
+import org.knvvl.exam.services.Languages;
+
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -18,6 +23,7 @@ public class Exam
         String getLabel();
         Integer getFileSize();
         int getCertificate();
+        String getLanguage();
     }
 
     @Id
@@ -30,6 +36,9 @@ public class Exam
     @Column(name = "certificate")
     private int certificate;
 
+    @Column(name = "language")
+    private String language = LANGUAGE_NL;
+
     @Column(name = "filesize")
     private Integer fileSize;
 
@@ -40,10 +49,11 @@ public class Exam
     {
     }
 
-    public Exam(String label, int certificate)
+    public Exam(String label, int certificate, String language)
     {
         this.label = label;
         this.certificate = certificate;
+        this.language = Languages.validate(language);
     }
 
     public Integer getId()
@@ -74,6 +84,17 @@ public class Exam
     public void setCertificate(int certificate)
     {
         this.certificate = certificate;
+    }
+
+    @Nonnull
+    public String getLanguage()
+    {
+        return language;
+    }
+
+    public void setLanguage(String language)
+    {
+        this.language = Languages.validate(language);
     }
 
     public byte[] getFilePdf()

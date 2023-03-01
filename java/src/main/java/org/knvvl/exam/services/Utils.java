@@ -10,5 +10,4 @@ public class Utils
         JsonElement valueJson = form.get(key);
         return valueJson == null ? "" : valueJson.getAsString();
     }
-
 }
