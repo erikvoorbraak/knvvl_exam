@@ -7,6 +7,7 @@ import static org.knvvl.exam.services.ExamRepositories.SORT_BY_ID;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Stream;
 
 import org.knvvl.exam.entities.Exam;
 import org.knvvl.exam.entities.Question;
@@ -38,18 +39,25 @@ public class ExamCreationService
         examService.addExam(exam, questions);
     }
 
+    public static Stream<Question> filterForExam(List<Question> questions, Exam exam, Topic topic)
+    {
+        return questions.stream()
+            .filter(not(Question::isIgnore))
+            .filter(topic::hasQuestion)
+            .filter(q -> q.getLanguage().equals(exam.getLanguage()))
+            .filter(q -> q.allowForCertificate(exam.getCertificate()));
+    }
+
     private class ExamCreationContext
     {
-        final int certificate;
-        final String language;
+        final Exam exam;
         final List<Question> allQuestions = questionRepository.findAll();
         final List<Question> examQuestions = new ArrayList<>();
         final List<Question> topicQuestions = new ArrayList<>();
 
         private ExamCreationContext(Exam exam)
         {
-            this.certificate = exam.getCertificate();
-            this.language = exam.getLanguage();
+            this.exam = exam;
         }
 
         List<Question> generate()
@@ -61,12 +69,7 @@ public class ExamCreationService
         private void addQuestionsForTopic(Topic topic)
         {
             topicQuestions.clear();
-            allQuestions.stream()
-                .filter(not(Question::isIgnore))
-                .filter(topic::hasQuestion)
-                .filter(q -> q.getLanguage().equals(language))
-                .filter(q -> q.allowForCertificate(certificate))
-                .forEach(topicQuestions::add);
+            filterForExam(allQuestions, exam, topic).forEach(topicQuestions::add);
 
             for (int i = 0; i < topic.getNumQuestions(); i++)
             {
@@ -78,7 +81,7 @@ public class ExamCreationService
         {
             if (topicQuestions.isEmpty())
             {
-                throw new IllegalStateException("Not enough questions for topic " + topic + ", certificate " + certificate);
+                throw new IllegalStateException("Not enough questions for topic " + topic + ", certificate " + exam.getCertificate());
             }
             Question newQuestion = topicQuestions.remove(RANDOM.nextInt(topicQuestions.size()));
             examQuestions.add(newQuestion);

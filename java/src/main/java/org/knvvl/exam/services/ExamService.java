@@ -64,8 +64,10 @@ public class ExamService
     {
         Question questionToGetAlt = examQuestion.getQuestion();
         Topic topic = questionToGetAlt.getTopic();
+        Exam exam = examRepository.getReferenceById(examQuestion.getExam());
         // Start with all questions of this topic
-        List<Question> otherQuestionsForTopic = new ArrayList<>(questionRepository.findByTopicOrderById(topic));
+        List<Question> otherQuestionsForTopic = new ArrayList<>();
+        ExamCreationService.filterForExam(questionRepository.findByTopicOrderById(topic), exam, topic).forEach(otherQuestionsForTopic::add);
         // Remove questions having same picture, group, etc
         removeSimilarQuestions(questionToGetAlt, otherQuestionsForTopic);
         // Remove questions that are already in this exam
