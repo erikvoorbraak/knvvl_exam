@@ -14,6 +14,7 @@ import org.knvvl.exam.entities.Picture;
 import org.knvvl.exam.services.ExamRepositories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,9 +71,14 @@ public class PictureRestService
     @PostMapping(value = "/pictures", produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> uploadNewPicture(@RequestParam("file") MultipartFile file) throws IOException
     {
+        byte[] bytes = file.getBytes();
+        if (bytes.length == 0)
+        {
+            return ResponseEntity.status(BAD_REQUEST).body("No file to upload was found");
+        }
         Picture picture = new Picture();
         picture.setFilename(retrieveFilename(file));
-        picture.setFileData(file.getBytes());
+        picture.setFileData(bytes);
         examRepositories.addPicture(picture);
         return ResponseEntity.status(OK).body(null);
     }
