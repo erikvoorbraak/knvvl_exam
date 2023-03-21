@@ -154,7 +154,8 @@ class ExamGenerator
         if (withQuestionId)
         {
             String req = question.getRequirement().getSubdomain();
-            String caption = "" + question.getId() + " " + question.getAnswer() + ", " + req + ", " + question.getTags(false);
+            String tags = String.join(", ", question.getTags(false));
+            String caption = "" + question.getId() + " " + question.getAnswer() + ", " + req + ", " + tags;
             PdfPTable table = createPdfPTable(FULL_WIDTH);
             table.addCell(getCell(caption, 1, captionFont));
             cell.addElement(table);

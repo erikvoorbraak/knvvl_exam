@@ -7,6 +7,7 @@ import static org.knvvl.exam.services.Languages.LANGUAGES;
 import static org.knvvl.exam.services.Languages.LANGUAGE_NL;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -276,29 +277,29 @@ public class Question
         this.language = Languages.validate(language);
     }
 
-    public String getTags(boolean asHtml)
+    public List<String> getTags(boolean asHtml)
     {
-        List<String> keywords = new ArrayList<>();
+        List<String> tags = new ArrayList<>();
         if (isAllowB2())
-            keywords.add("B2");
+            tags.add("B2");
         if (isAllowB3())
-            keywords.add("B3");
+            tags.add("B3");
         if (isIgnore())
-            keywords.add("Negeren");
+            tags.add("Negeren");
         if (isDiscuss())
-            keywords.add("Bespreken");
-        keywords.add(getLanguageKeyword());
+            tags.add("Bespreken");
+        tags.add(getLanguageKeyword());
 
         String examGroup = getExamGroup();
         if (!StringUtils.isBlank(examGroup))
-            keywords.add(examGroup);
+            tags.add(examGroup);
 
         Picture picture = getPicture();
         if (picture != null)
-            keywords.add(asHtml
+            tags.add(asHtml
                 ? "<a target=\"_blank\" href=\"/api/pictures/" + picture.getId() + "\">" + picture.getFilename() + "</a>"
                 : picture.getFilename());
-        return String.join(", ", keywords);
+        return tags;
     }
 
     public boolean applySearch(String searchLower)
@@ -314,14 +315,15 @@ public class Question
             || tryMatch(answerC, searchLower)
             || tryMatch(answerD, searchLower)
             || tryMatch(remarks, searchLower)
-            // Match keywords (tags), see QuestionRestService.getTags()
-            || tryMatch(examGroup, searchLower)
-            || tryMatch(getLanguageKeyword(), searchLower)
-            || (picture != null && tryMatch(picture.getFilename(), searchLower))
-            || (ignore && "negeren".contains(searchLower))
-            || (discuss && "bespreken".contains(searchLower))
-            || (allowB2 && "b2".contains(searchLower))
-            || (allowB3 && "b3".contains(searchLower));
+            || tryMatchTags(searchLower);
+    }
+
+    private boolean tryMatchTags(String searchLower)
+    {
+        List<String> wordsLower = Arrays.asList(searchLower.split("\\s+"));
+        List<String> tagsLower = getTags(false).stream().map(String::toLowerCase).toList();
+        // Each word in the user's search phrase must match a keyword
+        return wordsLower.stream().allMatch(wordLower -> tagsLower.stream().anyMatch(tag -> tag.contains(wordLower)));
     }
 
     private boolean tryMatch(String value, String searchLower)

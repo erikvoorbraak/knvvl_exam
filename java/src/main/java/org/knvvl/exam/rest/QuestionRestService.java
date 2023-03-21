@@ -78,7 +78,7 @@ public class QuestionRestService
             if (!addDetails && "answer".equals(questionField.getField()))
                 return json;
         }
-        json.addProperty("tagsHtml", question.getTags(true));
+        json.addProperty("tagsHtml", String.join(", ", question.getTags(true)));
         return json;
     }
 
