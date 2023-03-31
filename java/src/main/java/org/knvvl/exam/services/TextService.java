@@ -50,9 +50,9 @@ public class TextService
     public static Text EXAM_BACK_TITLE = add("exam.back.title", "Einde examenvragen");
     public static Text EXAM_BACK_COVER = add("exam.back.cover", "");
 
-    public static Text EXAM_TITLE_FONTNAME = add("exam.title.fontname", "Calibri");
+    public static Text EXAM_TITLE_FONTNAME = add("exam.title.fontname", "calibri");
     public static Text EXAM_TITLE_FONTSIZE = add("exam.title.fontsize", "14");
-    public static Text EXAM_BODY_FONTNAME = add("exam.body.fontname", "Calibri");
+    public static Text EXAM_BODY_FONTNAME = add("exam.body.fontname", "calibri");
     public static Text EXAM_BODY_FONTSIZE = add("exam.body.fontsize", "11");
 
     private static Text add(String key, String label)

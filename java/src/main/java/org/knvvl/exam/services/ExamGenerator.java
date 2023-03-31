@@ -13,13 +13,19 @@ import static com.itextpdf.text.Rectangle.NO_BORDER;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.logging.log4j.util.Strings;
 import org.knvvl.exam.entities.Exam;
 import org.knvvl.exam.entities.ExamQuestion;
 import org.knvvl.exam.entities.Question;
+import org.knvvl.exam.entities.Text;
 import org.knvvl.exam.entities.Topic;
 
 import com.itextpdf.text.BaseColor;
@@ -43,6 +49,7 @@ class ExamGenerator
     static final String BOX_NAME = "page";
     static final int FULL_WIDTH = 100;
     static final int MARGIN = 52;
+    static final Path fontsDir = Path.of("fonts");
 
     private final TextService textService;
     private final Exam exam;
@@ -191,9 +198,62 @@ class ExamGenerator
 
     private void registerFonts()
     {
-        String fontsDir = new File("Fonts").getAbsolutePath();
-        int registered = FontFactory.registerDirectory(fontsDir);
-        System.out.println("Registered " + registered + " font(s) found in " + fontsDir);
+        if (createFontsDir())
+        {
+            extractFont(TextService.EXAM_TITLE_FONTNAME);
+            extractFont(TextService.EXAM_BODY_FONTNAME);
+            int registered = Files.exists(fontsDir) ? FontFactory.registerDirectory(fontsDir.toFile().getAbsolutePath()) : 0;
+            System.out.println("Registered " + registered + " font(s) found in " + fontsDir);
+        }
+    }
+
+    private boolean createFontsDir()
+    {
+        try
+        {
+            if (!Files.exists(fontsDir))
+            {
+                Files.createDirectory(fontsDir);
+            }
+        }
+        catch (IOException e)
+        {
+            System.out.println("Cannot create fonts folder: " + e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    private void extractFont(Text fontSetting)
+    {
+        String fontName = textService.get(fontSetting);
+        if (Strings.isBlank(fontName))
+        {
+            return;
+        }
+        String fontFileName = fontName + ".ttf";
+        Path fontFile = fontsDir.resolve(fontFileName);
+        if (Files.exists(fontFile))
+        {
+            return;
+        }
+        try (InputStream inputStream = getClass().getResourceAsStream("/fonts/" + fontFileName))
+        {
+            if (inputStream == null)
+            {
+                System.out.println("Could not read font resource: " + fontFileName);
+                return;
+            }
+            try (FileOutputStream outputStream = new FileOutputStream(fontFile.toFile()))
+            {
+                outputStream.write(inputStream.readAllBytes());
+                System.out.println("Extracted font resource: " + fontFileName);
+            }
+        }
+        catch (IOException e)
+        {
+            System.out.println("Could not extract font resource: " + fontFileName + ", " + e.getMessage());
+        }
     }
 
     private Font getTitleFont()
