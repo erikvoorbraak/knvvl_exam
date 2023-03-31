@@ -58,7 +58,10 @@ public class ExamRepositories
     public void addTopic(Topic topic)
     {
         if (topic.getId() == null)
-            topic.setId(topicRepository.findTopByOrderByIdDesc().getId() + 1);
+        {
+            Topic latest = topicRepository.findTopByOrderByIdDesc();
+            topic.setId(latest == null ? 1 : latest.getId() + 1);
+        }
         topicRepository.save(topic);
     }
 
@@ -66,7 +69,10 @@ public class ExamRepositories
     public void addRequirement(Requirement requirement)
     {
         if (requirement.getId() == null)
-            requirement.setId(requirementRepository.findTopByOrderByIdDesc().getId() + 1);
+        {
+            Requirement latest = requirementRepository.findTopByOrderByIdDesc();
+            requirement.setId(latest == null ? 1 : latest.getId() + 1);
+        }
         requirementRepository.save(requirement);
     }
 
