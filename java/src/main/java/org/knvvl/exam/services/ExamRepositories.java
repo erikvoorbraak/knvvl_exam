@@ -74,7 +74,10 @@ public class ExamRepositories
     public void addPicture(Picture picture)
     {
         if (picture.getId() == null)
-            picture.setId(pictureRepository.findTopByOrderByIdDesc().getId() + 1);
+        {
+            Picture latest = pictureRepository.findTopByOrderByIdDesc();
+            picture.setId(latest == null ? 1 : latest.getId() + 1);
+        }
         pictureRepository.save(picture);
     }
 
