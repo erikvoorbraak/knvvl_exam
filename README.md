@@ -172,6 +172,7 @@ To run the Java Spring Boot Docker image, you need a Cloud Run instance.
 * Set up environment variables that Java will pick up to connect to Cloud SQL (substitute your own "Connection name"):
   * `spring.datasource.url` = `jdbc:postgresql:///exam?cloudSqlInstance=daring-atrium-382409:us-central1:pdb&socketFactory=com.google.cloud.sql.postgres.SocketFactory`
   * `spring.datasource.password` = `[secret]`
+  * To configure this I found some useful tips on https://cloud.google.com/sql/docs/postgres/connect-run#java.
 * Under "Cloud SQL connections", select your Postgres instance.
 
 ### Security
