@@ -20,13 +20,14 @@ Online tool for maintaining questions and exams for the Dutch paragliding theory
 # Prerequisites
 For developing, I have the following components installed on my local development environment. 
 Some of these are explained in more detail below, the rest are assumed to be installed.
-* **Git** for version control, backed by Githuib (https://gitforwindows.org/)
+* **Git** for version control, backed by Github (https://gitforwindows.org/)
 * **IntelliJ Community Edition** or your favorite IDE for back-end development
 * **Visual Studio Code** or your favorite IDE for front-end development
 * **maven** for Java dependency management (https://maven.apache.org/)
 * **npm** as javascript package manager (https://www.npmjs.com/)
 * **nginx for Windows** for redirecting back-end and front-end requests to separate services (https://nginx.org)
 * **PostgreSQL** for storing everything, including files (https://www.postgresql.org/)
+* **Docker Desktop** for building and running Docker images (https://www.docker.com/products/docker-desktop/)
 
 # Setup
 To get started, first pull all sources from Github: https://github.com/erikvoorbraak/knvvl_exam.
@@ -87,7 +88,12 @@ NOTE: the login screen from the backend doesn't automatically redirect to the fr
 click or manually type http://localhost/ again.
 
 # Build
-When development is done, follow the steps below to create a single JAR file.
+When development is done, follow the steps below. The complete flow from development to deployment is:
+* Build the frontend
+* Build the backend
+* Build a Docker image
+* Upload it to Docker hub
+* Restart cloud provider
 
 ### Building the frontend
 Open a command prompt and go to `C:/github/knvvl_exam/vue`. Build the frontend:<br/>
@@ -104,12 +110,73 @@ Alternatively, use your IDE to run Maven's package command.
 
 If successful, then a JAR file should appear in `C:/github/knvvl_exam/java/target`.
 
-### Running the server
-Finally we can set up an environment to test the jar file. Let's collect everything in a folder
+### Building a Docker image
+To be able to create a Docker image on a Windows machine, use "Docker Desktop" (https://www.docker.com/products/docker-desktop/).
+Open a command prompt and go to `C:/github/knvvl_exam/java`. Build the Docker image (note: the single '.' at the end is
+intended to be copied!):<br/>
+`docker build -t erikvoorbraak/knvvl_exam .`<br/>
+
+### Uploading the image to docker.io
+Open a command prompt and go to `C:/github/knvvl_exam/java`. First, log on to Docker Hub:<br/>
+`docker login -u "erikvoorbraak" -p "[secret]" docker.io`<br/>
+
+Now you can upload the Docker image:<br/>
+`docker push erikvoorbraak/knvvl_exam`<br/>
+
+### Running the server for Testing
+For testing purposes we can set up an environment to test the jar file. Collect everything in a folder
 `C:/servers/exam`, having the following content:
-* A folder `Fonts` for additional `ttf` files for use by the generated PDFs.
 * Optional folder `Imports` for `txt` files containing CSV exports from the original database.
 * A file `application.properties` to capture the actual settings to connect to the database.
 * The `exam.jar` file as it was built.
 * If on Windows, a file `run.bat` to launch the server with a single click. File contents: `java -jar exam.jar`.
 * Alternatively, open a command prompt and type `java -jar exam.jar`.
+
+### Running the Docker image for Testing
+
+To run a Postgres Docker image with a default password of "postgres":<br/>
+`docker run -e=POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres:11.7`<br/>
+
+To run the Spring Boot application in Docker Desktop locally:<br/>
+`docker run -p 80:8080 -e spring.datasource.url="jdbc:postgresql://host.docker.internal:5432/exam" -e spring.datasource.password="postgres" erikvoorbraak/knvvl_exam`<br/>
+
+
+# Deploy
+
+Below are the steps I took to get the application running on Google Cloud with Postgres.
+
+### Cloud SQL
+To store any data, you need a database. Choose the smallest offering: 1 vCPU, 3.75 GB, SSD storage: 10 GB.
+* Go to https://console.cloud.google.com/ and choose "Cloud SQL".
+* Click "Create service", select PostgreSQL and click "Create Instance".
+* Type a name for the database and a password for superuser "postgres".
+* Choose a configuration. I chose "Development".
+* Choose "Single zone" for zonal availability.
+* Create the service.
+* Write down the "Public IP address" and "Connection name" for later use.
+* To be able to connect to this Postgres instance from your local machine:
+  * Go to menu "Connections".
+  * Go to tab "Networking" and find "Authorized networks".
+  * Choose "Add network" and type the IP address of your home network (try https://whatismyipaddress.com/)
+
+### Cloud Run
+To run the Java Spring Boot Docker image, you need a Cloud Run instance.
+* Go to https://console.cloud.google.com/ and choose "Cloud Run".
+* Click "Create service", select "Deploy one revision from an existing container image".
+* Type the Container image url: "erikvoorbraak/knvvl_exam".
+* Type a service name, for example "knvvl_exam".
+* Choose "CPU is only allocated during request processing".
+* Set "Maximum number of instances" to 1.
+* For Authentication, choose "Allow unauthenticated invocations" as we do our own authentication.
+* Choose memory as 512MB and CPU as 1.
+* Set up environment variables that Java will pick up to connect to Cloud SQL (substitute your own "Connection name"):
+  * `spring.datasource.url` = `jdbc:postgresql:///exam?cloudSqlInstance=daring-atrium-382409:us-central1:pdb&socketFactory=com.google.cloud.sql.postgres.SocketFactory`
+  * `spring.datasource.password` = `[secret]`
+* Under "Cloud SQL connections", select your Postgres instance.
+
+### Security
+During the process, I had to enbale some services and add some role.
+* Enable service: compute.googleapis.com
+* Enable service: sqladmin.googleapis.com
+* Enable services: sqladmin
+* Find Google's identity management "IAM & Admin", you may need to add the role "Cloud SQL Access" to your service account(s).
