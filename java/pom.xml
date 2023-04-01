@@ -16,6 +16,19 @@
 	<properties>
 		<java.version>19</java.version>
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>central</id>
+			<name>Default Repository</name>
+			<layout>default</layout>
+			<url>https://repo1.maven.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -92,6 +105,12 @@
 			<version>3.1.1.RELEASE</version>
 		</dependency>
 
+<!--		For using Google Cloud-->
+		<dependency>
+			<groupId>com.google.cloud.sql</groupId>
+			<artifactId>postgres-socket-factory</artifactId>
+			<version>1.11.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
