@@ -4,6 +4,7 @@ Online tool for maintaining questions and exams for the Dutch paragliding theory
 * Back-end: **Java 19**
   * **Spring Boot** for configuration and dependency injection
   * **Hibernate** for Object-to-Relational mapping
+  * **EhCache** for second-level caching
   * **Gson** for mapping to/from json
   * **Liquibase** for database schema migration
   * **opencsv** for reading database exports
