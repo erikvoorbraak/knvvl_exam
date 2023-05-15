@@ -3,19 +3,24 @@ package org.knvvl.exam.entities;
 import static java.util.Objects.requireNonNull;
 
 import static org.apache.commons.lang3.Validate.isTrue;
-import static org.knvvl.exam.services.Languages.LANGUAGES;
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 import static org.knvvl.exam.services.Languages.LANGUAGE_NL;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Cache;
 import org.knvvl.exam.services.Languages;
 
 import jakarta.annotation.Nonnull;
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -24,6 +29,7 @@ import jakarta.persistence.Table;
 @Entity
 //@BatchSize(size=20) // TODO Batch size breaks getting Change instances
 @Table(name="t_question")
+@Cacheable @Cache(usage = READ_WRITE)
 public class Question
 {
     public static final String LANG_PREFIX = "Lang:";
@@ -31,11 +37,11 @@ public class Question
     @Column(name = "id")
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "topic")
     private Topic topic;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "requirement")
     private Requirement requirement;
 
@@ -57,7 +63,7 @@ public class Question
     @Column(name = "answer")
     private String answer;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "picture")
     private Picture picture;
 

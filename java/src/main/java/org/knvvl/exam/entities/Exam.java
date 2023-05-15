@@ -1,10 +1,14 @@
 package org.knvvl.exam.entities;
 
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 import static org.knvvl.exam.services.Languages.LANGUAGE_NL;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.knvvl.exam.services.Languages;
 
 import jakarta.annotation.Nonnull;
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -12,6 +16,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name="t_exam")
+@Cacheable @Cache(usage = READ_WRITE)
 public class Exam
 {
     /**

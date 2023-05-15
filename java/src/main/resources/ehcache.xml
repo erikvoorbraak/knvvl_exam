@@ -1,0 +1,6 @@
+<config
+        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xmlns='http://www.ehcache.org/v3'
+        xsi:schemaLocation="
+        https://www.ehcache.org/v3/ https://www.ehcache.org/schema/ehcache-core-3.0.xsd">
+</config>

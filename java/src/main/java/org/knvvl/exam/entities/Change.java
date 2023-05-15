@@ -1,8 +1,14 @@
 package org.knvvl.exam.entities;
 
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
+
 import java.io.Serializable;
 import java.time.Instant;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EmbeddedId;
@@ -13,6 +19,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name="t_change")
+@Cacheable @Cache(usage = READ_WRITE)
 public class Change
 {
     @EmbeddedId

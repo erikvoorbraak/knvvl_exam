@@ -1,12 +1,17 @@
 package org.knvvl.exam.entities;
 
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
+
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.Cache;
 
 @Entity
 @Table(name="t_user")
+@Cacheable @Cache(usage = READ_WRITE)
 public class User
 {
     @Id
