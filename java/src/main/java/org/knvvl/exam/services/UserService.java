@@ -23,6 +23,9 @@ public class UserService
     private PasswordEncoder passwordEncoder;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ChangeDetector changeDetector;
+
     private Supplier<Authentication> authenticationSupplier = () -> SecurityContextHolder.getContext().getAuthentication();
 
     @PostConstruct
@@ -72,6 +75,7 @@ public class UserService
         setPassword(user, rawPassword);
         user.setEmail(email);
         userRepository.save(user);
+        changeDetector.changed();
     }
 
     @Transactional
@@ -79,6 +83,7 @@ public class UserService
     {
         setPassword(user, rawPassword);
         userRepository.save(user);
+        changeDetector.changed();
     }
 
     public void setAuthenticationSupplier(Supplier<Authentication> authenticationSupplier)

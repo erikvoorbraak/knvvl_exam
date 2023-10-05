@@ -151,6 +151,13 @@
 			<artifactId>postgres-socket-factory</artifactId>
 			<version>1.11.0</version>
 		</dependency>
+
+		<!-- For connecting to Dropbox -->
+		<dependency>
+			<groupId>com.dropbox.core</groupId>
+			<artifactId>dropbox-core-sdk</artifactId>
+			<version>5.4.5</version>
+		</dependency>
 	</dependencies>
 
 	<build>

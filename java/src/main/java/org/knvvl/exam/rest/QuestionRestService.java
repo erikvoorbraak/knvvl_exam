@@ -9,15 +9,11 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.knvvl.exam.entities.Change;
-import org.knvvl.exam.entities.Picture;
 import org.knvvl.exam.entities.Question;
 import org.knvvl.exam.services.ExamRepositories;
-import org.knvvl.exam.services.QuestionField;
+import org.knvvl.exam.meta.EntityField;
 import org.knvvl.exam.services.QuestionService;
 import org.knvvl.exam.services.QuestionService.QuestionCreateResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,10 +68,10 @@ public class QuestionRestService
     {
         JsonObject json = new JsonObject();
         json.addProperty("id", question.getId());
-        for (QuestionField questionField : questionService.getQuestionFields())
+        for (EntityField entityField : questionService.getQuestionFields().getFields())
         {
-            questionField.writeJson(question, json);
-            if (!addDetails && "answer".equals(questionField.getField()))
+            entityField.writeJson(question, json);
+            if (!addDetails && "answer".equals(entityField.getField()))
                 return json;
         }
         json.addProperty("tagsHtml", String.join(", ", question.getTags(true)));

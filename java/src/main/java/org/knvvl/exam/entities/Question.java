@@ -14,13 +14,18 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cache;
+import org.knvvl.exam.meta.IdEntity;
+import org.knvvl.exam.repos.PictureRepository;
+import org.knvvl.exam.repos.RequirementRepository;
+import org.knvvl.exam.repos.TopicRepository;
+import org.knvvl.exam.meta.EntityField;
+import org.knvvl.exam.meta.EntityFields;
 import org.knvvl.exam.services.Languages;
 
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -30,7 +35,7 @@ import jakarta.persistence.Table;
 //@BatchSize(size=20) // TODO Batch size breaks getting Change instances
 @Table(name="t_question")
 @Cacheable @Cache(usage = READ_WRITE)
-public class Question
+public class Question implements IdEntity
 {
     public static final String LANG_PREFIX = "Lang:";
     @Id
@@ -88,9 +93,37 @@ public class Question
     @Column(name = "language")
     private String language = LANGUAGE_NL;
 
+    public static EntityFields<Question> getFields(TopicRepository topicRepository, RequirementRepository requirementRepository, PictureRepository pictureRepository)
+    {
+        return new EntityFields<>(List.of(
+            new EntityField.EntityFieldIdEntity<>("topic", topicRepository, Question::getTopic, Question::setTopic),
+            new EntityField.EntityFieldIdEntity<>("requirement", requirementRepository, Question::getRequirement, Question::setRequirement),
+            new EntityField.EntityFieldString<>("question", Question::getQuestion, Question::setQuestion),
+            new EntityField.EntityFieldString<>("answerA", Question::getAnswerA, Question::setAnswerA),
+            new EntityField.EntityFieldString<>("answerB", Question::getAnswerB, Question::setAnswerB),
+            new EntityField.EntityFieldString<>("answerC", Question::getAnswerC, Question::setAnswerC),
+            new EntityField.EntityFieldString<>("answerD", Question::getAnswerD, Question::setAnswerD),
+            new EntityField.EntityFieldString<>("answer", Question::getAnswer, Question::setAnswer),
+            new EntityField.EntityFieldBoolean<>("allowB2", Question::isAllowB2, Question::setAllowB2),
+            new EntityField.EntityFieldBoolean<>("allowB3", Question::isAllowB3, Question::setAllowB3),
+            new EntityField.EntityFieldBoolean<>("ignore", Question::isIgnore, Question::setIgnore),
+            new EntityField.EntityFieldBoolean<>("discuss", Question::isDiscuss, Question::setDiscuss),
+            new EntityField.EntityFieldString<>("remarks", Question::getRemarks, Question::setRemarks),
+            new EntityField.EntityFieldString<>("examGroup", Question::getExamGroup, Question::setExamGroup),
+            new EntityField.EntityFieldString<>("language", Question::getLanguage, Question::setLanguage),
+            new EntityField.EntityFieldIdEntity<>("picture", pictureRepository, Question::getPicture, Question::setPicture)));
+    }
+
+    @Override
     public Integer getId()
     {
         return id;
+    }
+
+    @Override
+    public void setId(int id)
+    {
+        this.id = id;
     }
 
     public Topic getTopic()
@@ -179,11 +212,6 @@ public class Question
     private String getLanguageKeyword()
     {
         return LANG_PREFIX + getLanguage();
-    }
-
-    public void setId(int id)
-    {
-        this.id = id;
     }
 
     public void setTopic(Topic topic)

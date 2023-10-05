@@ -10,6 +10,8 @@ import org.knvvl.exam.entities.Change;
 import org.knvvl.exam.entities.Change.ChangedByAt;
 import org.knvvl.exam.entities.ExamQuestion;
 import org.knvvl.exam.entities.Question;
+import org.knvvl.exam.meta.EntityField;
+import org.knvvl.exam.meta.EntityFields;
 import org.knvvl.exam.repos.ChangeRepository;
 import org.knvvl.exam.repos.PictureRepository;
 import org.knvvl.exam.repos.QuestionRepository;
@@ -30,6 +32,8 @@ import jakarta.transaction.Transactional;
 public class QuestionService
 {
     @Autowired
+    private ExamRepositories examRepositories;
+    @Autowired
     private QuestionRepository questionRepository;
     @Autowired
     private ExamService examService;
@@ -43,7 +47,10 @@ public class QuestionService
     private ChangeRepository changeRepository;
     @Autowired
     private UserService userService;
-    private List<QuestionField> questionFields;
+    @Autowired
+    private ChangeDetector changeDetector;
+
+    private EntityFields<Question> questionFields;
 
     public Stream<Question> queryQuestions(Sort sort, int topicId, int requirementId, int examId, String search)
     {
@@ -76,7 +83,7 @@ public class QuestionService
         List<Change> changes = new ArrayList<>();
         Question question = new Question();
         question.setId(getNewQuestionId());
-        for (QuestionField questionField : getQuestionFields())
+        for (EntityField<Question> questionField : getQuestionFields().getFields())
         {
             JsonElement jsonElement = form.get(questionField.getValueField());
             if (jsonElement == null && questionField.isMandatory())
@@ -91,6 +98,7 @@ public class QuestionService
         }
         questionRepository.save(question);
         changeRepository.saveAll(changes);
+        changeDetector.changed();
         return new QuestionCreateResult(question, null);
     }
 
@@ -100,27 +108,28 @@ public class QuestionService
         var changedByAt = new ChangedByAt(userService.getCurrentUser(), Instant.now());
         List<Change> changes = new ArrayList<>();
         Question question = questionRepository.getReferenceById(questionId);
-        for (QuestionField questionField : getQuestionFields())
+        for (EntityField<Question> entityField : getQuestionFields().getFields())
         {
-            JsonElement jsonElement = form.get(questionField.getValueField());
+            JsonElement jsonElement = form.get(entityField.getValueField());
             if (jsonElement != null)
             {
-                logChange(changedByAt, question, questionField, changes, () ->
-                    questionField.readJson(question, jsonElement));
+                logChange(changedByAt, question, entityField, changes, () ->
+                    entityField.readJson(question, jsonElement));
             }
         }
         questionRepository.save(question);
         changeRepository.saveAll(changes);
+        changeDetector.changed();
         return null;
     }
 
-    private void logChange(ChangedByAt changedByAt, Question question, QuestionField questionField, List<Change> changes, Runnable action)
+    private void logChange(ChangedByAt changedByAt, Question question, EntityField<Question> entityField, List<Change> changes, Runnable action)
     {
-        String oldValue = questionField.toStringValue(question);
+        String oldValue = entityField.toStringValue(question);
         action.run();
-        String newValue = questionField.toStringValue(question);
+        String newValue = entityField.toStringValue(question);
         if (!Objects.equals(oldValue, newValue))
-            changes.add(new Change(changedByAt, question, questionField.getField(), oldValue, newValue));
+            changes.add(new Change(changedByAt, question, entityField.getField(), oldValue, newValue));
     }
 
     public List<Change> getChanges(int questionId)
@@ -128,33 +137,12 @@ public class QuestionService
         return changeRepository.findByChangeKeyQuestionIdOrderByChangeKeyChangedAtDesc(questionId);
     }
 
-    public List<QuestionField> getQuestionFields()
+    public EntityFields<Question> getQuestionFields()
     {
         if (questionFields == null)
         {
-            questionFields = newQuestionFields();
+            questionFields = Question.getFields(topicRepository, requirementRepository, pictureRepository);
         }
         return questionFields;
-    }
-
-    private List<QuestionField> newQuestionFields()
-    {
-        return List.of(
-            new QuestionField.QuestionFieldTopic(topicRepository),
-            new QuestionField.QuestionFieldRequirement(requirementRepository),
-            new QuestionField.QuestionFieldString("question", Question::getQuestion, Question::setQuestion),
-            new QuestionField.QuestionFieldString("answerA", Question::getAnswerA, Question::setAnswerA),
-            new QuestionField.QuestionFieldString("answerB", Question::getAnswerB, Question::setAnswerB),
-            new QuestionField.QuestionFieldString("answerC", Question::getAnswerC, Question::setAnswerC),
-            new QuestionField.QuestionFieldString("answerD", Question::getAnswerD, Question::setAnswerD),
-            new QuestionField.QuestionFieldString("answer", Question::getAnswer, Question::setAnswer),
-            new QuestionField.QuestionFieldBoolean("allowB2", Question::isAllowB2, Question::setAllowB2),
-            new QuestionField.QuestionFieldBoolean("allowB3", Question::isAllowB3, Question::setAllowB3),
-            new QuestionField.QuestionFieldBoolean("ignore", Question::isIgnore, Question::setIgnore),
-            new QuestionField.QuestionFieldBoolean("discuss", Question::isDiscuss, Question::setDiscuss),
-            new QuestionField.QuestionFieldString("remarks", Question::getRemarks, Question::setRemarks),
-            new QuestionField.QuestionFieldString("examGroup", Question::getExamGroup, Question::setExamGroup),
-            new QuestionField.QuestionFieldString("language", Question::getLanguage, Question::setLanguage),
-            new QuestionField.QuestionFieldPicture(pictureRepository));
     }
 }

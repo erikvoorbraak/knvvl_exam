@@ -11,6 +11,7 @@ Online tool for maintaining questions and exams for the Dutch paragliding theory
   * **itextpdf + pdfbox** for creating PDF documents
   * **Thymeleaf + Spring Security** for user authentication
   * **JUnit** for unit testing
+  * **Dropbox** for sending backups to
 * Front-end: **Vue 3** (https://vuejs.org)
   * **Vite** based
   * Quick-started using https://cli.vuejs.org/guide/creating-a-project.html#vue-create
@@ -29,6 +30,7 @@ Some of these are explained in more detail below, the rest are assumed to be ins
 * **nginx for Windows** for redirecting back-end and front-end requests to separate services (https://nginx.org)
 * **PostgreSQL** for storing everything, including files (https://www.postgresql.org/)
 * **Docker Desktop** for building and running Docker images (https://www.docker.com/products/docker-desktop/)
+* **Dropbox** account, no local install of Dropbox executable required (https://www.dropbox.com/)
 
 # Setup
 To get started, first pull all sources from Github: https://github.com/erikvoorbraak/knvvl_exam.
@@ -87,6 +89,13 @@ After nginx starts successfully, you should be able to point your browser at htt
 
 NOTE: the login screen from the backend doesn't automatically redirect to the frontend. You may have to 
 click or manually type http://localhost/ again.
+
+### Setting up Dropbox
+To write backups to Dropbox, you need to create a Dropbox App with sufficient permissions.
+https://github.com/dropbox/dropbox-sdk-java describes in detail how to do that.
+https://www.dropbox.com/developers/apps allows you to set up an App; make sure that on the Permissions tab,
+you enable `files.content.write` and `files.content.read`. After that, generate an `access token` to use here.
+
 
 # Build
 When development is done, follow the steps below. The complete flow from development to deployment is:
@@ -177,7 +186,7 @@ To run the Java Spring Boot Docker image, you need a Cloud Run instance.
 * Under "Cloud SQL connections", select your Postgres instance.
 
 ### Security
-During the process, I had to enbale some services and add some role.
+During the process, I had to enable some services and add some roles.
 * Enable service: compute.googleapis.com
 * Enable service: sqladmin.googleapis.com
 * Enable services: sqladmin

@@ -2,9 +2,14 @@ package org.knvvl.exam.entities;
 
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
+import java.util.List;
+
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.knvvl.exam.meta.LabeledEntity;
+import org.knvvl.exam.repos.TopicRepository;
+import org.knvvl.exam.meta.EntityField;
+import org.knvvl.exam.meta.EntityFields;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
@@ -47,12 +52,25 @@ public class Requirement implements LabeledEntity
     @Column(name = "level_b3")
     private String levelB3;
 
+    public static EntityFields<Requirement> getFields(TopicRepository topicRepository)
+    {
+        return new EntityFields<>(List.of(
+            new EntityField.EntityFieldString<>("label", Requirement::getLabel, Requirement::setLabel),
+            new EntityField.EntityFieldIdEntity<>("topic", topicRepository, Requirement::getTopic, Requirement::setTopic),
+            new EntityField.EntityFieldInteger<>("domain", Requirement::getDomain, Requirement::setDomain),
+            new EntityField.EntityFieldString<>("domainTitle", Requirement::getDomainTitle, Requirement::setDomainTitle),
+            new EntityField.EntityFieldString<>("subdomain", Requirement::getSubdomain, Requirement::setSubdomain),
+            new EntityField.EntityFieldString<>("levelB2", Requirement::getLevelB2, Requirement::setLevelB2),
+            new EntityField.EntityFieldString<>("levelB3", Requirement::getLevelB3, Requirement::setLevelB3)));
+    }
+
     @Override
     public Integer getId()
     {
         return id;
     }
 
+    @Override
     public void setId(int id)
     {
         this.id = id;

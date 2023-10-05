@@ -26,6 +26,8 @@ public class ExamService
     private ExamQuestionRepository examQuestionRepository;
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private ChangeDetector changeDetector;
 
     @Transactional
     public void addExam(Exam exam, List<Question> questions)
@@ -41,6 +43,7 @@ public class ExamService
             examQuestions.add(new ExamQuestion(examId, question, question.getTopic(), i));
         }
         examQuestionRepository.saveAll(examQuestions);
+        changeDetector.changed();
     }
 
     /**
@@ -58,6 +61,7 @@ public class ExamService
     {
         examQuestion.setQuestion(questionRepository.getReferenceById(altQuestionId));
         examQuestionRepository.save(examQuestion);
+        changeDetector.changed();
     }
 
     public List<Question> getAltQuestions(ExamQuestion examQuestion)
@@ -88,6 +92,7 @@ public class ExamService
         List<ExamQuestion> questions = examQuestionRepository.findByExamOrderByQuestionIndex(examId);
         examQuestionRepository.deleteAll(questions);
         examRepository.delete(examRepository.getReferenceById(examId));
+        changeDetector.changed();
     }
 
     public void removeSimilarQuestions(Question examQuestion, List<Question> removeFrom)

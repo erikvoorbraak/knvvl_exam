@@ -2,9 +2,14 @@ package org.knvvl.exam.entities;
 
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
+import java.util.List;
+
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.knvvl.exam.meta.LabeledEntity;
+import org.knvvl.exam.meta.EntityField.EntityFieldInteger;
+import org.knvvl.exam.meta.EntityField.EntityFieldString;
+import org.knvvl.exam.meta.EntityFields;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
@@ -28,6 +33,13 @@ public class Topic implements LabeledEntity
     @Column(name = "num_questions")
     private int numQuestions;
 
+    public static EntityFields<Topic> getFields()
+    {
+        return new EntityFields<>(List.of(
+            new EntityFieldString<>("label", Topic::getLabel, Topic::setLabel),
+            new EntityFieldInteger<>("numQuestions", Topic::getNumQuestions, Topic::setNumQuestions)));
+    }
+
     public Topic()
     {
     }
@@ -43,6 +55,7 @@ public class Topic implements LabeledEntity
         return id;
     }
 
+    @Override
     public void setId(int id)
     {
         this.id = id;
@@ -71,12 +84,17 @@ public class Topic implements LabeledEntity
 
     public boolean hasQuestion(Question question)
     {
-        return this.equals(question.getTopic());
+        return sameTopic(question.getTopic());
     }
 
     @Override
     public String toString()
     {
         return label;
+    }
+
+    public boolean sameTopic(Topic other)
+    {
+        return other != null && id != null && id.equals(other.getId());
     }
 }

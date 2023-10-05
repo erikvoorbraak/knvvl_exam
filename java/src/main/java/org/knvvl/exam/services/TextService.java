@@ -62,7 +62,10 @@ public class TextService
         return text;
     }
 
-    @Autowired private TextRepository textRepository;
+    @Autowired
+    private TextRepository textRepository;
+    @Autowired
+    private ChangeDetector changeDetector;
 
     @Transactional
     public void saveInitialTexts()
@@ -87,5 +90,6 @@ public class TextService
     public void save(Text text)
     {
         textRepository.save(text);
+        changeDetector.changed();
     }
 }

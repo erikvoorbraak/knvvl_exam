@@ -3,8 +3,13 @@ package org.knvvl.exam.entities;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 import static org.knvvl.exam.services.Languages.LANGUAGE_NL;
 
+import java.util.List;
+
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.knvvl.exam.meta.IdEntity;
+import org.knvvl.exam.meta.KnvvlEntity;
+import org.knvvl.exam.meta.EntityField;
+import org.knvvl.exam.meta.EntityFields;
 import org.knvvl.exam.services.Languages;
 
 import jakarta.annotation.Nonnull;
@@ -17,7 +22,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name="t_exam")
 @Cacheable @Cache(usage = READ_WRITE)
-public class Exam
+public class Exam implements IdEntity
 {
     /**
      * To avoid getting the file when retrieving all records
@@ -50,6 +55,15 @@ public class Exam
     @Column(name = "file_pdf")
     private byte[] filePdf;
 
+    public static EntityFields<Exam> getFields()
+    {
+        return new EntityFields<>(List.of(
+            new EntityField.EntityFieldString<>("label", Exam::getLabel, Exam::setLabel),
+            new EntityField.EntityFieldInteger<>("certificate", Exam::getCertificate, Exam::setCertificate),
+            new EntityField.EntityFieldString<>("language", Exam::getLanguage, Exam::setLanguage),
+            new EntityField.EntityFieldBytes<>("filePdf", Exam::getFilePdf, Exam::setFilePdf)));
+    }
+
     public Exam()
     {
     }
@@ -61,11 +75,13 @@ public class Exam
         this.language = Languages.validate(language);
     }
 
+    @Override
     public Integer getId()
     {
         return id;
     }
 
+    @Override
     public void setId(int id)
     {
         this.id = id;

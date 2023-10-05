@@ -1,5 +1,9 @@
 package org.knvvl.exam;
 
+import java.time.Instant;
+
+import javax.annotation.Nonnull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -9,10 +13,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ExamApplication
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExamApplication.class);
+	private static final Instant started = Instant.now();
 
 	public static void main(String[] args) {
 		logStartupInfo(args);
 		SpringApplication.run(ExamApplication.class, args);
+	}
+
+	@Nonnull
+	public static Instant getStartedInstant()
+	{
+		return started.minusNanos(started.getNano());
 	}
 
 	private static void logStartupInfo(String[] args)
