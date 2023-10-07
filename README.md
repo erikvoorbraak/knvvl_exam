@@ -11,7 +11,7 @@ Online tool for maintaining questions and exams for the Dutch paragliding theory
   * **itextpdf + pdfbox** for creating PDF documents
   * **Thymeleaf + Spring Security** for user authentication
   * **JUnit** for unit testing
-  * **Dropbox** for sending backups to
+  * **Google Cloud Storage** for sending backups to
 * Front-end: **Vue 3** (https://vuejs.org)
   * **Vite** based
   * Quick-started using https://cli.vuejs.org/guide/creating-a-project.html#vue-create
@@ -30,7 +30,6 @@ Some of these are explained in more detail below, the rest are assumed to be ins
 * **nginx for Windows** for redirecting back-end and front-end requests to separate services (https://nginx.org)
 * **PostgreSQL** for storing everything, including files (https://www.postgresql.org/)
 * **Docker Desktop** for building and running Docker images (https://www.docker.com/products/docker-desktop/)
-* **Dropbox** account, no local install of Dropbox executable required (https://www.dropbox.com/)
 
 # Setup
 To get started, first pull all sources from Github: https://github.com/erikvoorbraak/knvvl_exam.
@@ -89,12 +88,6 @@ After nginx starts successfully, you should be able to point your browser at htt
 
 NOTE: the login screen from the backend doesn't automatically redirect to the frontend. You may have to 
 click or manually type http://localhost/ again.
-
-### Setting up Dropbox
-To write backups to Dropbox, you need to create a Dropbox App with sufficient permissions.
-https://github.com/dropbox/dropbox-sdk-java describes in detail how to do that.
-https://www.dropbox.com/developers/apps allows you to set up an App; make sure that on the Permissions tab,
-you enable `files.content.write` and `files.content.read`. After that, generate an `access token` to use here.
 
 
 # Build
@@ -179,11 +172,24 @@ To run the Java Spring Boot Docker image, you need a Cloud Run instance.
 * Set "Maximum number of instances" to 1.
 * For Authentication, choose "Allow unauthenticated invocations" as we do our own authentication.
 * Choose memory as 512MB and CPU as 1.
-* Set up environment variables that Java will pick up to connect to Cloud SQL (substitute your own "Connection name"):
+* Set up environment variables that Java will pick up to connect to Cloud SQL (substitute your own `Connection name` and `[secret]`):
   * `spring.datasource.url` = `jdbc:postgresql:///exam?cloudSqlInstance=daring-atrium-382409:us-central1:pdb&socketFactory=com.google.cloud.sql.postgres.SocketFactory`
   * `spring.datasource.password` = `[secret]`
+  * `exam.backup.access-token` = `[uuid]`
   * To configure this I found some useful tips on https://cloud.google.com/sql/docs/postgres/connect-run#java.
 * Under "Cloud SQL connections", select your Postgres instance.
+
+### Backup to Google Cloud Storage
+The application can write a database backup as Json to Google Cloud Storage if configured.
+Configuration and default: `exam.google-cloud-storage.bucket-name=knvvl_backup`
+The code will not create the bucket automatically, this is a one-time action for the configurator.
+Once configured, a backup will be written:
+* Either manually by accessing /api/admin
+* Or using Google Cloud Scheduler
+
+The scheduled backup uses a public REST endpoint `POST /backup` to create a backup and write it to a Cloud Storage bucket.
+To avoid unauthorized access, a header `backupAccessToken` must be supplied, whose value must match the value as
+configured in `exam.backup.access-token`.
 
 ### Security
 During the process, I had to enable some services and add some roles.

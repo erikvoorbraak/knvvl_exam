@@ -41,7 +41,7 @@ public class TextService
         Veel succes!
         """;
 
-    private static List<Text> TEXTS = new ArrayList<>();
+    private static final List<Text> TEXTS = new ArrayList<>();
 
     public static Text EXAM_TITLE_B2 = add("exam.title.b2", "KNVvL Schermvliegen - Examen Brevet 2");
     public static Text EXAM_COVER_B2 = add("exam.cover.b2", INTRO);
@@ -54,6 +54,9 @@ public class TextService
     public static Text EXAM_TITLE_FONTSIZE = add("exam.title.fontsize", "14");
     public static Text EXAM_BODY_FONTNAME = add("exam.body.fontname", "calibri");
     public static Text EXAM_BODY_FONTSIZE = add("exam.body.fontsize", "11");
+
+    public static Text EXAM_LAST_CHANGED = add("exam.last-changed", "");
+    public static Text EXAM_LAST_BACKUP = add("exam.last-backup", "");
 
     private static Text add(String key, String label)
     {
@@ -87,9 +90,21 @@ public class TextService
     }
 
     @Transactional
-    public void save(Text text)
+    public void save(String textKey, String value)
     {
+        Text text = textRepository.getReferenceById(textKey);
+        text.setLabel(value);
         textRepository.save(text);
         changeDetector.changed();
+    }
+
+    public List<Text> findAll()
+    {
+        return textRepository.findAll();
+    }
+
+    public Text getReferenceById(String textKey)
+    {
+        return textRepository.getReferenceById(textKey);
     }
 }

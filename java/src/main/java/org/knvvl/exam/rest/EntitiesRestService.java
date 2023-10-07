@@ -16,8 +16,8 @@ import org.knvvl.exam.entities.Text;
 import org.knvvl.exam.entities.Topic;
 import org.knvvl.exam.repos.QuestionRepository;
 import org.knvvl.exam.repos.RequirementRepository;
-import org.knvvl.exam.repos.TextRepository;
 import org.knvvl.exam.repos.TopicRepository;
+import org.knvvl.exam.services.TextService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,16 +34,19 @@ import com.google.gson.JsonObject;
 public class EntitiesRestService
 {
     @Autowired
-    private TextRepository textRepository;
-    @Autowired private TopicRepository topicRepository;
-    @Autowired private RequirementRepository requirementRepository;
-    @Autowired private QuestionRepository questionRepository;
+    private TextService textService;
+    @Autowired
+    private TopicRepository topicRepository;
+    @Autowired
+    private RequirementRepository requirementRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @GetMapping(value = "/texts", produces = APPLICATION_JSON_VALUE)
     String getTexts()
     {
         JsonArray all = new JsonArray();
-        for (Text text : textRepository.findAll())
+        for (Text text : textService.findAll())
         {
             JsonObject json = new JsonObject();
             json.addProperty("key", text.getKey());
@@ -56,15 +59,13 @@ public class EntitiesRestService
     @GetMapping(value = "/texts/{textKey}", produces = TEXT_PLAIN_VALUE)
     String getText(@PathVariable("textKey") String textKey)
     {
-        return textRepository.getReferenceById(textKey).getLabel();
+        return textService.getReferenceById(textKey).getLabel();
     }
 
     @PostMapping(value = "/texts/{textKey}", consumes = TEXT_PLAIN_VALUE)
     void saveText(@PathVariable("textKey") String textKey, @RequestBody String body)
     {
-        Text text = textRepository.getReferenceById(textKey);
-        text.setLabel(body);
-        textRepository.save(text);
+        textService.save(textKey, body);
     }
 
     @GetMapping(value = "/topics", produces = APPLICATION_JSON_VALUE)

@@ -36,7 +36,6 @@ import org.knvvl.exam.repos.TextRepository;
 import org.knvvl.exam.repos.TopicRepository;
 import org.knvvl.exam.repos.UserRepository;
 import org.knvvl.exam.services.BackupService;
-import org.knvvl.exam.services.DropboxService;
 import org.knvvl.exam.services.ExamRepositories;
 import org.mockito.ArgumentCaptor;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -52,7 +51,6 @@ class BackupServiceTest
     private final ChangeRepository changeRepository = mock(ChangeRepository.class);
     private final UserRepository userRepository = mock(UserRepository.class);
     private final TextRepository textRepository = mock(TextRepository.class);
-    private final DropboxService dropboxService = new DropboxService();
 
     private final ExamRepositories examRepositories = new ExamRepositories();
     private final BackupService backupService = new BackupService(examRepositories);

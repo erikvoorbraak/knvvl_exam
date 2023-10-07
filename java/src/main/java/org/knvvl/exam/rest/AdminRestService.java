@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 import org.knvvl.exam.ExamApplication;
 import org.knvvl.exam.services.BackupService;
 import org.knvvl.exam.services.ChangeDetector;
-import org.knvvl.exam.services.DropboxService;
+import org.knvvl.exam.services.GoogleCloudStorageService;
 import org.knvvl.exam.spring.UserDetailsServiceImpl;
 import org.knvvl.exam.spring.UserDetailsServiceImpl.UserLogon;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ public class AdminRestService
         <input type="file" name="file" accept="application/json"/>
         <input type="submit" name="submit"/>
         </form>
-        {dropboxService}
+        {googleCloudStorageService}
         <h2>About</h2>
         Created by Erik Voorbraak in 2023, to be used for KNVvL "Examencommissie".
         </body></html>""";
@@ -62,7 +62,7 @@ public class AdminRestService
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
-    private DropboxService dropboxService;
+    private GoogleCloudStorageService googleCloudStorageService;
 
     @GetMapping(value = "/admin", produces = TEXT_HTML_VALUE)
     ResponseEntity<String> backupHtml()
@@ -73,7 +73,7 @@ public class AdminRestService
             .replace("{lastChanged}", lastChanged == null ? "(no changes since startup)" : lastChanged.toString())
             .replace("{numChanges}", String.valueOf(changeDetector.getNumChanges()))
             .replace("{userLogons}", userDetailsService.getUserLogons().stream().map(UserLogon::toString).collect(joining("<br/>")))
-            .replace("{dropboxService}", dropboxService.getAdminSectionHtml());
+            .replace("{googleCloudStorageService}", googleCloudStorageService.getAdminSectionHtml());
         return ResponseEntity.ok(page);
     }
 
@@ -92,18 +92,18 @@ public class AdminRestService
         return ResponseEntity.ok("");
     }
 
-    private static Path createTimestampedFile(String prefix)
+    static Path createTimestampedFile(String prefix)
     {
         String timestamp = LocalDateTime.now().format(FORMATTER);
         return Path.of(prefix + timestamp + ".json");
     }
 
-    @PostMapping(value = "/exportDropbox", produces = TEXT_HTML_VALUE)
-    ResponseEntity<String> exportToDropbox() throws IOException
+    @PostMapping(value = "/exportGoogleCloudStorage", produces = TEXT_HTML_VALUE)
+    ResponseEntity<String> exportToGoogleCloudStorage() throws IOException
     {
         Path file = createTimestampedFile("Export");
         backupService.exportAll(file);
-        String message = dropboxService.exportNow(file);
+        String message = googleCloudStorageService.exportNow(file);
         Files.delete(file);
         return ResponseEntity.ok(message);
     }
