@@ -70,9 +70,20 @@ public class Change implements KnvvlEntity
 
     public record ChangedByAt(User changedBy, Instant changedAt)
     {
+        public ChangedByAt(User changedBy)
+        {
+            this(changedBy, now());
+        }
+
+        public static Instant now()
+        {
+            var now = Instant.now();
+            return now.minusNanos(now.getNano());
+        }
+
         public String toString()
         {
-            return changedAt.minusNanos(changedAt.getNano()) + " by " + changedBy;
+            return changedAt + " by " + changedBy;
         }
     }
 

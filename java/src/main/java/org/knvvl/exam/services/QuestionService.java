@@ -1,6 +1,5 @@
 package org.knvvl.exam.services;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -79,7 +78,7 @@ public class QuestionService
     @Transactional
     public QuestionCreateResult createQuestion(JsonObject form)
     {
-        var changedByAt = new ChangedByAt(userService.getCurrentUser(), Instant.now());
+        var changedByAt = new ChangedByAt(userService.getCurrentUser());
         List<Change> changes = new ArrayList<>();
         Question question = new Question();
         question.setId(getNewQuestionId());
@@ -105,7 +104,7 @@ public class QuestionService
     @Transactional
     public String updateQuestion(int questionId, JsonObject form)
     {
-        var changedByAt = new ChangedByAt(userService.getCurrentUser(), Instant.now());
+        var changedByAt = new ChangedByAt(userService.getCurrentUser());
         List<Change> changes = new ArrayList<>();
         Question question = questionRepository.getReferenceById(questionId);
         for (EntityField<Question> entityField : getQuestionFields().getFields())

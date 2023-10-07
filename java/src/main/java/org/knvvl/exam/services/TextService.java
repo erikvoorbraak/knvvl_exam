@@ -43,20 +43,23 @@ public class TextService
 
     private static final List<Text> TEXTS = new ArrayList<>();
 
-    public static Text EXAM_TITLE_B2 = add("exam.title.b2", "KNVvL Schermvliegen - Examen Brevet 2");
-    public static Text EXAM_COVER_B2 = add("exam.cover.b2", INTRO);
-    public static Text EXAM_TITLE_B3 = add("exam.title.b3", "KNVvL Schermvliegen - Examen Brevet 3");
-    public static Text EXAM_COVER_B3 = add("exam.cover.b3", INTRO.replace("brevet 2", "brevet 3"));
-    public static Text EXAM_BACK_TITLE = add("exam.back.title", "Einde examenvragen");
-    public static Text EXAM_BACK_COVER = add("exam.back.cover", "");
+    public static final Text EXAM_TITLE_B2 = add("exam.title.b2", "KNVvL Schermvliegen - Examen Brevet 2");
+    public static final Text EXAM_COVER_B2 = add("exam.cover.b2", INTRO);
+    public static final Text EXAM_TITLE_B3 = add("exam.title.b3", "KNVvL Schermvliegen - Examen Brevet 3");
+    public static final Text EXAM_COVER_B3 = add("exam.cover.b3", INTRO.replace("brevet 2", "brevet 3"));
+    public static final Text EXAM_BACK_TITLE = add("exam.back.title", "Einde examenvragen");
+    public static final Text EXAM_BACK_COVER = add("exam.back.cover", "");
 
-    public static Text EXAM_TITLE_FONTNAME = add("exam.title.fontname", "calibri");
-    public static Text EXAM_TITLE_FONTSIZE = add("exam.title.fontsize", "14");
-    public static Text EXAM_BODY_FONTNAME = add("exam.body.fontname", "calibri");
-    public static Text EXAM_BODY_FONTSIZE = add("exam.body.fontsize", "11");
+    public static final Text EXAM_TITLE_FONTNAME = add("exam.title.fontname", "calibri");
+    public static final Text EXAM_TITLE_FONTSIZE = add("exam.title.fontsize", "14");
+    public static final Text EXAM_BODY_FONTNAME = add("exam.body.fontname", "calibri");
+    public static final Text EXAM_BODY_FONTSIZE = add("exam.body.fontsize", "11");
 
-    public static Text EXAM_LAST_CHANGED = add("exam.last-changed", "");
-    public static Text EXAM_LAST_BACKUP = add("exam.last-backup", "");
+    public static final Text EXAM_LAST_CHANGED = add("exam.last-changed", "");
+    public static final Text EXAM_LAST_BACKUP = add("exam.last-backup", "");
+
+    public static final List<Text> READ_ONLY_TEXTS = List.of(
+        EXAM_LAST_CHANGED, EXAM_LAST_BACKUP);
 
     private static Text add(String key, String label)
     {
@@ -92,6 +95,10 @@ public class TextService
     @Transactional
     public void save(String textKey, String value)
     {
+        if (READ_ONLY_TEXTS.stream().anyMatch(t -> t.getKey().equals(textKey)))
+        {
+            throw new IllegalArgumentException("This setting is read-only: " + textKey);
+        }
         Text text = textRepository.getReferenceById(textKey);
         text.setLabel(value);
         textRepository.save(text);

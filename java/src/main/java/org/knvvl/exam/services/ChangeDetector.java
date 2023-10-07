@@ -33,7 +33,7 @@ public class ChangeDetector
     @Transactional
     public void changed()
     {
-        lastChanged = new ChangedByAt(userService.getCurrentUser(), Instant.now());
+        lastChanged = new ChangedByAt(userService.getCurrentUser());
         numChanges++;
         saveCurrentDateTime(EXAM_LAST_CHANGED);
     }
@@ -66,7 +66,7 @@ public class ChangeDetector
     private void saveCurrentDateTime(Text text)
     {
         Text fromDB = textRepository.getReferenceById(text.getKey());
-        fromDB.setLabel(Instant.now().toString());
+        fromDB.setLabel(ChangedByAt.now().toString());
         textRepository.save(fromDB);
     }
 
