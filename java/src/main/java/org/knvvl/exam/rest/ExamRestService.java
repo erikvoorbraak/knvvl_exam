@@ -1,7 +1,5 @@
 package org.knvvl.exam.rest;
 
-import static java.lang.Boolean.TRUE;
-
 import static org.knvvl.exam.rest.QuestionRestService.GSON;
 import static org.knvvl.exam.services.Utils.getAsString;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -194,8 +192,7 @@ public class ExamRestService
     @PostMapping(path = "/exams/altquestions/{examQuestionId}", consumes = TEXT_PLAIN_VALUE)
     void setAltQuestion(@PathVariable String examQuestionId, @RequestBody String altQuestionId)
     {
-        ExamQuestion examQuestion = examRepositories.getExamQuestionRepository().getReferenceById(Integer.parseInt(examQuestionId));
-        examService.setAltQuestion(examQuestion, Integer.parseInt(altQuestionId));
+        examService.setAltQuestion(Integer.parseInt(examQuestionId), Integer.parseInt(altQuestionId));
     }
 
     @GetMapping(value = "/exams/{examId}/generate", produces = APPLICATION_PDF_VALUE)

@@ -14,12 +14,12 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cache;
+import org.knvvl.exam.meta.EntityField;
+import org.knvvl.exam.meta.EntityFields;
 import org.knvvl.exam.meta.IdEntity;
 import org.knvvl.exam.repos.PictureRepository;
 import org.knvvl.exam.repos.RequirementRepository;
 import org.knvvl.exam.repos.TopicRepository;
-import org.knvvl.exam.meta.EntityField;
-import org.knvvl.exam.meta.EntityFields;
 import org.knvvl.exam.services.Languages;
 
 import jakarta.annotation.Nonnull;
@@ -32,7 +32,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-//@BatchSize(size=20) // TODO Batch size breaks getting Change instances
+//@BatchSize(size=20) // TODO Setting BatchSize leads to null values for Change.question and ExamQuestion.question
 @Table(name="t_question")
 @Cacheable @Cache(usage = READ_WRITE)
 public class Question implements IdEntity

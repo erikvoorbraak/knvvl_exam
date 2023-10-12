@@ -4,12 +4,11 @@ import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 import java.util.List;
 
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
-import org.knvvl.exam.meta.LabeledEntity;
 import org.knvvl.exam.meta.EntityField.EntityFieldInteger;
 import org.knvvl.exam.meta.EntityField.EntityFieldString;
 import org.knvvl.exam.meta.EntityFields;
+import org.knvvl.exam.meta.LabeledEntity;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
@@ -19,7 +18,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name="t_topic")
-@BatchSize(size=20)
+//@BatchSize(size=20) // TODO Setting BatchSize leads to null values for ExamQuestion.topic
 @Cacheable @Cache(usage = READ_WRITE)
 public class Topic implements LabeledEntity
 {

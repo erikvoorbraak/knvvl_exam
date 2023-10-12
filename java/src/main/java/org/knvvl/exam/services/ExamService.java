@@ -57,8 +57,9 @@ public class ExamService
     }
 
     @Transactional
-    public void setAltQuestion(ExamQuestion examQuestion, int altQuestionId)
+    public void setAltQuestion(int examQuestionId, int altQuestionId)
     {
+        ExamQuestion examQuestion = examQuestionRepository.getReferenceById(examQuestionId);
         examQuestion.setQuestion(questionRepository.getReferenceById(altQuestionId));
         examQuestionRepository.save(examQuestion);
         changeDetector.changed();
