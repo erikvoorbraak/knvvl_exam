@@ -39,6 +39,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("api")
 public class ExamRestService
@@ -197,15 +199,19 @@ public class ExamRestService
 
     @GetMapping(value = "/exams/{examId}/generate", produces = APPLICATION_PDF_VALUE)
     ResponseEntity<byte[]> generatePdf(@PathVariable("examId") int examId,
-        @RequestParam(value = "withQuestionId", defaultValue = "false") boolean withQuestionId)
+        @RequestParam(value = "withQuestionId", defaultValue = "false") boolean withQuestionId,
+        HttpServletResponse response)
     {
-        try
+        try (var stream = response.getOutputStream())
         {
             Exam exam = examRepositories.getExamRepository().getReferenceById(examId);
+            String filename = exam.getLabel() + ".pdf";
+            response.setHeader("Content-Disposition", "attachment; filename=" + filename);
             byte[] bytes = examToPdfService.generatePdf(exam, withQuestionId);
-            return ResponseEntity.status(OK).body(bytes);
+            stream.write(bytes);
+            return ResponseEntity.status(OK).build();
         }
-        catch (ExamException e)
+        catch (ExamException | IOException e)
         {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(e.getMessage().getBytes());
         }
