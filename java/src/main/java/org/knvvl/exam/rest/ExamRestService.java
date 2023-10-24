@@ -91,7 +91,7 @@ public class ExamRestService
         Topic topic = questions.get(0).getTopic();
         for (ExamQuestion question : questions)
         {
-            if (topic != question.getTopic())
+            if (!topic.sameTopic(question.getTopic()))
             {
                 topic = question.getTopic();
                 b.append("\n");

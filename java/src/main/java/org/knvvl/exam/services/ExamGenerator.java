@@ -12,7 +12,6 @@ import static com.itextpdf.text.Element.ALIGN_CENTER;
 import static com.itextpdf.text.Rectangle.NO_BORDER;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -132,7 +131,7 @@ class ExamGenerator
         for (ExamQuestion question : questions)
         {
             Topic questionTopic = question.getTopic();
-            if (!questionTopic.equals(topic))
+            if (!questionTopic.sameTopic(topic))
             {
                 topic = questionTopic;
                 document.newPage();
