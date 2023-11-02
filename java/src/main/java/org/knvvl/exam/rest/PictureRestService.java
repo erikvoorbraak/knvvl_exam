@@ -8,13 +8,14 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.knvvl.exam.entities.Picture;
 import org.knvvl.exam.services.ExamRepositories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,11 +31,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import jakarta.persistence.EntityNotFoundException;
+import net.coobird.thumbnailator.Thumbnails;
 
 @RestController
 @RequestMapping("api")
 public class PictureRestService
 {
+    static final int MAX_SIZE = 400_000;
+    static final int MAX_DIMENSION = 1600;
+
     @Autowired
     private ExamRepositories examRepositories;
 
@@ -76,11 +81,27 @@ public class PictureRestService
         {
             return ResponseEntity.status(BAD_REQUEST).body("No file to upload was found");
         }
+        byte[] resized = resizeIfNeeded(bytes);
         Picture picture = new Picture();
         picture.setFilename(retrieveFilename(file));
-        picture.setFileData(bytes);
+        picture.setFileData(resized);
         examRepositories.addPicture(picture);
         return ResponseEntity.status(OK).body(null);
+    }
+
+    private byte[] resizeIfNeeded(byte[] bytes) throws IOException
+    {
+        byte[] worker = bytes;
+        int maxXY = MAX_DIMENSION;
+        while ((maxXY > 0) && (worker.length > MAX_SIZE))
+        {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+            Thumbnails.of(in).size(maxXY, maxXY).toOutputStream(out);
+            worker = out.toByteArray();
+            maxXY -= 100;
+        }
+        return worker;
     }
 
     private static String retrieveFilename(MultipartFile file)
