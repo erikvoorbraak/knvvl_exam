@@ -1,11 +1,11 @@
 package org.knvvl.exam.services;
 
-import static org.knvvl.exam.services.TextService.EXAM_BACK_COVER;
-import static org.knvvl.exam.services.TextService.EXAM_BACK_TITLE;
-import static org.knvvl.exam.services.TextService.EXAM_COVER_B2;
-import static org.knvvl.exam.services.TextService.EXAM_COVER_B3;
-import static org.knvvl.exam.services.TextService.EXAM_TITLE_B2;
-import static org.knvvl.exam.services.TextService.EXAM_TITLE_B3;
+import static org.knvvl.exam.meta.Config.EXAM_BACK_COVER;
+import static org.knvvl.exam.meta.Config.EXAM_BACK_TITLE;
+import static org.knvvl.exam.meta.Config.EXAM_COVER_B2;
+import static org.knvvl.exam.meta.Config.EXAM_COVER_B3;
+import static org.knvvl.exam.meta.Config.EXAM_TITLE_B2;
+import static org.knvvl.exam.meta.Config.EXAM_TITLE_B3;
 
 import static com.itextpdf.text.Chunk.NEWLINE;
 import static com.itextpdf.text.Element.ALIGN_CENTER;
@@ -24,8 +24,8 @@ import org.apache.logging.log4j.util.Strings;
 import org.knvvl.exam.entities.Exam;
 import org.knvvl.exam.entities.ExamQuestion;
 import org.knvvl.exam.entities.Question;
-import org.knvvl.exam.entities.Text;
 import org.knvvl.exam.entities.Topic;
+import org.knvvl.exam.meta.Config;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -199,8 +199,8 @@ class ExamGenerator
     {
         if (createFontsDir())
         {
-            extractFont(TextService.EXAM_TITLE_FONTNAME);
-            extractFont(TextService.EXAM_BODY_FONTNAME);
+            extractFont(Config.EXAM_TITLE_FONTNAME);
+            extractFont(Config.EXAM_BODY_FONTNAME);
             int registered = Files.exists(fontsDir) ? FontFactory.registerDirectory(fontsDir.toFile().getAbsolutePath()) : 0;
             System.out.println("Registered " + registered + " font(s) found in " + fontsDir);
         }
@@ -223,7 +223,7 @@ class ExamGenerator
         return true;
     }
 
-    private void extractFont(Text fontSetting)
+    private void extractFont(Config fontSetting)
     {
         String fontName = textService.get(fontSetting);
         if (Strings.isBlank(fontName))
@@ -258,17 +258,17 @@ class ExamGenerator
     private Font getTitleFont()
     {
         return FontFactory.getFont(
-            textService.get(TextService.EXAM_TITLE_FONTNAME),
-            Integer.parseInt(textService.get(TextService.EXAM_TITLE_FONTSIZE)),
+            textService.get(Config.EXAM_TITLE_FONTNAME),
+            Integer.parseInt(textService.get(Config.EXAM_TITLE_FONTSIZE)),
             Font.BOLD);
     }
 
     private Font getBodyFont(int style)
     {
         return FontFactory.getFont(
-            textService.get(TextService.EXAM_BODY_FONTNAME),
+            textService.get(Config.EXAM_BODY_FONTNAME),
             FontFactory.defaultEncoding, FontFactory.defaultEmbedding,
-            Integer.parseInt(textService.get(TextService.EXAM_BODY_FONTSIZE)),
+            Integer.parseInt(textService.get(Config.EXAM_BODY_FONTSIZE)),
             style);
     }
 

@@ -12,6 +12,7 @@ const router = createRouter({
     { path: '/questions', component: () => import('../views/Questions.vue') },
     { path: '/newquestion', component: () => import('../views/EditQuestion.vue') },
     { path: '/questions/:questionId', component: () => import('../views/EditQuestion.vue') },
+    { path: '/translates/:translatesId', component: () => import('../views/EditQuestion.vue') },
     { path: '/topics', component: () => import('../views/Topics.vue') },
     { path: '/requirements', component: () => import('../views/Requirements.vue') },
     { path: '/exams', component: () => import('../views/Exams.vue') },

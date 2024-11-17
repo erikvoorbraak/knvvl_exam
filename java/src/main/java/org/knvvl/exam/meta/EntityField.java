@@ -52,6 +52,7 @@ public abstract class EntityField<T extends KnvvlEntity>
 
     public abstract boolean hasValue(T entity);
     public abstract String toStringValue(T entity);
+    public abstract void copyValue(T from, T to);
 
     public abstract void writeJson(T entity, JsonObject jsonObject);
     public abstract void readJson(T entity, JsonElement jsonElement);
@@ -91,6 +92,17 @@ public abstract class EntityField<T extends KnvvlEntity>
         {
             String value = getter.apply(entity);
             return value == null ? "" : value;
+        }
+
+        public void setStringValue(T entity, String value)
+        {
+            setter.accept(entity, value);
+        }
+
+        @Override
+        public void copyValue(T from, T to)
+        {
+            setter.accept(to, getter.apply(from));
         }
 
         @Override
@@ -165,6 +177,12 @@ public abstract class EntityField<T extends KnvvlEntity>
         {
             setter.accept(entity, reader.nextBoolean());
         }
+
+        @Override
+        public void copyValue(T from, T to)
+        {
+            setter.accept(to, getter.apply(from));
+        }
     }
 
     public static class EntityFieldInteger<T extends KnvvlEntity> extends EntityField<T>
@@ -214,6 +232,12 @@ public abstract class EntityField<T extends KnvvlEntity>
         {
             setter.accept(entity, reader.nextInt());
         }
+
+        @Override
+        public void copyValue(T from, T to)
+        {
+            setter.accept(to, getter.apply(from));
+        }
     }
 
     public static class EntityFieldLong<T extends KnvvlEntity> extends EntityField<T>
@@ -262,6 +286,12 @@ public abstract class EntityField<T extends KnvvlEntity>
         public void importJsonValue(T entity, JsonReader reader) throws IOException
         {
             setter.accept(entity, reader.nextLong());
+        }
+
+        @Override
+        public void copyValue(T from, T to)
+        {
+            setter.accept(to, getter.apply(from));
         }
     }
 
@@ -317,6 +347,12 @@ public abstract class EntityField<T extends KnvvlEntity>
                 return;
             }
             setter.accept(entity, Base64.getDecoder().decode(base64));
+        }
+
+        @Override
+        public void copyValue(T from, T to)
+        {
+            setter.accept(to, getter.apply(from));
         }
     }
 
@@ -401,6 +437,12 @@ public abstract class EntityField<T extends KnvvlEntity>
             V idEntity = repository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("Cannot find record for " + entity + "." + field + ": " + id));
             setter.accept(entity, idEntity);
+        }
+
+        @Override
+        public void copyValue(T from, T to)
+        {
+            setter.accept(to, getter.apply(from));
         }
     }
 }

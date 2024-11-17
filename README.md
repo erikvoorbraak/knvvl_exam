@@ -26,7 +26,7 @@ Some of these are explained in more detail below, the rest are assumed to be ins
 * **IntelliJ Community Edition** or your favorite IDE for back-end development
 * **Visual Studio Code** or your favorite IDE for front-end development
 * **maven** for Java dependency management (https://maven.apache.org/)
-* **npm** as javascript package manager (https://www.npmjs.com/)
+* **npm** as javascript package manager (https://www.npmjs.com/ or https://sourceforge.net/projects/npm.mirror/)
 * **nginx for Windows** for redirecting back-end and front-end requests to separate services (https://nginx.org)
 * **PostgreSQL** for storing everything, including files (https://www.postgresql.org/)
 * **Docker Desktop** for building and running Docker images (https://www.docker.com/products/docker-desktop/)
@@ -108,7 +108,7 @@ To make Java aware of the frontend build, first move everything
 from `C:/github/knvvl_exam/vue/dist`
 into `C:/github/knvvl_exam/java/src/main/resources/static`.
 
-Now we can create the JAR file. Open a command prompt on `C:/github/knvvl_exam/java` and run `mvn package`.
+Now we can create the JAR file. Open a command prompt on `C:/github/knvvl_exam/java` and run `mvn clean`, then `mvn package`.
 Alternatively, use your IDE to run Maven's package command.
 
 If successful, then a JAR file should appear in `C:/github/knvvl_exam/java/target`.

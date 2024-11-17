@@ -83,7 +83,7 @@ class BackupServiceTest
     {
         var text = new Text();
         text.setKey("k");
-        text.setLabel("L");
+        text.setValue("L");
         return text;
     }
 

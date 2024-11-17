@@ -16,8 +16,9 @@
   export default defineComponent({
     setup() {
       const headers: Header[] = [
-        { text: "Key", value: "key", sortable: true  },
-        { text: "Text", value: "label", sortable: true }
+        { text: "Key", value: "key", sortable: true },
+        { text: "Label", value: "label", sortable: true },
+        { text: "Value", value: "value", sortable: true }
       ];
       return {
         headers

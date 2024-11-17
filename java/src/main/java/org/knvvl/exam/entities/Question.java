@@ -1,6 +1,7 @@
 package org.knvvl.exam.entities;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 
 import static org.apache.commons.lang3.Validate.isTrue;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
@@ -11,6 +12,8 @@ import static jakarta.persistence.FetchType.LAZY;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cache;
@@ -38,6 +41,9 @@ import jakarta.persistence.Table;
 public class Question implements IdEntity
 {
     public static final String LANG_PREFIX = "Lang:";
+    public static final String TRANSLATES_PREFIX = "Translates:";
+    public static final List<String> TRANSLATABLE_FIELDS = List.of("question", "answerA", "answerB", "answerC", "answerD");
+
     @Id
     @Column(name = "id")
     private Integer id;
@@ -91,7 +97,10 @@ public class Question implements IdEntity
     private String examGroup;
 
     @Column(name = "language")
-    private String language = LANGUAGE_NL;
+    private String language = LANGUAGE_NL.id();
+
+    @Column(name = "translates")
+    private Integer translates;
 
     public static EntityFields<Question> getFields(TopicRepository topicRepository, RequirementRepository requirementRepository, PictureRepository pictureRepository)
     {
@@ -111,6 +120,7 @@ public class Question implements IdEntity
             new EntityField.EntityFieldString<>("remarks", Question::getRemarks, Question::setRemarks),
             new EntityField.EntityFieldString<>("examGroup", Question::getExamGroup, Question::setExamGroup),
             new EntityField.EntityFieldString<>("language", Question::getLanguage, Question::setLanguage),
+            new EntityField.EntityFieldInteger<>("translates", Question::getTranslates, Question::setTranslates),
             new EntityField.EntityFieldIdEntity<>("picture", pictureRepository, Question::getPicture, Question::setPicture)));
     }
 
@@ -208,10 +218,10 @@ public class Question implements IdEntity
         return language;
     }
 
-    @Nonnull
-    private String getLanguageKeyword()
+    @Nullable
+    public Integer getTranslates()
     {
-        return LANG_PREFIX + getLanguage();
+        return translates;
     }
 
     public void setTopic(Topic topic)
@@ -311,29 +321,36 @@ public class Question implements IdEntity
         this.language = Languages.validate(language);
     }
 
+    public void setTranslates(Integer translates)
+    {
+        this.translates = translates;
+    }
+
     public List<String> getTags(boolean asHtml)
     {
         List<String> tags = new ArrayList<>();
-        if (isAllowB2())
-            tags.add("B2");
-        if (isAllowB3())
-            tags.add("B3");
-        if (isIgnore())
-            tags.add("Negeren");
-        if (isDiscuss())
-            tags.add("Bespreken");
-        tags.add(getLanguageKeyword());
+        if (isAllowB2()) tags.add("B2");
+        if (isAllowB3()) tags.add("B3");
+        if (isIgnore()) tags.add("Negeren");
+        if (isDiscuss()) tags.add("Bespreken");
+        tags.add(LANG_PREFIX + getLanguage());
+        ofNullable(translates).map(t -> TRANSLATES_PREFIX + t).ifPresent(tags::add);
 
         String examGroup = getExamGroup();
         if (!StringUtils.isBlank(examGroup))
             tags.add(examGroup);
 
+        addPictureTag(asHtml, tags);
+        return tags;
+    }
+
+    private void addPictureTag(boolean asHtml, List<String> tags)
+    {
         Picture picture = getPicture();
         if (picture != null)
             tags.add(asHtml
                 ? "<a target=\"_blank\" href=\"/api/pictures/" + picture.getId() + "\">" + picture.getFilename() + "</a>"
                 : picture.getFilename());
-        return tags;
     }
 
     public boolean applySearch(String searchLower)

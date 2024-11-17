@@ -1,7 +1,7 @@
 package org.knvvl.exam.services;
 
-import static org.knvvl.exam.services.TextService.EXAM_LAST_BACKUP;
-import static org.knvvl.exam.services.TextService.EXAM_LAST_CHANGED;
+import static org.knvvl.exam.meta.Config.EXAM_LAST_BACKUP;
+import static org.knvvl.exam.meta.Config.EXAM_LAST_CHANGED;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -9,6 +9,7 @@ import java.time.Instant;
 
 import org.knvvl.exam.entities.Change.ChangedByAt;
 import org.knvvl.exam.entities.Text;
+import org.knvvl.exam.meta.Config;
 import org.knvvl.exam.repos.TextRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -42,12 +43,12 @@ public class ChangeDetector
 
     public NeedsBackup needsBackup()
     {
-        var lastChangedString = textRepository.getReferenceById(EXAM_LAST_CHANGED.getKey()).getLabel();
+        var lastChangedString = textRepository.getReferenceById(EXAM_LAST_CHANGED.key()).getValue();
         if (isNullOrEmpty(lastChangedString))
         {
             return new NeedsBackup(false, "No changes found");
         }
-        var lastBackupString = textRepository.getReferenceById(EXAM_LAST_BACKUP.getKey()).getLabel();
+        var lastBackupString = textRepository.getReferenceById(EXAM_LAST_BACKUP.key()).getValue();
         var message = "lastChanged = " + lastChangedString + ", lastBackup = " + lastBackupString;
         if (isNullOrEmpty(lastBackupString))
         {
@@ -63,10 +64,10 @@ public class ChangeDetector
         saveCurrentDateTime(EXAM_LAST_BACKUP);
     }
 
-    private void saveCurrentDateTime(Text text)
+    private void saveCurrentDateTime(Config config)
     {
-        Text fromDB = textRepository.getReferenceById(text.getKey());
-        fromDB.setLabel(ChangedByAt.now().toString());
+        Text fromDB = textRepository.getReferenceById(config.key());
+        fromDB.setValue(ChangedByAt.now().toString());
         textRepository.save(fromDB);
     }
 

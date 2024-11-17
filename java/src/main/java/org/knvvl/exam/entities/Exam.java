@@ -6,11 +6,11 @@ import static org.knvvl.exam.services.Languages.LANGUAGE_NL;
 import java.util.List;
 
 import org.hibernate.annotations.Cache;
-import org.knvvl.exam.meta.IdEntity;
-import org.knvvl.exam.meta.KnvvlEntity;
 import org.knvvl.exam.meta.EntityField;
 import org.knvvl.exam.meta.EntityFields;
+import org.knvvl.exam.meta.IdEntity;
 import org.knvvl.exam.services.Languages;
+import org.knvvl.exam.services.Languages.Language;
 
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Cacheable;
@@ -47,7 +47,7 @@ public class Exam implements IdEntity
     private int certificate;
 
     @Column(name = "language")
-    private String language = LANGUAGE_NL;
+    private String language = LANGUAGE_NL.id();
 
     @Column(name = "filesize")
     private Integer fileSize;
@@ -68,11 +68,11 @@ public class Exam implements IdEntity
     {
     }
 
-    public Exam(String label, int certificate, String language)
+    public Exam(String label, int certificate, Language language)
     {
         this.label = label;
         this.certificate = certificate;
-        this.language = Languages.validate(language);
+        this.language = language.id();
     }
 
     @Override

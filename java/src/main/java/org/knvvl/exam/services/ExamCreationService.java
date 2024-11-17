@@ -14,6 +14,7 @@ import org.knvvl.exam.entities.Question;
 import org.knvvl.exam.entities.Topic;
 import org.knvvl.exam.repos.QuestionRepository;
 import org.knvvl.exam.repos.TopicRepository;
+import org.knvvl.exam.services.Languages.Language;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class ExamCreationService
     QuestionRepository questionRepository;
 
     @Transactional
-    public void createExam(String label, int certificate, String language)
+    public void createExam(String label, int certificate, Language language)
     {
         Exam exam = new Exam(label, certificate, language);
         List<Question> questions = new ExamCreationContext(exam).generate();

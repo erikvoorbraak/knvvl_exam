@@ -1,9 +1,15 @@
 package org.knvvl.exam.services;
 
-import java.util.ArrayList;
+import static org.knvvl.exam.entities.Text.WRITE_ONLY_VALUE;
+import static org.knvvl.exam.meta.Config.EXAM_TARGET_LANGUAGE;
+import static org.knvvl.exam.meta.Config.READ_ONLY_CONFIGS;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 import java.util.List;
 
 import org.knvvl.exam.entities.Text;
+import org.knvvl.exam.meta.Config;
 import org.knvvl.exam.repos.TextRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,60 +19,6 @@ import jakarta.transaction.Transactional;
 @Service
 public class TextService
 {
-    private static final String INTRO = """
-        Voor u ligt het theorie examen voor brevet 2 van de KNVvL afdeling schermvliegen.
-                
-        Dit examen bestaat uit:
-            • een vragenlijst met 100 vragen over de volgende onderdelen
-                o 20 vragen materiaalkennis
-                o 20 vragen aerodynamica
-                o 20 vragen meteorologie
-                o 20 vragen regelgeving
-                o 20 vragen vliegpraktijk
-            • een kladvel
-            • antwoordformulieren met invulinstructie
-                
-        Tijdens dit examen zijn slechts toegestaan:
-            • schrijfmaterialen
-                
-        Eigen papieren zijn niet toegestaan!
-                
-        Vul de antwoorden op de antwoordformulieren in die u achteraan dit examen aantreft.
-        Volg hierbij de instructies aan het eind van het examen (net vóór de antwoordformulieren). Voor elk vak moet een apart formulier worden ingevuld!
-                
-        Graag uw GSM toestel uitzetten.
-        Als u klaar bent, of als de tijd verstreken is, graag de vragen, uw antwoorden en uw kladvel inleveren conform de mondelinge instructies van de examencommissie.
-                
-        De examenduur is 2 uur. U mag beginnen na het startsein van de examencommissie.
-        Veel succes!
-        """;
-
-    private static final List<Text> TEXTS = new ArrayList<>();
-
-    public static final Text EXAM_TITLE_B2 = add("exam.title.b2", "KNVvL Schermvliegen - Examen Brevet 2");
-    public static final Text EXAM_COVER_B2 = add("exam.cover.b2", INTRO);
-    public static final Text EXAM_TITLE_B3 = add("exam.title.b3", "KNVvL Schermvliegen - Examen Brevet 3");
-    public static final Text EXAM_COVER_B3 = add("exam.cover.b3", INTRO.replace("brevet 2", "brevet 3"));
-    public static final Text EXAM_BACK_TITLE = add("exam.back.title", "Einde examenvragen");
-    public static final Text EXAM_BACK_COVER = add("exam.back.cover", "");
-
-    public static final Text EXAM_TITLE_FONTNAME = add("exam.title.fontname", "calibri");
-    public static final Text EXAM_TITLE_FONTSIZE = add("exam.title.fontsize", "14");
-    public static final Text EXAM_BODY_FONTNAME = add("exam.body.fontname", "calibri");
-    public static final Text EXAM_BODY_FONTSIZE = add("exam.body.fontsize", "11");
-
-    public static final Text EXAM_LAST_CHANGED = add("exam.last-changed", "");
-    public static final Text EXAM_LAST_BACKUP = add("exam.last-backup", "");
-
-    public static final List<Text> READ_ONLY_TEXTS = List.of(
-        EXAM_LAST_CHANGED, EXAM_LAST_BACKUP);
-
-    private static Text add(String key, String label)
-    {
-        Text text = new Text(key, label);
-        TEXTS.add(text);
-        return text;
-    }
 
     @Autowired
     private TextRepository textRepository;
@@ -76,31 +28,39 @@ public class TextService
     @Transactional
     public void saveInitialTexts()
     {
-        TEXTS.stream()
-            .filter(t -> textRepository.findById(t.getKey()).isEmpty())
-            .map((t -> new Text(t.getKey(), t.getLabel()))) // Deep copy
+        Config.CONFIGS.stream()
+            .filter(t -> textRepository.findById(t.key()).isEmpty())
+            .map((t -> new Text(t.key(), t.defaultValue()))) // Deep copy
             .forEach(textRepository::save);
     }
 
-    public String get(Text staticText)
+    public String get(Config staticText)
     {
-        return get(staticText.getKey());
+        return get(staticText.key());
     }
 
     public String get(String key)
     {
-        return textRepository.getReferenceById(key).getLabel();
+        return textRepository.getReferenceById(key).getValue();
     }
 
     @Transactional
     public void save(String textKey, String value)
     {
-        if (READ_ONLY_TEXTS.stream().anyMatch(t -> t.getKey().equals(textKey)))
+        if (READ_ONLY_CONFIGS.stream().anyMatch(t -> t.key().equals(textKey)))
         {
             throw new IllegalArgumentException("This setting is read-only: " + textKey);
         }
+        if (WRITE_ONLY_VALUE.equals(value))
+        {
+            return; // User accidentally saving an obfuscated password/key value
+        }
+        if (EXAM_TARGET_LANGUAGE.key().equals(textKey) && !isNullOrEmpty(value))
+        {
+            Languages.validate(value);
+        }
         Text text = textRepository.getReferenceById(textKey);
-        text.setLabel(value);
+        text.setValue(value);
         textRepository.save(text);
         changeDetector.changed();
     }

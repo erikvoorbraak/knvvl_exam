@@ -27,6 +27,7 @@ import org.knvvl.exam.repos.PictureRepository;
 import org.knvvl.exam.repos.QuestionRepository;
 import org.knvvl.exam.repos.RequirementRepository;
 import org.knvvl.exam.repos.TopicRepository;
+import org.knvvl.exam.services.Languages.Language;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,7 @@ public class ImportExportService
         importQuestionTranslations("Questions_en.txt", LANGUAGE_EN);
     }
 
-    private void importQuestionTranslations(String fileName, String language)
+    private void importQuestionTranslations(String fileName, Language language)
     {
         File importDir = new File("ImportTranslations");
         File importFile = new File(importDir, fileName);
@@ -81,7 +82,7 @@ public class ImportExportService
         }
     }
 
-    private void importQuestionTranslation(List<String> line, String language)
+    private void importQuestionTranslation(List<String> line, Language language)
     {
         var lineCopy = new ArrayList<>(line);
         lineCopy.set(0, String.valueOf(questionRepository.findTopByOrderByIdDesc().getId() + 1));
@@ -167,7 +168,7 @@ public class ImportExportService
         requirementRepository.save(requirement);
     }
 
-    private void importQuestion(List<String> line, String language)
+    private void importQuestion(List<String> line, Language language)
     {
         Question question = new Question();
         question.setId(toInt(line.get(0)));
@@ -185,7 +186,7 @@ public class ImportExportService
         question.setAllowB2(!onlyB3);
         question.setAllowB3(true);
         question.setRemarks(line.get(14));
-        question.setLanguage(language);
+        question.setLanguage(language.id());
         questionRepository.save(question);
     }
 

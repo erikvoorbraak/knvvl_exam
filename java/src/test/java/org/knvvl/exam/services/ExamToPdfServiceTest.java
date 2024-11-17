@@ -24,8 +24,8 @@ import org.knvvl.exam.entities.ExamQuestion;
 import org.knvvl.exam.entities.Picture;
 import org.knvvl.exam.entities.Question;
 import org.knvvl.exam.entities.Requirement;
-import org.knvvl.exam.entities.Text;
 import org.knvvl.exam.entities.Topic;
+import org.knvvl.exam.meta.Config;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -93,7 +93,7 @@ class ExamToPdfServiceTest
         service.examService = examService;
         service.textService = textService;
         when(examService.getQuestionsForExam(exam.getId())).thenReturn(List.of(eq1, eq2));
-        when(textService.get(any(Text.class))).thenAnswer(i -> ((Text)i.getArgument(0)).getLabel());
+        when(textService.get(any(Config.class))).thenAnswer(i -> ((Config)i.getArgument(0)).defaultValue());
     }
 
     @Test

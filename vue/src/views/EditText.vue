@@ -2,7 +2,8 @@
     <main>
         <form v-on:submit.prevent="submit"> 
         {{ this.textKey }}<br/>
-        <textarea v-model="form.label" rows="20" cols="80"/><br/>
+        <textarea v-model="form.label" cols="80" readonly/><br/>
+        <textarea v-model="form.value" rows="20" cols="80"/><br/>
         <button class="button is-primary">Submit</button>
         </form>
     </main>
@@ -24,7 +25,7 @@
                         'Content-Type': 'text/plain'
                     }
                 }
-                await axios.post('/api/texts/' + this.textKey, this.form.label, config);
+                await axios.post('/api/texts/' + this.textKey, this.form.value, config);
                 this.$router.go(-1);
               } catch (error) {
                   if (error.response) {
@@ -35,7 +36,9 @@
       },
       mounted() {
         document.title = "Tekst bewerken";
-        axios.get('/api/texts/' + this.textKey).then((response) => { this.form.label = response.data });
+        axios.get('/api/texts/' + this.textKey).then((response) => {
+            this.form.label = response.data.label;
+            this.form.value = response.data.value; });
     }
   }
   </script>

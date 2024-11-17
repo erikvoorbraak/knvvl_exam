@@ -9,13 +9,15 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 import org.knvvl.exam.entities.Change;
 import org.knvvl.exam.entities.Question;
-import org.knvvl.exam.services.ExamRepositories;
 import org.knvvl.exam.meta.EntityField;
+import org.knvvl.exam.services.ExamRepositories;
 import org.knvvl.exam.services.QuestionService;
 import org.knvvl.exam.services.QuestionService.QuestionCreateResult;
+import org.knvvl.exam.services.TextService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +41,7 @@ public class QuestionRestService
 
     @Autowired private ExamRepositories examRepositories;
     @Autowired private QuestionService questionService;
+    @Autowired private TextService textService;
 
     @GetMapping(value = "/questions", produces = "application/json")
     String getQuestions(
@@ -49,7 +52,7 @@ public class QuestionRestService
     {
         JsonArray all = new JsonArray();
         questionService.queryQuestions(SORT_BY_ID.descending(), topicId, requirementId, examId, search)
-            .map(q -> this.getJsonQuestion(q, true))
+            .map(q -> this.getJsonQuestion(q, true, false, true, false))
             .forEach(all::add);
         return GSON.toJson(all);
     }
@@ -57,25 +60,58 @@ public class QuestionRestService
     @GetMapping(value = "/questions/{questionId}", produces = APPLICATION_JSON_VALUE)
     String getQuestion(@PathVariable("questionId") int questionId)
     {
-        Question question = examRepositories.getQuestionRepository().getReferenceById(questionId);
-        JsonObject json = getJsonQuestion(question, true);
-        json.addProperty("topicId", question.getTopic().getId());
-        json.addProperty("requirementId", question.getRequirement().getId());
+        var question = examRepositories.getQuestionRepository().getReferenceById(questionId);
+        var json = getJsonQuestion(question, true, true, false, true);
         return GSON.toJson(json);
     }
 
-    JsonObject getJsonQuestion(Question question, boolean addDetails)
+    @GetMapping(value = "/questions/{questionId}/translated", produces = APPLICATION_JSON_VALUE)
+    ResponseEntity<String> getQuestionTranslated(@PathVariable("questionId") int questionId)
+    {
+        var question = examRepositories.getQuestionRepository().getReferenceById(questionId);
+        var error = questionService.checkCanTranslate(question);
+        if (error != null) {
+            return ResponseEntity.status(BAD_REQUEST).body(error);
+        }
+        var translated = questionService.createTranslated(question);
+        var json = getJsonQuestion(translated, true, true, false, true);
+        return ResponseEntity.status(OK).body(GSON.toJson(json));
+    }
+
+    JsonObject getJsonQuestion(Question question, boolean addDetails, boolean addEntityIds, boolean addTranslatable, boolean addTranslates)
     {
         JsonObject json = new JsonObject();
-        json.addProperty("id", question.getId());
-        for (EntityField entityField : questionService.getQuestionFields().getFields())
-        {
+        Optional.ofNullable(question.getId()).ifPresent(id -> json.addProperty("id", question.getId()));
+        for (EntityField entityField : questionService.getQuestionFields().getFields()) {
             entityField.writeJson(question, json);
             if (!addDetails && "answer".equals(entityField.getField()))
                 return json;
         }
+        if (addEntityIds){
+            json.addProperty("topicId", question.getTopic().getId());
+            json.addProperty("requirementId", question.getRequirement().getId());
+        }
         json.addProperty("tagsHtml", String.join(", ", question.getTags(true)));
+        if (addTranslatable && questionService.checkCanTranslate(question) == null) {
+            json.addProperty("translatable", true);
+        }
+        if (addTranslates) {
+            addOriginalForTranslated(question, json);
+        }
         return json;
+    }
+
+    private void addOriginalForTranslated(Question question, JsonObject json)
+    {
+        Integer translates = question.getTranslates();
+        if (translates != null && examRepositories.getQuestionRepository().existsById(translates)) {
+            var original = examRepositories.getQuestionRepository().getReferenceById(translates);
+            json.addProperty("question_original", original.getQuestion());
+            json.addProperty("answerA_original", original.getAnswerA());
+            json.addProperty("answerB_original", original.getAnswerB());
+            json.addProperty("answerC_original", original.getAnswerC());
+            json.addProperty("answerD_original", original.getAnswerD());
+        }
     }
 
     @PostMapping(path = "questions", consumes = APPLICATION_JSON_VALUE, produces = TEXT_PLAIN_VALUE)

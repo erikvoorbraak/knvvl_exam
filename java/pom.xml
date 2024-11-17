@@ -162,7 +162,7 @@
 			<version>2.3.3</version>
 		</dependency>
 
-<!--		For using Google Cloud-->
+        <!-- For using Google Cloud-->
 		<dependency>
 			<groupId>com.google.cloud.sql</groupId>
 			<artifactId>postgres-socket-factory</artifactId>
@@ -173,6 +173,13 @@
 			<groupId>net.coobird</groupId>
 			<artifactId>thumbnailator</artifactId>
 			<version>0.4.11</version>
+		</dependency>
+
+		<!-- For parsing markdown -->
+		<dependency>
+			<groupId>com.vladsch.flexmark</groupId>
+			<artifactId>flexmark</artifactId>
+			<version>0.64.8</version>
 		</dependency>
 
 	</dependencies>

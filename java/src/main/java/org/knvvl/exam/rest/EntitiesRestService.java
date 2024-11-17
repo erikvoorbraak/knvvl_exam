@@ -1,5 +1,6 @@
 package org.knvvl.exam.rest;
 
+import static java.util.Comparator.comparing;
 import static java.util.function.Predicate.not;
 
 import static org.knvvl.exam.rest.QuestionRestService.GSON;
@@ -46,20 +47,26 @@ public class EntitiesRestService
     String getTexts()
     {
         JsonArray all = new JsonArray();
-        for (Text text : textService.findAll())
-        {
-            JsonObject json = new JsonObject();
-            json.addProperty("key", text.getKey());
-            json.addProperty("label", text.getLabel());
-            all.add(json);
-        }
+        textService.findAll().stream()
+            .sorted(comparing(Text::getKey))
+            .forEach(t -> all.add(toJson(t)));
         return GSON.toJson(all);
     }
 
-    @GetMapping(value = "/texts/{textKey}", produces = TEXT_PLAIN_VALUE)
+    private static JsonObject toJson(Text text)
+    {
+        JsonObject json = new JsonObject();
+        json.addProperty("key", text.getKey());
+        json.addProperty("value", text.getValueToEdit());
+        json.addProperty("label", text.getLabel());
+        return json;
+    }
+
+    @GetMapping(value = "/texts/{textKey}", produces = APPLICATION_JSON_VALUE)
     String getText(@PathVariable("textKey") String textKey)
     {
-        return textService.getReferenceById(textKey).getLabel();
+        Text text = textService.getReferenceById(textKey);
+        return GSON.toJson(toJson(text));
     }
 
     @PostMapping(value = "/texts/{textKey}", consumes = TEXT_PLAIN_VALUE)

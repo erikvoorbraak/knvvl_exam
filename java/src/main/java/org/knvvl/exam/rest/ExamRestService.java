@@ -24,6 +24,7 @@ import org.knvvl.exam.services.ExamException;
 import org.knvvl.exam.services.ExamRepositories;
 import org.knvvl.exam.services.ExamService;
 import org.knvvl.exam.services.ExamToPdfService;
+import org.knvvl.exam.services.Languages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -122,7 +123,7 @@ public class ExamRestService
             return ResponseEntity.status(BAD_REQUEST).body("Exam with this name already exists");
 
         try {
-            examCreationService.createExam(label, Integer.parseInt(certificate), language);
+            examCreationService.createExam(label, Integer.parseInt(certificate), Languages.get(language));
         }
         catch (RuntimeException e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
@@ -170,7 +171,7 @@ public class ExamRestService
         JsonArray all = new JsonArray();
         for (ExamQuestion examQuestion : examRepositories.getExamQuestionRepository().findByExamOrderByQuestionIndex(examId))
         {
-            JsonObject json = questionRestService.getJsonQuestion(examQuestion.getQuestion(), false);
+            JsonObject json = questionRestService.getJsonQuestion(examQuestion.getQuestion(), false, false, false, false);
             json.addProperty("examQuestionId", examQuestion.getId());
             all.add(json);
         }
@@ -184,7 +185,7 @@ public class ExamRestService
         ExamQuestion examQuestion = examRepositories.getExamQuestionRepository().getReferenceById(Integer.parseInt(examQuestionId));
         for (Question altQuestion : examService.getAltQuestions(examQuestion))
         {
-            JsonObject json = questionRestService.getJsonQuestion(altQuestion, false);
+            JsonObject json = questionRestService.getJsonQuestion(altQuestion, false, false, false, false);
             json.addProperty("url", "/api/exams/altquestions/" + examQuestionId);
             all.add(json);
         }
