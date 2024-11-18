@@ -7,17 +7,19 @@
   >
     <template #item-id="{ id, translatable, translates }">
       <a :style="{ cursor: 'pointer' }"
-        @click.exact="this.$router.push('/questions/' + id)"
-        @click.ctrl="ctrlClick('/questions/' + id)">{{
-        id
-      }}</a>
+        @click.exact="clickExact('/questions/' + id)"
+        @click.ctrl="clickCtrl('/questions/' + id)">{{ id }}</a>
       <span v-if="translatable">
-        <a :style="{ cursor: 'pointer' }" @click="this.$router.push('/translates/' + id)">
+        <a :style="{ cursor: 'pointer' }" 
+          @click.exact="clickExact('/translates/' + id)"
+          @click.ctrl="clickCtrl('/translates/' + id)">
           <img src="/translate.png" width="16" height="16" title="Translate question to configured target language"/>
         </a>
       </span>
       <span v-if="translates">
-        <a :style="{ cursor: 'pointer' }" @click="this.$router.push('/questions/' + translates)">
+        <a :style="{ cursor: 'pointer' }" 
+          @click.exact="clickExact('/questions/' + translates)"
+          @click.ctrl="clickCtrl('/questions/' + translates)">
           <img src="/translates.png" width="16" height="16" title="Go to original question that this is a translation of"/>
         </a>
       </span>
@@ -77,7 +79,10 @@ export default defineComponent({
     };
   },
   methods: {
-    ctrlClick(location) {
+    clickExact(location) {
+      this.$router.push(location);
+    },
+    clickCtrl(location) {
       window.open(location, '_blank');
     },
     loadQuestions: function () {

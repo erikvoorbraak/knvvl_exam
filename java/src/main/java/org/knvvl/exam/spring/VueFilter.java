@@ -21,11 +21,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class VueFilter implements Filter
 {
     @Override
-    public void destroy() {}
-
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterchain)
-        throws IOException, ServletException
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterchain) throws IOException, ServletException
     {
         if (isForSpring(request)) {
             filterchain.doFilter(request, response);
