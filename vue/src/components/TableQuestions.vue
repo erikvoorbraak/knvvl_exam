@@ -6,7 +6,9 @@
     :rows-items="[10, 20, 50, 100]"
   >
     <template #item-id="{ id, translatable, translates }">
-      <a :style="{ cursor: 'pointer' }" @click="this.$router.push('/questions/' + id)">{{
+      <a :style="{ cursor: 'pointer' }"
+        @click.exact="this.$router.push('/questions/' + id)"
+        @click.ctrl="ctrlClick('/questions/' + id)">{{
         id
       }}</a>
       <span v-if="translatable">
@@ -75,6 +77,9 @@ export default defineComponent({
     };
   },
   methods: {
+    ctrlClick(location) {
+      window.open(location, '_blank');
+    },
     loadQuestions: function () {
       axios
         .get(
