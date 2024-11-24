@@ -71,7 +71,7 @@ public class QuestionRestService
         var question = examRepositories.getQuestionRepository().getReferenceById(questionId);
         var error = questionService.checkCanTranslate(question);
         if (error != null) {
-            return ResponseEntity.status(BAD_REQUEST).body(error);
+            return ResponseEntity.status(BAD_REQUEST).body(error.message());
         }
         var translated = questionService.createTranslated(question);
         var json = getJsonQuestion(translated, true, true, false, true);
@@ -92,8 +92,12 @@ public class QuestionRestService
             json.addProperty("requirementId", question.getRequirement().getId());
         }
         json.addProperty("tagsHtml", String.join(", ", question.getTags(true)));
-        if (addTranslatable && questionService.checkCanTranslate(question) == null) {
+        var checkCanTranslate = questionService.checkCanTranslate(question);
+        if (addTranslatable && checkCanTranslate == null) {
             json.addProperty("translatable", true);
+        }
+        else if (checkCanTranslate.questionIdTranslated() != null ){
+            json.addProperty("translated", checkCanTranslate.questionIdTranslated());
         }
         if (addTranslates) {
             addOriginalForTranslated(question, json);

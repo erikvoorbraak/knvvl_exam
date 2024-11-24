@@ -5,7 +5,7 @@
     :rows-per-page="10"
     :rows-items="[10, 20, 50, 100]"
   >
-    <template #item-id="{ id, translatable, translates }">
+    <template #item-id="{ id, translatable, translates, translated }">
       <a :style="{ cursor: 'pointer' }"
         @click.exact="clickExact('/questions/' + id)"
         @click.ctrl="clickCtrl('/questions/' + id)">{{ id }}</a>
@@ -21,6 +21,13 @@
           @click.exact="clickExact('/questions/' + translates)"
           @click.ctrl="clickCtrl('/questions/' + translates)">
           <img src="/translates.png" width="16" height="16" title="Go to original question that this is a translation of"/>
+        </a>
+      </span>
+      <span v-if="translated">
+        <a :style="{ cursor: 'pointer' }" 
+          @click.exact="clickExact('/questions/' + translated)"
+          @click.ctrl="clickCtrl('/questions/' + translated)">
+          <img src="/translates.png" width="16" height="16" title="Go to translation of this question"/>
         </a>
       </span>
     </template>

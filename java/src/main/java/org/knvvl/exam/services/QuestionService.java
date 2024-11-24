@@ -13,11 +13,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import org.knvvl.exam.entities.Change;
@@ -79,7 +77,7 @@ public class QuestionService
     /**
      * Given a question, which languages is it translated to?
      */
-    private static final Map<Integer, Set<String>> translationsCache = new HashMap<>();
+    private static final Map<Integer, Map<String, Integer>> translationsCache = new HashMap<>();
 
     public Stream<Question> queryQuestions(Sort sort, int topicId, int requirementId, int examId, String search)
     {
@@ -103,7 +101,7 @@ public class QuestionService
         Integer translates = question.getTranslates();
         if (translates != null)
         {
-            getTranslationsCache(translates).add(question.getLanguage());
+            getTranslationsCache(translates).put(question.getLanguage(), question.getId());
         }
     }
 
@@ -116,9 +114,13 @@ public class QuestionService
         }
     }
 
-    private static Set<String> getTranslationsCache(Integer questionId)
+    /**
+     * @param questionId To get tranlsations for
+     * @return Map of translations for the given question: language -> translation
+     */
+    private static Map<String, Integer> getTranslationsCache(Integer questionId)
     {
-        return translationsCache.computeIfAbsent(questionId, HashSet::new);
+        return translationsCache.computeIfAbsent(questionId, HashMap::new);
     }
 
     private int getNewQuestionId()
@@ -214,23 +216,26 @@ public class QuestionService
         return questionFields;
     }
 
-    public String checkCanTranslate(Question question)
+    public CheckCanTranslate checkCanTranslate(Question question)
     {
         var targetLanguage = textService.get(EXAM_TARGET_LANGUAGE);
         if (isNullOrEmpty(targetLanguage))
         {
-            return "No language to translate to configured in Settings: '" + EXAM_TARGET_LANGUAGE + "'";
+            return new CheckCanTranslate("No language to translate to configured in Settings: '" + EXAM_TARGET_LANGUAGE + "'", null);
         }
         if (targetLanguage.equals(question.getLanguage()))
         {
-            return "This question is already in language " + targetLanguage;
+            return new CheckCanTranslate("This question is already in language " + targetLanguage, null);
         }
-        if (getTranslationsCache(question.getId()).contains(targetLanguage))
+        var translationId = getTranslationsCache(question.getId()).get(targetLanguage);
+        if (translationId != null)
         {
-            return "Already found translation to " + targetLanguage + " for question " + question.getId();
+            return new CheckCanTranslate("Already found translation to " + targetLanguage + " for question " + question.getId(), translationId);
         }
         return null;
     }
+
+    public record CheckCanTranslate(String message, Integer questionIdTranslated) {}
 
     public Question createTranslated(Question question)
     {

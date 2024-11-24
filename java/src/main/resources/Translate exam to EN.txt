@@ -1,0 +1,11 @@
+-- Example translate exam 160 to 162
+
+insert into t_exam_question(id, exam, question, topic, question_index)
+select eq.id+2000, 162, tq.id, eq.topic, eq.question_index
+from t_exam_question eq
+join t_question tq on tq.translates=eq.question
+where eq.exam=160
+
+select * from t_exam_question where exam=162
+
+delete from t_exam_question where exam=162
