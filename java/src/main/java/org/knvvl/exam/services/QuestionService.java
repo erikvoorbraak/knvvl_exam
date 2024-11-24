@@ -79,13 +79,15 @@ public class QuestionService
      */
     private static final Map<Integer, Map<String, Integer>> translationsCache = new HashMap<>();
 
-    public Stream<Question> queryQuestions(Sort sort, int topicId, int requirementId, int examId, String search)
+    public Stream<Question> queryQuestions(Sort sort, String language, int topicId, int requirementId, int examId, String search)
     {
         List<Question> questions;
         if (examId != 0)
             questions = examService.getQuestionsForExam(examId).stream().map(ExamQuestion::getQuestion).toList();
         else
-            questions = questionRepository.findAll(sort);
+            questions = Strings.isNullOrEmpty(language)
+                ? questionRepository.findAll(sort)
+                : questionRepository.findByLanguage(language, sort);
 
         questions.forEach(QuestionService::cacheTranslation);
 

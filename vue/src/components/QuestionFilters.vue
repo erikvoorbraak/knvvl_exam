@@ -1,4 +1,9 @@
 <template>
+    <select name="language" @change="filterByLanguage" v-model="language">
+        <option value="all">--</option>
+        <option value="nl">nl</option>
+        <option value="en">en</option>
+    </select>
     <select name="topic" @change="filterByTopic">
         <option value="0">-- alle vakken --</option>
         <option v-for="q in topics" :key="q.id" :value="q.id">{{ q.label }}</option>
@@ -26,6 +31,9 @@ export default {
         }
     },
     methods: {
+        filterByLanguage: function(e) {
+            this.$emit("languageSelected", e.target.value);
+        },
         filterByTopic: function(e) {
             this.$emit("topicSelected", e.target.value);
         },
@@ -40,6 +48,7 @@ export default {
         },
     },
     mounted() {
+        axios.get("/api/questions/filter/language").then((response) => { this.language = response.data; });
         axios.get('/api/requirements').then((response) => { this.requirements = response.data });
         axios.get('/api/exams').then((response) => { this.exams = response.data });
         axios.get('/api/topics').then((response) => { this.topics = response.data });

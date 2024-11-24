@@ -67,7 +67,7 @@ import type { Header, Item } from "vue3-easy-data-table";
 import axios from "axios";
 
 export default defineComponent({
-  props: ["topicId", "requirementId", "examId", "search"],
+  props: ["language", "topicId", "requirementId", "examId", "search"],
   setup() {
     const headers: Header[] = [
       { text: "ID", value: "id", sortable: true },
@@ -95,7 +95,10 @@ export default defineComponent({
     loadQuestions: function () {
       axios
         .get(
-          "/api/questions?topic=" +
+          "/api/questions" +
+            "?language=" +
+            this.language +
+            "&topic=" +
             this.topicId +
             "&requirement=" +
             this.requirementId +
@@ -110,6 +113,9 @@ export default defineComponent({
     }
   },
   watch: {
+    language() {
+      this.loadQuestions();
+    },
     topicId() {
       this.loadQuestions();
     },

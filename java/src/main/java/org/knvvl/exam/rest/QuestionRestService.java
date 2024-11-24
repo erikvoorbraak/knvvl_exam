@@ -6,9 +6,13 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.knvvl.exam.entities.Change;
@@ -17,7 +21,7 @@ import org.knvvl.exam.meta.EntityField;
 import org.knvvl.exam.services.ExamRepositories;
 import org.knvvl.exam.services.QuestionService;
 import org.knvvl.exam.services.QuestionService.QuestionCreateResult;
-import org.knvvl.exam.services.TextService;
+import org.knvvl.exam.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,23 +42,44 @@ import com.google.gson.JsonObject;
 public class QuestionRestService
 {
     static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    static final Map<Integer, String> userToFilterLanguage = new HashMap<>();
 
     @Autowired private ExamRepositories examRepositories;
     @Autowired private QuestionService questionService;
-    @Autowired private TextService textService;
+    @Autowired private UserService userService;
 
     @GetMapping(value = "/questions", produces = "application/json")
     String getQuestions(
+        @RequestParam(name = "language", defaultValue = "") String language,
         @RequestParam(name = "topic", defaultValue = "0") Integer topicId,
         @RequestParam(name = "requirement", defaultValue = "0") Integer requirementId,
         @RequestParam(name = "exam", defaultValue = "0") Integer examId,
         @RequestParam(name = "search", defaultValue = "") String search)
     {
         JsonArray all = new JsonArray();
-        questionService.queryQuestions(SORT_BY_ID.descending(), topicId, requirementId, examId, search)
+        questionService.queryQuestions(SORT_BY_ID.descending(), handleFilterLanguage(language), topicId, requirementId, examId, search)
             .map(q -> this.getJsonQuestion(q, true, false, true, false))
             .forEach(all::add);
         return GSON.toJson(all);
+    }
+
+    private String handleFilterLanguage(String language) {
+        Integer userId = userService.getCurrentUser().getId();
+        if ("all".equals(language)) {
+            userToFilterLanguage.remove(userId);
+            return "";
+        }
+        if (!isNullOrEmpty(language)) {
+            userToFilterLanguage.put(userId, language);
+            return language;
+        }
+        return getCurrentUserFilterLanguage();
+    }
+
+    @GetMapping(value = "/questions/filter/language", produces = TEXT_PLAIN_VALUE)
+    String getCurrentUserFilterLanguage()
+    {
+        return userToFilterLanguage.getOrDefault(userService.getCurrentUser().getId(), "");
     }
 
     @GetMapping(value = "/questions/{questionId}", produces = APPLICATION_JSON_VALUE)
