@@ -8,8 +8,9 @@ import javax.annotation.Nonnull;
 
 public class Languages
 {
+    public static final String ALL = "all"; // Selection option in frontend
     public static final Language LANGUAGE_EN = new Language("en", "English");
-    public static final Language LANGUAGE_NL = new Language("nl", "Dutch");
+    public static final Language LANGUAGE_NL = new Language("nl", "Dutch"); // Default
     public static final List<Language> LANGUAGES = List.of(LANGUAGE_EN, LANGUAGE_NL);
     private static final String LANGUAGES_JOINED = LANGUAGES.stream().map(Language::id).collect(joining(","));
 

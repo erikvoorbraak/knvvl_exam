@@ -1,6 +1,7 @@
 package org.knvvl.exam.rest;
 
 import static org.knvvl.exam.services.ExamRepositories.SORT_BY_ID;
+import static org.knvvl.exam.services.Languages.LANGUAGE_NL;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -19,6 +20,7 @@ import org.knvvl.exam.entities.Change;
 import org.knvvl.exam.entities.Question;
 import org.knvvl.exam.meta.EntityField;
 import org.knvvl.exam.services.ExamRepositories;
+import org.knvvl.exam.services.Languages;
 import org.knvvl.exam.services.QuestionService;
 import org.knvvl.exam.services.QuestionService.QuestionCreateResult;
 import org.knvvl.exam.services.UserService;
@@ -65,8 +67,8 @@ public class QuestionRestService
 
     private String handleFilterLanguage(String language) {
         Integer userId = userService.getCurrentUser().getId();
-        if ("all".equals(language)) {
-            userToFilterLanguage.remove(userId);
+        if (Languages.ALL.equals(language)) {
+            userToFilterLanguage.put(userId, "");
             return "";
         }
         if (!isNullOrEmpty(language)) {
@@ -79,7 +81,7 @@ public class QuestionRestService
     @GetMapping(value = "/questions/filter/language", produces = TEXT_PLAIN_VALUE)
     String getCurrentUserFilterLanguage()
     {
-        return userToFilterLanguage.getOrDefault(userService.getCurrentUser().getId(), "");
+        return userToFilterLanguage.getOrDefault(userService.getCurrentUser().getId(), LANGUAGE_NL.id());
     }
 
     @GetMapping(value = "/questions/{questionId}", produces = APPLICATION_JSON_VALUE)
@@ -118,10 +120,12 @@ public class QuestionRestService
         }
         json.addProperty("tagsHtml", String.join(", ", question.getTags(true)));
         var checkCanTranslate = questionService.checkCanTranslate(question);
-        if (addTranslatable && checkCanTranslate == null) {
-            json.addProperty("translatable", true);
+        if (checkCanTranslate == null) { // Ok to translate
+            if (addTranslatable) {
+                json.addProperty("translatable", true);
+            }
         }
-        else if (checkCanTranslate.questionIdTranslated() != null ){
+        else if (checkCanTranslate.questionIdTranslated() != null) { // Add translated question-id
             json.addProperty("translated", checkCanTranslate.questionIdTranslated());
         }
         if (addTranslates) {

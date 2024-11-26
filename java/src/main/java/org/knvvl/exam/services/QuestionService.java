@@ -218,6 +218,11 @@ public class QuestionService
         return questionFields;
     }
 
+    /**
+     *
+     * @param question to check for
+     * @return Information why it cannot be translated, or null if it can be translated
+     */
     public CheckCanTranslate checkCanTranslate(Question question)
     {
         var targetLanguage = textService.get(EXAM_TARGET_LANGUAGE);
