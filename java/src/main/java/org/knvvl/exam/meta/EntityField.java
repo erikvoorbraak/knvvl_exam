@@ -20,6 +20,7 @@ import jakarta.annotation.Nonnull;
 public abstract class EntityField<T extends KnvvlEntity>
 {
     protected final String field;
+    protected boolean mandatory;
 
     EntityField(@Nonnull String field)
     {
@@ -38,10 +39,7 @@ public abstract class EntityField<T extends KnvvlEntity>
 
     public boolean isMandatory()
     {
-        return "topic".equals(field)
-            || "requirement".equals(field)
-            || "question".equals(field)
-            || field.startsWith("answer");
+        return mandatory;
     }
 
     @Override
@@ -127,6 +125,12 @@ public abstract class EntityField<T extends KnvvlEntity>
         public void importJsonValue(T entity, JsonReader reader) throws IOException
         {
             setter.accept(entity, reader.nextString());
+        }
+
+        public EntityFieldString<T> mandatory()
+        {
+            this.mandatory = true;
+            return this;
         }
     }
 
@@ -237,6 +241,12 @@ public abstract class EntityField<T extends KnvvlEntity>
         public void copyValue(T from, T to)
         {
             setter.accept(to, getter.apply(from));
+        }
+
+        public EntityFieldInteger<T> mandatory()
+        {
+            this.mandatory = true;
+            return this;
         }
     }
 
@@ -443,6 +453,12 @@ public abstract class EntityField<T extends KnvvlEntity>
         public void copyValue(T from, T to)
         {
             setter.accept(to, getter.apply(from));
+        }
+
+        public EntityFieldIdEntity<T, V> mandatory()
+        {
+            this.mandatory = true;
+            return this;
         }
     }
 }

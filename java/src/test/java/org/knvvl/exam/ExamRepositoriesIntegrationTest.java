@@ -22,11 +22,10 @@ import org.knvvl.exam.entities.Topic;
 import org.knvvl.exam.repos.ChangeRepository;
 import org.knvvl.exam.repos.RequirementRepository;
 import org.knvvl.exam.repos.TopicRepository;
+import org.knvvl.exam.services.CreateEntityResult;
 import org.knvvl.exam.services.ExamRepositories;
 import org.knvvl.exam.services.ExamService;
-import org.knvvl.exam.services.Languages;
 import org.knvvl.exam.services.QuestionService;
-import org.knvvl.exam.services.QuestionService.QuestionCreateResult;
 import org.knvvl.exam.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -114,10 +113,10 @@ public class ExamRepositoriesIntegrationTest
         json.addProperty("answerC", s);
         json.addProperty("answerD", s);
         json.addProperty("answer", "A");
-        QuestionCreateResult result = questionService.createQuestion(json);
-        assertNotNull(result.question());
+        CreateEntityResult result = questionService.createQuestion(json);
+        assertNotNull(result.entity());
         assertNull(result.message());
-        return result.question();
+        return (Question)result.entity();
     }
 
     private Topic givenTopic()

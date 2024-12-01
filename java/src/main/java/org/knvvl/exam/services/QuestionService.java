@@ -135,7 +135,7 @@ public class QuestionService
 
     @Nonnull
     @Transactional
-    public QuestionCreateResult createQuestion(JsonObject form)
+    public CreateEntityResult createQuestion(JsonObject form)
     {
         var changedByAt = new ChangedByAt(userService.getCurrentUser());
         List<Change> changes = new ArrayList<>();
@@ -146,7 +146,7 @@ public class QuestionService
             JsonElement jsonElement = form.get(questionField.getValueField());
             if (jsonElement == null && questionField.isMandatory())
             {
-                return new QuestionCreateResult(null, "Mandatory field: " + questionField);
+                return new CreateEntityResult(null, "Mandatory field: " + questionField);
             }
             if (jsonElement != null)
             {
@@ -158,7 +158,7 @@ public class QuestionService
         changeRepository.saveAll(changes);
         changeDetector.changed();
         cacheTranslation(question);
-        return new QuestionCreateResult(question, null);
+        return new CreateEntityResult(question, null);
     }
 
     @Transactional

@@ -6,10 +6,10 @@ import java.util.List;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
-import org.knvvl.exam.meta.LabeledEntity;
-import org.knvvl.exam.repos.TopicRepository;
 import org.knvvl.exam.meta.EntityField;
 import org.knvvl.exam.meta.EntityFields;
+import org.knvvl.exam.meta.LabeledEntity;
+import org.knvvl.exam.repos.TopicRepository;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
@@ -55,11 +55,11 @@ public class Requirement implements LabeledEntity
     public static EntityFields<Requirement> getFields(TopicRepository topicRepository)
     {
         return new EntityFields<>(List.of(
-            new EntityField.EntityFieldString<>("label", Requirement::getLabel, Requirement::setLabel),
-            new EntityField.EntityFieldIdEntity<>("topic", topicRepository, Requirement::getTopic, Requirement::setTopic),
-            new EntityField.EntityFieldInteger<>("domain", Requirement::getDomain, Requirement::setDomain),
-            new EntityField.EntityFieldString<>("domainTitle", Requirement::getDomainTitle, Requirement::setDomainTitle),
-            new EntityField.EntityFieldString<>("subdomain", Requirement::getSubdomain, Requirement::setSubdomain),
+            new EntityField.EntityFieldString<>("label", Requirement::getLabel, Requirement::setLabel).mandatory(),
+            new EntityField.EntityFieldIdEntity<>("topic", topicRepository, Requirement::getTopic, Requirement::setTopic).mandatory(),
+            new EntityField.EntityFieldInteger<>("domain", Requirement::getDomain, Requirement::setDomain).mandatory(),
+            new EntityField.EntityFieldString<>("domainTitle", Requirement::getDomainTitle, Requirement::setDomainTitle).mandatory(),
+            new EntityField.EntityFieldString<>("subdomain", Requirement::getSubdomain, Requirement::setSubdomain).mandatory(),
             new EntityField.EntityFieldString<>("levelB2", Requirement::getLevelB2, Requirement::setLevelB2),
             new EntityField.EntityFieldString<>("levelB3", Requirement::getLevelB3, Requirement::setLevelB3)));
     }
@@ -145,6 +145,16 @@ public class Requirement implements LabeledEntity
     public void setLevelB3(String levelB3)
     {
         this.levelB3 = levelB3;
+    }
+
+    public String getTopicLabel()
+    {
+        return topic == null ? "" : topic.getLabel();
+    }
+
+    public Integer getTopicId()
+    {
+        return topic == null ? null : topic.getId();
     }
 
     @Override

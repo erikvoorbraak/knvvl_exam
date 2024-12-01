@@ -22,7 +22,6 @@ import org.knvvl.exam.meta.EntityField;
 import org.knvvl.exam.services.ExamRepositories;
 import org.knvvl.exam.services.Languages;
 import org.knvvl.exam.services.QuestionService;
-import org.knvvl.exam.services.QuestionService.QuestionCreateResult;
 import org.knvvl.exam.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -151,7 +150,7 @@ public class QuestionRestService
     public ResponseEntity<String> createQuestion(@RequestBody String body)
     {
         JsonObject form = GSON.fromJson(body, JsonObject.class);
-        QuestionCreateResult result = questionService.createQuestion(form);
+        var result = questionService.createQuestion(form);
         if (result.message() != null)
             return ResponseEntity.status(BAD_REQUEST).body(result.message());
         return ResponseEntity.status(OK).body(null);

@@ -12,11 +12,9 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import org.knvvl.exam.entities.Question;
-import org.knvvl.exam.entities.Requirement;
 import org.knvvl.exam.entities.Text;
 import org.knvvl.exam.entities.Topic;
 import org.knvvl.exam.repos.QuestionRepository;
-import org.knvvl.exam.repos.RequirementRepository;
 import org.knvvl.exam.repos.TopicRepository;
 import org.knvvl.exam.services.TextService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +36,6 @@ public class EntitiesRestService
     private TextService textService;
     @Autowired
     private TopicRepository topicRepository;
-    @Autowired
-    private RequirementRepository requirementRepository;
     @Autowired
     private QuestionRepository questionRepository;
 
@@ -87,26 +83,6 @@ public class EntitiesRestService
             json.addProperty("label", topic.getLabel());
             json.addProperty("numQuestions", topic.getNumQuestions());
             json.addProperty("nQuestions", activeQuestions(questions, q -> topic.equals(q.getTopic())));
-            all.add(json);
-        }
-        return GSON.toJson(all);
-    }
-
-    @GetMapping(value = "/requirements", produces = APPLICATION_JSON_VALUE)
-    String getRequirements()
-    {
-        List<Question> questions = questionRepository.findAll();
-        JsonArray all = new JsonArray();
-        for (Requirement requirement : requirementRepository.findAll(SORT_BY_ID))
-        {
-            JsonObject json = new JsonObject();
-            json.addProperty("id", requirement.getId());
-            json.addProperty("label", requirement.getLabel());
-            json.addProperty("topic", requirement.getTopic().getLabel());
-            json.addProperty("domain", requirement.getDomain());
-            json.addProperty("domainTitle", requirement.getDomainTitle());
-            json.addProperty("subdomain", requirement.getSubdomain());
-            json.addProperty("nQuestions", activeQuestions(questions, q -> requirement.equals(q.getRequirement())));
             all.add(json);
         }
         return GSON.toJson(all);

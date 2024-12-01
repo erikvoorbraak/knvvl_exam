@@ -105,21 +105,21 @@ public class Question implements IdEntity
     public static EntityFields<Question> getFields(TopicRepository topicRepository, RequirementRepository requirementRepository, PictureRepository pictureRepository)
     {
         return new EntityFields<>(List.of(
-            new EntityField.EntityFieldIdEntity<>("topic", topicRepository, Question::getTopic, Question::setTopic),
-            new EntityField.EntityFieldIdEntity<>("requirement", requirementRepository, Question::getRequirement, Question::setRequirement),
-            new EntityField.EntityFieldString<>("question", Question::getQuestion, Question::setQuestion),
-            new EntityField.EntityFieldString<>("answerA", Question::getAnswerA, Question::setAnswerA),
-            new EntityField.EntityFieldString<>("answerB", Question::getAnswerB, Question::setAnswerB),
-            new EntityField.EntityFieldString<>("answerC", Question::getAnswerC, Question::setAnswerC),
-            new EntityField.EntityFieldString<>("answerD", Question::getAnswerD, Question::setAnswerD),
-            new EntityField.EntityFieldString<>("answer", Question::getAnswer, Question::setAnswer),
+            new EntityField.EntityFieldIdEntity<>("topic", topicRepository, Question::getTopic, Question::setTopic).mandatory(),
+            new EntityField.EntityFieldIdEntity<>("requirement", requirementRepository, Question::getRequirement, Question::setRequirement).mandatory(),
+            new EntityField.EntityFieldString<>("question", Question::getQuestion, Question::setQuestion).mandatory(),
+            new EntityField.EntityFieldString<>("answerA", Question::getAnswerA, Question::setAnswerA).mandatory(),
+            new EntityField.EntityFieldString<>("answerB", Question::getAnswerB, Question::setAnswerB).mandatory(),
+            new EntityField.EntityFieldString<>("answerC", Question::getAnswerC, Question::setAnswerC).mandatory(),
+            new EntityField.EntityFieldString<>("answerD", Question::getAnswerD, Question::setAnswerD).mandatory(),
+            new EntityField.EntityFieldString<>("answer", Question::getAnswer, Question::setAnswer).mandatory(),
             new EntityField.EntityFieldBoolean<>("allowB2", Question::isAllowB2, Question::setAllowB2),
             new EntityField.EntityFieldBoolean<>("allowB3", Question::isAllowB3, Question::setAllowB3),
             new EntityField.EntityFieldBoolean<>("ignore", Question::isIgnore, Question::setIgnore),
             new EntityField.EntityFieldBoolean<>("discuss", Question::isDiscuss, Question::setDiscuss),
             new EntityField.EntityFieldString<>("remarks", Question::getRemarks, Question::setRemarks),
             new EntityField.EntityFieldString<>("examGroup", Question::getExamGroup, Question::setExamGroup),
-            new EntityField.EntityFieldString<>("language", Question::getLanguage, Question::setLanguage),
+            new EntityField.EntityFieldString<>("language", Question::getLanguage, Question::setLanguage).mandatory(),
             new EntityField.EntityFieldInteger<>("translates", Question::getTranslates, Question::setTranslates),
             new EntityField.EntityFieldIdEntity<>("picture", pictureRepository, Question::getPicture, Question::setPicture)));
     }
