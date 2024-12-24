@@ -20,6 +20,8 @@ import jakarta.transaction.Transactional;
 @Service
 public class ExamService
 {
+    public static final int MAX_FILTERS = 3;
+
     @Autowired
     private ExamRepository examRepository;
     @Autowired
@@ -51,7 +53,7 @@ public class ExamService
      * @param examId
      * @return Questions ordered by how they appeared in the exam
      */
-    public List<ExamQuestion> getQuestionsForExam(int examId)
+    public List<ExamQuestion> getExamQuestionsForExam(int examId)
     {
         return examQuestionRepository.findByExamOrderByQuestionIndex(examId);
     }
@@ -67,24 +69,48 @@ public class ExamService
 
     public List<Question> getAltQuestions(ExamQuestion examQuestion)
     {
-        Question questionToGetAlt = examQuestion.getQuestion();
-        Topic topic = questionToGetAlt.getTopic();
-        Exam exam = examRepository.getReferenceById(examQuestion.getExam());
-        // Start with all questions of this topic
-        List<Question> otherQuestionsForTopic = new ArrayList<>();
-        ExamCreationService.filterForExam(questionRepository.findByTopicOrderById(topic), exam, topic).forEach(otherQuestionsForTopic::add);
-        // Remove questions having same picture, group, etc
-        removeSimilarQuestions(questionToGetAlt, otherQuestionsForTopic);
-        // Remove questions that are already in this exam
-        getQuestionsForExam(examQuestion.getExam()).forEach(eq -> otherQuestionsForTopic.remove(eq.getQuestion())); // includes questionToGetAlt
+        int examId = examQuestion.getExam();
+        Question questionForWhichToGetAlt = examQuestion.getQuestion();
+        Topic topic = questionForWhichToGetAlt.getTopic();
+        Exam exam = examRepository.getReferenceById(examId);
+        List<Question> allQuestionsForTopic = questionRepository.findByTopicOrderById(topic);
+        List<Question> allAltQuestionsForTopic = ExamCreationService.filterForExam(allQuestionsForTopic, exam, topic).toList();
+        List<Question> questionsForTopicInExam = getExamQuestionsForExam(examId).stream()
+            .filter(eq -> topic.getId().equals(eq.getTopic().getId()))
+            .map(ExamQuestion::getQuestion).toList();
+
+        List<Question> altQuestionsForTopic = getAltQuestionsForTopic(allAltQuestionsForTopic, questionsForTopicInExam);
 
         // Set order: first questions with same requirement, then with same topic
         List<Question> altQuestions = new ArrayList<>();
-        altQuestions.add(questionToGetAlt);
-        Requirement requirement = questionToGetAlt.getRequirement();
-        otherQuestionsForTopic.stream().filter(q -> q.getRequirement().equals(requirement)).forEach(altQuestions::add);
-        otherQuestionsForTopic.stream().filter(q -> !q.getRequirement().equals(requirement)).forEach(altQuestions::add);
+        altQuestions.add(questionForWhichToGetAlt);
+        Requirement requirement = questionForWhichToGetAlt.getRequirement();
+        altQuestionsForTopic.stream().filter(q -> q.getRequirement().equals(requirement)).forEach(altQuestions::add);
+        altQuestionsForTopic.stream().filter(q -> !q.getRequirement().equals(requirement)).forEach(altQuestions::add);
         return altQuestions;
+    }
+
+    private List<Question> getAltQuestionsForTopic(List<Question> allAltQuestionsForTopic, List<Question> questionsForTopicInExam)
+    {
+        // As long as too few alt-questions remain, skip more filters of the similar-questions check
+        List<Question> altQuestionsForTopic = new ArrayList<>();
+        int howManyFilters = MAX_FILTERS;
+        while (howManyFilters >= 0 && altQuestionsForTopic.size() < 10) {
+            altQuestionsForTopic = getAltQuestionsForTopic(allAltQuestionsForTopic, questionsForTopicInExam, howManyFilters);
+            howManyFilters--;
+        }
+        return altQuestionsForTopic;
+    }
+
+    private List<Question> getAltQuestionsForTopic(List<Question> allAltQuestionsForTopic, List<Question> questionsForTopicInExam, int howManyFilters)
+    {
+        // Start with all questions for this topic that 'fit' in this exam
+        List<Question> altQuestionsForTopic = new ArrayList<>(allAltQuestionsForTopic);
+        // Remove questions having same picture/group/etc as any of the questions already in the exam
+        questionsForTopicInExam.forEach(q -> removeSimilarQuestions(q, altQuestionsForTopic, howManyFilters));
+        // Remove questions that are already in this exam
+        altQuestionsForTopic.removeAll(questionsForTopicInExam); // includes questionForWhichToGetAlt
+        return altQuestionsForTopic;
     }
 
     @Transactional
@@ -96,16 +122,29 @@ public class ExamService
         changeDetector.changed();
     }
 
-    public void removeSimilarQuestions(Question examQuestion, List<Question> removeFrom)
+    /**
+     * @param examQuestion
+     * @param removeFrom
+     * @param howManyFilters 0, 1, 2, 3
+     */
+    public static void removeSimilarQuestions(Question examQuestion, List<Question> removeFrom, int howManyFilters)
     {
         // Use any given picture only once
-        Picture pictureInExam = examQuestion.getPicture();
-        if (pictureInExam != null)
-            removeFrom.removeIf(q -> pictureInExam.equals(q.getPicture()));
-
+        if (howManyFilters > 0) {
+            Picture pictureInExam = examQuestion.getPicture();
+            if (pictureInExam != null)
+                removeFrom.removeIf(q -> pictureInExam.equals(q.getPicture()));
+        }
         // Include at most one question in a given examGroup
-        String examGroup = examQuestion.getExamGroup();
-        if (!examGroup.isEmpty())
-            removeFrom.removeIf(q -> examGroup.equals(q.getExamGroup()));
+        if (howManyFilters > 1) {
+            String examGroup = examQuestion.getExamGroup();
+            if (!examGroup.isEmpty())
+                removeFrom.removeIf(q -> examGroup.equals(q.getExamGroup()));
+        }
+        // Include one question per requirement
+        if (howManyFilters > 2) {
+            Requirement requirement = examQuestion.getRequirement();
+            removeFrom.removeIf(q -> requirement.equals(q.getRequirement()));
+        }
     }
 }

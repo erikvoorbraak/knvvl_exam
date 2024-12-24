@@ -15,7 +15,7 @@ public class ExamToPdfService
 
     public byte[] generatePdf(Exam exam, boolean withQuestionId)
     {
-        List<ExamQuestion> questions = examService.getQuestionsForExam(exam.getId());
+        List<ExamQuestion> questions = examService.getExamQuestionsForExam(exam.getId());
         return new ExamGenerator(textService, exam, questions, withQuestionId).generatePdf();
     }
 }

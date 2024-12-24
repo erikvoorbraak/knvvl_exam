@@ -92,7 +92,7 @@ class ExamToPdfServiceTest
         exam.setId(examId);
         service.examService = examService;
         service.textService = textService;
-        when(examService.getQuestionsForExam(exam.getId())).thenReturn(List.of(eq1, eq2));
+        when(examService.getExamQuestionsForExam(exam.getId())).thenReturn(List.of(eq1, eq2));
         when(textService.get(any(Config.class))).thenAnswer(i -> ((Config)i.getArgument(0)).defaultValue());
     }
 

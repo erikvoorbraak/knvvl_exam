@@ -80,7 +80,7 @@ public class ExamRestService
         json.addProperty("label", exam.getLabel());
         json.addProperty("certificate", exam.getCertificate());
         json.addProperty("language", exam.getLanguage());
-        List<ExamQuestion> questions = examService.getQuestionsForExam(examId);
+        List<ExamQuestion> questions = examService.getExamQuestionsForExam(examId);
         json.addProperty("questions", printQuestions(questions, q -> String.valueOf(q.getId())));
         json.addProperty("answers", printQuestions(questions, Question::getAnswer));
         return GSON.toJson(json);

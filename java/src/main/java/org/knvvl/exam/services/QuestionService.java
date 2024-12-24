@@ -83,7 +83,7 @@ public class QuestionService
     {
         List<Question> questions;
         if (examId != 0)
-            questions = examService.getQuestionsForExam(examId).stream().map(ExamQuestion::getQuestion).toList();
+            questions = examService.getExamQuestionsForExam(examId).stream().map(ExamQuestion::getQuestion).toList();
         else
             questions = Strings.isNullOrEmpty(language)
                 ? questionRepository.findAll(sort)

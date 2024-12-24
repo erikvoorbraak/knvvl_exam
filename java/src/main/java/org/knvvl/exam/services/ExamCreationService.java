@@ -3,12 +3,15 @@ package org.knvvl.exam.services;
 import static java.util.function.Predicate.not;
 
 import static org.knvvl.exam.services.ExamRepositories.SORT_BY_ID;
+import static org.knvvl.exam.services.ExamService.MAX_FILTERS;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
+import org.jetbrains.annotations.Nullable;
 import org.knvvl.exam.entities.Exam;
 import org.knvvl.exam.entities.Question;
 import org.knvvl.exam.entities.Topic;
@@ -36,7 +39,10 @@ public class ExamCreationService
     public void createExam(String label, int certificate, Language language)
     {
         Exam exam = new Exam(label, certificate, language);
-        List<Question> questions = new ExamCreationContext(exam).generate();
+        List<Question> questions = topicRepository.findAll(SORT_BY_ID).stream()
+            .map(topic -> generateForTopic(exam, topic))
+            .flatMap(Collection::stream)
+            .toList();
         examService.addExam(exam, questions);
     }
 
@@ -49,44 +55,33 @@ public class ExamCreationService
             .filter(q -> q.allowForCertificate(exam.getCertificate()));
     }
 
-    private class ExamCreationContext
+    private List<Question> generateForTopic(Exam exam, Topic topic)
     {
-        final Exam exam;
-        final List<Question> allQuestions = questionRepository.findAll();
-        final List<Question> examQuestions = new ArrayList<>();
-        final List<Question> topicQuestions = new ArrayList<>();
-
-        private ExamCreationContext(Exam exam)
-        {
-            this.exam = exam;
-        }
-
-        List<Question> generate()
-        {
-            topicRepository.findAll(SORT_BY_ID).forEach(this::addQuestionsForTopic);
-            return examQuestions;
-        }
-
-        private void addQuestionsForTopic(Topic topic)
-        {
-            topicQuestions.clear();
-            filterForExam(allQuestions, exam, topic).forEach(topicQuestions::add);
-
-            for (int i = 0; i < topic.getNumQuestions(); i++)
-            {
-                addQuestionForTopic(topic);
+        int howManyFilters = MAX_FILTERS;
+        var candidatesForTopic = filterForExam(questionRepository.findAll(), exam, topic).toList();
+        while (howManyFilters > 0) {
+            var examQuestionsForTopic = tryQuestionsForTopic(topic, candidatesForTopic, howManyFilters);
+            if (examQuestionsForTopic != null) {
+                return examQuestionsForTopic;
             }
+            howManyFilters--;
         }
+        throw new IllegalStateException("Not enough questions for topic " + topic + ", certificate " + exam.getCertificate());
+    }
 
-        private void addQuestionForTopic(Topic topic)
-        {
-            if (topicQuestions.isEmpty())
-            {
-                throw new IllegalStateException("Not enough questions for topic " + topic + ", certificate " + exam.getCertificate());
+    @Nullable
+    private static List<Question> tryQuestionsForTopic(Topic topic, List<Question> candidatesForTopic, int howManyFilters)
+    {
+        List<Question> remainingForTopic = new ArrayList<>(candidatesForTopic);
+        List<Question> examQuestionsForTopic = new ArrayList<>();
+        for (int i = 0; i < topic.getNumQuestions(); i++) {
+            if (remainingForTopic.isEmpty()) {
+                return null;
             }
-            Question newQuestion = topicQuestions.remove(RANDOM.nextInt(topicQuestions.size()));
-            examQuestions.add(newQuestion);
-            examService.removeSimilarQuestions(newQuestion, topicQuestions);
+            var newQuestion = remainingForTopic.remove(RANDOM.nextInt(remainingForTopic.size()));
+            examQuestionsForTopic.add(newQuestion);
+            ExamService.removeSimilarQuestions(newQuestion, remainingForTopic, howManyFilters);
         }
+        return examQuestionsForTopic;
     }
 }
