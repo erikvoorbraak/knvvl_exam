@@ -82,6 +82,12 @@ public class Requirement implements LabeledEntity
         return label;
     }
 
+    @Override
+    public String getDisplayString()
+    {
+        return subdomain + ": " + label;
+    }
+
     public void setLabel(String label)
     {
         this.label = label;

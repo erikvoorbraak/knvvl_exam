@@ -413,7 +413,7 @@ public abstract class EntityField<T extends KnvvlEntity>
             {
                 if (idEntity instanceof LabeledEntity le)
                 {
-                    jsonObject.addProperty(field, le.getLabel());
+                    jsonObject.addProperty(field, le.getDisplayString());
                 }
                 jsonObject.addProperty(getValueField(), idEntity.getId());
             }
