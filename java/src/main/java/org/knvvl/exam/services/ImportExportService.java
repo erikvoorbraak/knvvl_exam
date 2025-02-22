@@ -2,8 +2,8 @@ package org.knvvl.exam.services;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 
-import static org.knvvl.exam.services.Languages.LANGUAGE_EN;
-import static org.knvvl.exam.services.Languages.LANGUAGE_NL;
+import static org.knvvl.exam.values.Languages.LANGUAGE_EN;
+import static org.knvvl.exam.values.Languages.LANGUAGE_NL;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,7 +27,7 @@ import org.knvvl.exam.repos.PictureRepository;
 import org.knvvl.exam.repos.QuestionRepository;
 import org.knvvl.exam.repos.RequirementRepository;
 import org.knvvl.exam.repos.TopicRepository;
-import org.knvvl.exam.services.Languages.Language;
+import org.knvvl.exam.values.Languages.Language;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -205,7 +205,7 @@ public class ImportExportService
             int questionId = toInt(examQuestions[i]);
             Topic topic = topics.stream().filter(t -> t.getId().equals(topicIc)).findFirst().orElseThrow();
             Question question = questions.stream().filter(q -> q.getId().equals(questionId)).findFirst().orElseThrow();
-            ExamQuestion examQuestion = new ExamQuestion(exam.getId(), question, topic, i + 1);
+            ExamQuestion examQuestion = new ExamQuestion(exam.getId(), question, topic, i + 1, null);
             examQuestionRepository.save(examQuestion);
         }
     }

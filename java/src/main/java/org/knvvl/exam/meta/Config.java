@@ -55,6 +55,8 @@ public record Config(@Nonnull String key, String defaultValue, String label)
     public static final Config EXAM_BODY_FONTSIZE = add("exam.body.fontsize", "11", "Paragraph font size used for PDF exam");
     public static final Config EXAM_LAST_CHANGED = add("exam.last-changed", "", "Date-time of last change, used for backup");
     public static final Config EXAM_LAST_BACKUP = add("exam.last-backup", "", "Date-time of last backup");
+    public static final Config EXAM_THRESHOLD_PER_TOPIC = add("exam.threshold-per-topic", "65", "Minimum percentage correct per topic");
+    public static final Config EXAM_THRESHOLD_OVERALL = add("exam.threshold-overall", "77", "Minimum percentage correct overall");
 
     public static final Config EXAM_TARGET_LANGUAGE = add("exam.target-language", "", "Default translate button translates to this language");
     public static final Config EXAM_CHATGPT_APIKEY = add("exam.chatgpt.apikey", "", "API key for ChatGPT client");

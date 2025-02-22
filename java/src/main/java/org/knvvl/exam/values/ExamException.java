@@ -1,4 +1,4 @@
-package org.knvvl.exam.services;
+package org.knvvl.exam.values;
 
 public class ExamException extends RuntimeException
 {

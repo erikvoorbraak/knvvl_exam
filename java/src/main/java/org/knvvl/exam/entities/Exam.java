@@ -1,7 +1,7 @@
 package org.knvvl.exam.entities;
 
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
-import static org.knvvl.exam.services.Languages.LANGUAGE_NL;
+import static org.knvvl.exam.values.Languages.LANGUAGE_NL;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import org.hibernate.annotations.Cache;
 import org.knvvl.exam.meta.EntityField;
 import org.knvvl.exam.meta.EntityFields;
 import org.knvvl.exam.meta.IdEntity;
-import org.knvvl.exam.services.Languages;
-import org.knvvl.exam.services.Languages.Language;
+import org.knvvl.exam.values.Languages;
+import org.knvvl.exam.values.Languages.Language;
 
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Cacheable;

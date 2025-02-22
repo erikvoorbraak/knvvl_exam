@@ -5,7 +5,7 @@ import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.knvvl.exam.services.Languages.LANGUAGE_NL;
+import static org.knvvl.exam.values.Languages.LANGUAGE_NL;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,7 +22,7 @@ import org.knvvl.exam.entities.Topic;
 import org.knvvl.exam.repos.ChangeRepository;
 import org.knvvl.exam.repos.RequirementRepository;
 import org.knvvl.exam.repos.TopicRepository;
-import org.knvvl.exam.services.CreateEntityResult;
+import org.knvvl.exam.values.CreateEntityResult;
 import org.knvvl.exam.services.ExamRepositories;
 import org.knvvl.exam.services.ExamService;
 import org.knvvl.exam.services.QuestionService;

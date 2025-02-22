@@ -9,6 +9,7 @@ import org.knvvl.exam.entities.Requirement;
 import org.knvvl.exam.meta.EntityField;
 import org.knvvl.exam.repos.RequirementRepository;
 import org.knvvl.exam.repos.TopicRepository;
+import org.knvvl.exam.values.CreateEntityResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;

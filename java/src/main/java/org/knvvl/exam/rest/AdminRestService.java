@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import org.knvvl.exam.ExamApplication;
 import org.knvvl.exam.services.BackupService;
 import org.knvvl.exam.services.ChangeDetector;
+import org.knvvl.exam.services.ExamAnswersImportService;
 import org.knvvl.exam.services.GoogleCloudStorageService;
 import org.knvvl.exam.spring.UserDetailsServiceImpl;
 import org.knvvl.exam.spring.UserDetailsServiceImpl.UserLogon;
@@ -44,12 +45,32 @@ public class AdminRestService
         <h2>User Logons</h2>
         {userLogons}
         <h2>Download Backup</h2>
-        Click <a href="/api/export" target="_blank">here</a> to download a Json backup.
+        Click <a href="/api/exportBackup" target="_blank">here</a> to download a Json backup.
         <h2>Restore Backup</h2>
-        <form method="POST" action="/api/import" enctype="multipart/form-data">
+        <form method="POST" action="/api/importBackup" enctype="multipart/form-data">
         <input type="file" name="file" accept="application/json"/>
         <input type="submit" name="submit"/>
         </form>
+        <h2>Import answers</h2>
+        Format is JSON (question value is local to topic, eg. 1-20): <pre>
+        [
+          {
+            "student": "123456",
+            "exam": 123,
+            "question": 20,
+            "topic": 5,
+            "answerCorrect": "A",
+            "answerGiven": "D"
+          },
+          etc
+        ]
+        </pre>
+        <br/>
+        <form method="POST" action="/api/importAnswers" enctype="multipart/form-data">
+        <input type="file" name="file" accept="application/json"/>
+        <input type="submit" name="submit"/>
+        </form>
+
         {googleCloudStorageService}
         <h2>About</h2>
         Created by Erik Voorbraak in 2023, to be used for KNVvL "Examencommissie".
@@ -57,6 +78,8 @@ public class AdminRestService
 
     @Autowired
     private BackupService backupService;
+    @Autowired
+    private ExamAnswersImportService examAnswersImportService;
     @Autowired
     private ChangeDetector changeDetector;
     @Autowired
@@ -77,7 +100,7 @@ public class AdminRestService
         return ResponseEntity.ok(page);
     }
 
-    @GetMapping(value = "/export", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/exportBackup", produces = APPLICATION_JSON_VALUE)
     ResponseEntity<String> exportBackup(HttpServletResponse response) throws IOException
     {
         Path file = createTimestampedFile("Export");
@@ -98,17 +121,7 @@ public class AdminRestService
         return Path.of(prefix + timestamp + ".json");
     }
 
-    @PostMapping(value = "/exportGoogleCloudStorage", produces = TEXT_HTML_VALUE)
-    ResponseEntity<String> exportToGoogleCloudStorage() throws IOException
-    {
-        Path file = createTimestampedFile("Export");
-        backupService.exportAll(file);
-        String message = googleCloudStorageService.exportNow(file);
-        Files.delete(file);
-        return ResponseEntity.ok(message);
-    }
-
-    @PostMapping(value = "/import", produces = TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/importBackup", produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> importBackup(@RequestParam("file") MultipartFile mpFile) throws IOException
     {
         if (!backupService.canRestore())
@@ -126,5 +139,37 @@ public class AdminRestService
         Files.delete(file);
 
         return ResponseEntity.ok(imported);
+    }
+
+    @PostMapping(value = "/exportGoogleCloudStorage", produces = TEXT_HTML_VALUE)
+    ResponseEntity<String> exportToGoogleCloudStorage() throws IOException
+    {
+        Path file = createTimestampedFile("Export");
+        backupService.exportAll(file);
+        String message = googleCloudStorageService.exportNow(file);
+        Files.delete(file);
+        return ResponseEntity.ok(message);
+    }
+
+    @PostMapping(value = "/importAnswers", produces = TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> importAnswers(@RequestParam("file") MultipartFile mpFile) throws IOException
+    {
+        byte[] bytes = mpFile.getBytes();
+        if (bytes.length == 0)
+        {
+            return ResponseEntity.status(BAD_REQUEST).body("No file to upload was found");
+        }
+        try
+        {
+            Path file = createTimestampedFile("Import");
+            Files.write(file, bytes);
+            var imported = examAnswersImportService.importFrom(file);
+            Files.delete(file);
+            return ResponseEntity.ok(imported);
+        }
+        catch (RuntimeException e)
+        {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 }

@@ -6,12 +6,11 @@ import java.util.List;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
-import org.knvvl.exam.meta.IdEntity;
-import org.knvvl.exam.meta.KnvvlEntity;
-import org.knvvl.exam.repos.QuestionRepository;
-import org.knvvl.exam.repos.TopicRepository;
 import org.knvvl.exam.meta.EntityField;
 import org.knvvl.exam.meta.EntityFields;
+import org.knvvl.exam.meta.IdEntity;
+import org.knvvl.exam.repos.QuestionRepository;
+import org.knvvl.exam.repos.TopicRepository;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
@@ -47,13 +46,17 @@ public class ExamQuestion implements IdEntity
     @Column(name = "question_index")
     private int questionIndex;
 
+    @Column(name = "answer")
+    private String answer;
+
     public static EntityFields<ExamQuestion> getFields(QuestionRepository questionRepository, TopicRepository topicRepository)
     {
         return new EntityFields<>(List.of(
             new EntityField.EntityFieldInteger<>("exam", ExamQuestion::getExam, ExamQuestion::setExam),
             new EntityField.EntityFieldIdEntity<>("question", questionRepository, ExamQuestion::getQuestion, ExamQuestion::setQuestion),
             new EntityField.EntityFieldIdEntity<>("topic", topicRepository, ExamQuestion::getTopic, ExamQuestion::setTopic),
-            new EntityField.EntityFieldInteger<>("questionIndex", ExamQuestion::getQuestionIndex, ExamQuestion::setQuestionIndex)));
+            new EntityField.EntityFieldInteger<>("questionIndex", ExamQuestion::getQuestionIndex, ExamQuestion::setQuestionIndex),
+            new EntityField.EntityFieldString<>("answer", ExamQuestion::getAnswer, ExamQuestion::setAnswer)));
     }
 
     public ExamQuestion()
@@ -61,13 +64,14 @@ public class ExamQuestion implements IdEntity
         // For Hibernate
     }
 
-    public ExamQuestion(int exam, Question question, Topic topic, int questionIndex)
+    public ExamQuestion(int exam, Question question, Topic topic, int questionIndex, String answer)
     {
         this.id = exam * 1000 + questionIndex;
         this.exam = exam;
         this.question = question;
         this.topic = topic;
         this.questionIndex = questionIndex;
+        this.answer = answer;
     }
 
     @Override
@@ -120,5 +124,15 @@ public class ExamQuestion implements IdEntity
     public void setTopic(Topic topic)
     {
         this.topic = topic;
+    }
+
+    public void setAnswer(String answer)
+    {
+        this.answer = answer;
+    }
+
+    public String getAnswer()
+    {
+        return answer;
     }
 }

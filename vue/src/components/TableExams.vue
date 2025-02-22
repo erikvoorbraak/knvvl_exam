@@ -5,8 +5,13 @@
       :rows-per-page="10"
       :rows-items="[10, 20, 50, 100]">
       <template #item-id="{ id }">
-        <a :style="{ cursor: 'pointer'}" @click="this.$router.push('/exam/' + id)">{{ id }}</a><br/>
-        <a :style="{ cursor: 'pointer'}" @click="this.$router.push('/examQuestions/' + id)">Vragen</a>
+        <a :style="{ cursor: 'pointer' }"
+          @click.exact="clickExact('/exam/' + id)"
+          @click.ctrl="clickCtrl('/exam/' + id)">{{ id }}</a>
+        <br/>
+        <a :style="{ cursor: 'pointer' }"
+          @click.exact="clickExact('/examQuestions/' + id)"
+          @click.ctrl="clickCtrl('/examQuestions/' + id)">Vragen</a>
       </template>
       <template #item-fileSize="{ url, fileSize }">
         <a target="_blank" download="GeneratedExam" :href="url + '/generate'">Genereer</a>&nbsp;
@@ -39,6 +44,12 @@
       };
     },
     methods: {
+        clickExact(location) {
+          this.$router.push(location);
+        },
+        clickCtrl(location) {
+          window.open(location, '_blank');
+        },
         loadRows: function() {
           axios
           .get('/api/exams')

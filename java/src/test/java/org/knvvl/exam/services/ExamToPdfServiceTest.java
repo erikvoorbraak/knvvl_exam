@@ -3,7 +3,7 @@ package org.knvvl.exam.services;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.knvvl.exam.services.ExamGenerator.BACKGROUND;
 import static org.knvvl.exam.services.ExamGenerator.FULL_WIDTH;
-import static org.knvvl.exam.services.Languages.LANGUAGE_NL;
+import static org.knvvl.exam.values.Languages.LANGUAGE_NL;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

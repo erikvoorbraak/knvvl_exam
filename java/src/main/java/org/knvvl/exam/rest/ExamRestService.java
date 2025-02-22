@@ -19,12 +19,15 @@ import org.knvvl.exam.entities.Exam;
 import org.knvvl.exam.entities.ExamQuestion;
 import org.knvvl.exam.entities.Question;
 import org.knvvl.exam.entities.Topic;
+import org.knvvl.exam.repos.ExamAnswerRepository;
 import org.knvvl.exam.services.ExamCreationService;
-import org.knvvl.exam.services.ExamException;
+import org.knvvl.exam.services.TextService;
+import org.knvvl.exam.values.ExamException;
 import org.knvvl.exam.services.ExamRepositories;
 import org.knvvl.exam.services.ExamService;
 import org.knvvl.exam.services.ExamToPdfService;
-import org.knvvl.exam.services.Languages;
+import org.knvvl.exam.values.ExamScores;
+import org.knvvl.exam.values.Languages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,6 +54,9 @@ public class ExamRestService
     @Autowired private ExamService examService;
     @Autowired private ExamToPdfService examToPdfService;
     @Autowired private QuestionRestService questionRestService;
+    @Autowired private ExamAnswerRepository examAnswerRepository;
+    @Autowired
+    private TextService textService;
 
     @GetMapping(value = "/exams", produces = APPLICATION_JSON_VALUE)
     String getExams()
@@ -83,7 +89,16 @@ public class ExamRestService
         List<ExamQuestion> questions = examService.getExamQuestionsForExam(examId);
         json.addProperty("questions", printQuestions(questions, q -> String.valueOf(q.getId())));
         json.addProperty("answers", printQuestions(questions, Question::getAnswer));
+        addStatistics(examId, json, questions);
         return GSON.toJson(json);
+    }
+
+    private void addStatistics(int examId, JsonObject json, List<ExamQuestion> questions)
+    {
+        ExamScores examScores = new ExamScores(examAnswerRepository).addForExam(examId);
+        json.addProperty("percentagePassed", examScores.getPercentagePassed(examService.getPassCriteria()));
+        json.addProperty("scorePercentage", examScores.getScorePercentage());
+        json.addProperty("historicScorePercentage", new ExamScores(examAnswerRepository).addHistoricScores(questions).getScorePercentage());
     }
 
     private String printQuestions(List<ExamQuestion> questions, Function<Question, String> function)

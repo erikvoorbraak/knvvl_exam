@@ -7,6 +7,12 @@
             <tr><td><button class="button is-primary">Change</button></td></tr>
             <tr><td>Vragen</td><td><textarea v-model="form.questions" readonly="true" rows="5" cols="120"/></td></tr>
             <tr><td>Antwoorden</td><td><textarea v-model="form.answers" readonly="true" rows="5" cols="120"/></td></tr>
+            <tr><td><a title="Percentage kandidaten die is geslaagd op basis van de huidige normering">% Geslaagd</a></td>
+                <td><input disabled v-model="form.percentagePassed"/></td></tr>
+            <tr><td><a title="Percentage vragen die goed is beantwoord ten opzichte van het totaal aantal vragen">% Vragen goed</a></td>
+                <td><input disabled v-model="form.scorePercentage"/></td></tr>
+            <tr><td><a title="Te verwachten percentage goed beantwoorde vragen op basis van alle examens">% Vragen goed, historisch</a></td>
+                <td><input disabled v-model="form.historicScorePercentage"/></td></tr>
             </table>
             
         </form>

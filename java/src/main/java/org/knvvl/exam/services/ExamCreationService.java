@@ -17,7 +17,7 @@ import org.knvvl.exam.entities.Question;
 import org.knvvl.exam.entities.Topic;
 import org.knvvl.exam.repos.QuestionRepository;
 import org.knvvl.exam.repos.TopicRepository;
-import org.knvvl.exam.services.Languages.Language;
+import org.knvvl.exam.values.Languages.Language;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

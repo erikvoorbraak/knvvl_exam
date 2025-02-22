@@ -26,6 +26,7 @@ import org.knvvl.exam.entities.ExamQuestion;
 import org.knvvl.exam.entities.Question;
 import org.knvvl.exam.entities.Topic;
 import org.knvvl.exam.meta.Config;
+import org.knvvl.exam.values.ExamException;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;

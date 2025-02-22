@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.knvvl.exam.entities.Change;
 import org.knvvl.exam.entities.Exam;
+import org.knvvl.exam.entities.ExamAnswer;
 import org.knvvl.exam.entities.ExamQuestion;
 import org.knvvl.exam.entities.Picture;
 import org.knvvl.exam.entities.Question;
@@ -11,8 +12,10 @@ import org.knvvl.exam.entities.Requirement;
 import org.knvvl.exam.entities.Text;
 import org.knvvl.exam.entities.Topic;
 import org.knvvl.exam.entities.User;
+import org.knvvl.exam.meta.EntityFields;
 import org.knvvl.exam.meta.EntityHandler;
 import org.knvvl.exam.repos.ChangeRepository;
+import org.knvvl.exam.repos.ExamAnswerRepository;
 import org.knvvl.exam.repos.ExamQuestionRepository;
 import org.knvvl.exam.repos.ExamRepository;
 import org.knvvl.exam.repos.PictureRepository;
@@ -41,6 +44,8 @@ public class ExamRepositories
     private ExamRepository examRepository;
     @Autowired
     private ExamQuestionRepository examQuestionRepository;
+    @Autowired
+    private ExamAnswerRepository examAnswerRepository;
     @Autowired
     private QuestionRepository questionRepository;
     @Autowired
@@ -106,6 +111,7 @@ public class ExamRepositories
         var examQuestionFields = ExamQuestion.getFields(questionRepository, topicRepository);
         var changeFields = Change.getFields(userRepository, questionRepository);
 
+        EntityFields<ExamAnswer> fields = ExamAnswer.getFields();
         return List.of(
             new EntityHandler<>(textRepository, Text.getFields(), "texts", Text::new),
             new EntityHandler<>(userRepository, User.getFields(), "users", User::new),
@@ -115,6 +121,7 @@ public class ExamRepositories
             new EntityHandler<>(questionRepository, questionFields, "questions", Question::new),
             new EntityHandler<>(examRepository, Exam.getFields(), "exams", Exam::new),
             new EntityHandler<>(examQuestionRepository, examQuestionFields, "examQuestions", ExamQuestion::new),
+            new EntityHandler<>(examAnswerRepository, fields, "examAnswers", ExamAnswer::newExamAnswerForJsonImport),
             new EntityHandler<>(changeRepository, changeFields, "changes", Change::newChangeForJsonImport));
     }
 

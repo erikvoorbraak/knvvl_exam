@@ -9,9 +9,13 @@ import org.knvvl.exam.entities.Picture;
 import org.knvvl.exam.entities.Question;
 import org.knvvl.exam.entities.Requirement;
 import org.knvvl.exam.entities.Topic;
+import org.knvvl.exam.meta.Config;
 import org.knvvl.exam.repos.ExamQuestionRepository;
 import org.knvvl.exam.repos.ExamRepository;
 import org.knvvl.exam.repos.QuestionRepository;
+import org.knvvl.exam.repos.TopicRepository;
+import org.knvvl.exam.values.ExamQuestions;
+import org.knvvl.exam.values.PassCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +34,10 @@ public class ExamService
     private QuestionRepository questionRepository;
     @Autowired
     private ChangeDetector changeDetector;
+    @Autowired
+    private TextService textService;
+    @Autowired
+    private TopicRepository topicRepository;
 
     @Transactional
     public void addExam(Exam exam, List<Question> questions)
@@ -42,7 +50,7 @@ public class ExamService
         for (int i = 0; i < questions.size(); i++)
         {
             Question question = questions.get(i);
-            examQuestions.add(new ExamQuestion(examId, question, question.getTopic(), i));
+            examQuestions.add(new ExamQuestion(examId, question, question.getTopic(), i, question.getAnswer()));
         }
         examQuestionRepository.saveAll(examQuestions);
         changeDetector.changed();
@@ -56,6 +64,11 @@ public class ExamService
     public List<ExamQuestion> getExamQuestionsForExam(int examId)
     {
         return examQuestionRepository.findByExamOrderByQuestionIndex(examId);
+    }
+
+    public ExamQuestions getExamQuestions(int examId)
+    {
+        return new ExamQuestions(examId, getExamQuestionsForExam(examId));
     }
 
     @Transactional
@@ -146,5 +159,13 @@ public class ExamService
             Requirement requirement = examQuestion.getRequirement();
             removeFrom.removeIf(q -> requirement.equals(q.getRequirement()));
         }
+    }
+
+    public PassCriteria getPassCriteria()
+    {
+        return new PassCriteria(
+            (int)topicRepository.count(),
+            Integer.parseInt(textService.get(Config.EXAM_THRESHOLD_PER_TOPIC)),
+            Integer.parseInt(textService.get(Config.EXAM_THRESHOLD_OVERALL)));
     }
 }

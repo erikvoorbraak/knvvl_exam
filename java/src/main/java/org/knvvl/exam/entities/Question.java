@@ -5,7 +5,7 @@ import static java.util.Optional.ofNullable;
 
 import static org.apache.commons.lang3.Validate.isTrue;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
-import static org.knvvl.exam.services.Languages.LANGUAGE_NL;
+import static org.knvvl.exam.values.Languages.LANGUAGE_NL;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -23,7 +23,7 @@ import org.knvvl.exam.meta.IdEntity;
 import org.knvvl.exam.repos.PictureRepository;
 import org.knvvl.exam.repos.RequirementRepository;
 import org.knvvl.exam.repos.TopicRepository;
-import org.knvvl.exam.services.Languages;
+import org.knvvl.exam.values.Languages;
 
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Cacheable;
