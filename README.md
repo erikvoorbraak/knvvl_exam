@@ -115,7 +115,7 @@ If successful, then a JAR file should appear in `C:/github/knvvl_exam/java/targe
 
 ### Building a Docker image
 To be able to create a Docker image on a Windows machine, use "Docker Desktop" (https://www.docker.com/products/docker-desktop/).
-Open a command prompt and go to `C:/github/knvvl_exam/java`. Build the Docker image (note: the single '.' at the end is
+AOpen a command prompt and go to `C:/github/knvvl_exam/java`. Build the Docker image (note: the single '.' at the end is
 intended to be copied!):<br/>
 `docker build -t erikvoorbraak/knvvl_exam .`<br/>
 
