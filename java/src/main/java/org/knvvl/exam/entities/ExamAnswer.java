@@ -1,10 +1,14 @@
 package org.knvvl.exam.entities;
 
+import static org.apache.commons.lang3.Validate.isTrue;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 import java.io.Serializable;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
+import org.apache.logging.log4j.util.Strings;
 import org.hibernate.annotations.Cache;
 import org.knvvl.exam.meta.EntityField;
 import org.knvvl.exam.meta.EntityFields;
@@ -48,29 +52,31 @@ public class ExamAnswer implements KnvvlEntity
     public ExamAnswer()
     {
         // For Hibernate
-
     }
 
-    public ExamAnswer(String student, int exam, int question, int topic, String answersCorrect, String answerGiven)
+    private ExamAnswer(ExamAnswerKey examAnswerKey)
     {
+        this.examAnswerKey = examAnswerKey;
+    }
+
+    public ExamAnswer(@Nonnull String student, int exam, int question, int topic, @Nonnull String answersCorrect, @Nonnull String answerGiven)
+    {
+        isTrue(!Strings.isBlank(student), "student cannot be blank");
+        isTrue(exam >= 0, "exam must be greater than 0");
+        isTrue(question >= 0, "question must be greater than 0");
+        isTrue(topic >= 0, "topic must be greater than 0");
+        isTrue(!Strings.isBlank(answersCorrect), "answersCorrect must not be blank");
+        isTrue(!Strings.isBlank(answerGiven) && answerGiven.length() == 1, "answerGiven must be a string of length 1");
+
         this.examAnswerKey = new ExamAnswerKey(student, exam, question);
         this.topic = topic;
         this.answersCorrect = answersCorrect;
         this.answerGiven = answerGiven;
     }
 
-    public void normalize()
-    {
-        if ("ABCD".equals(answerGiven) || "A|B|C|D".equals(answerGiven)) // Different ways of saying all answers are correct
-        {
-            answersCorrect = "ABCD";
-            answerGiven = "A";
-        }
-    }
-
     public static ExamAnswer newExamAnswerForJsonImport()
     {
-        return new ExamAnswer(null, 0, 0, 0, null, null);
+        return new ExamAnswer(new ExamAnswerKey());
     }
 
     @Embeddable

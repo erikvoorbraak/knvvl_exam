@@ -44,15 +44,13 @@ public class ExamAnswersImportService
     {
         var examQuestions = cachedQuestions.computeIfAbsent(jsonAnswer.exam, examId -> examService.getExamQuestions(examId));
         var questionId = examQuestions.get(jsonAnswer.topic, jsonAnswer.question).getQuestion().getId();
-        var examAnswer = new ExamAnswer(
+        return new ExamAnswer(
             jsonAnswer.student,
             jsonAnswer.exam,
             questionId,
             jsonAnswer.topic,
             jsonAnswer.answerCorrect,
             jsonAnswer.answerGiven);
-        examAnswer.normalize();
-        return examAnswer;
     }
 
     private static class ExamAnswerJson

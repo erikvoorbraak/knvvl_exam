@@ -59,7 +59,7 @@ public class AdminRestService
             "exam": 123,
             "question": 20,
             "topic": 5,
-            "answerCorrect": "A",
+            "answerCorrect": "AB",
             "answerGiven": "D"
           },
           etc
