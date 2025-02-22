@@ -40,17 +40,19 @@ public class ExamAnswersImportService
         return "Imported " + toInsert.size() + " exam answers";
     }
 
-    private ExamAnswer toExamAnswer(ExamAnswerJson examAnswer, Map<Integer, ExamQuestions> cachedQuestions)
+    private ExamAnswer toExamAnswer(ExamAnswerJson jsonAnswer, Map<Integer, ExamQuestions> cachedQuestions)
     {
-        var examQuestions = cachedQuestions.computeIfAbsent(examAnswer.exam, examId -> examService.getExamQuestions(examId));
-        var questionId = examQuestions.get(examAnswer.topic, examAnswer.question).getQuestion().getId();
-        return new ExamAnswer(
-            examAnswer.student,
-            examAnswer.exam,
+        var examQuestions = cachedQuestions.computeIfAbsent(jsonAnswer.exam, examId -> examService.getExamQuestions(examId));
+        var questionId = examQuestions.get(jsonAnswer.topic, jsonAnswer.question).getQuestion().getId();
+        var examAnswer = new ExamAnswer(
+            jsonAnswer.student,
+            jsonAnswer.exam,
             questionId,
-            examAnswer.topic,
-            examAnswer.answerCorrect,
-            examAnswer.answerGiven);
+            jsonAnswer.topic,
+            jsonAnswer.answerCorrect,
+            jsonAnswer.answerGiven);
+        examAnswer.normalize();
+        return examAnswer;
     }
 
     private static class ExamAnswerJson

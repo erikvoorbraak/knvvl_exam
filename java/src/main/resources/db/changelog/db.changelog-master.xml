@@ -12,5 +12,6 @@
     <include file="db/changelog/add-language.xml"/>
     <include file="db/changelog/add-column-translates.xml"/>
     <include file="db/changelog/add-answers.xml"/>
+    <include file="db/changelog/indexes.xml"/>
 
 </databaseChangeLog>

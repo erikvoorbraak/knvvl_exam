@@ -59,6 +59,15 @@ public class ExamAnswer implements KnvvlEntity
         this.answerGiven = answerGiven;
     }
 
+    public void normalize()
+    {
+        if ("ABCD".equals(answerGiven) || "A|B|C|D".equals(answerGiven)) // Different ways of saying all answers are correct
+        {
+            answersCorrect = "ABCD";
+            answerGiven = "A";
+        }
+    }
+
     public static ExamAnswer newExamAnswerForJsonImport()
     {
         return new ExamAnswer(null, 0, 0, 0, null, null);

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+    <changeSet id="indexes_v01" author="erivoo">
+        <createIndex tableName="t_change" indexName="i_change_question">
+            <column name="question"/>
+        </createIndex>
+        <createIndex tableName="t_exam_question" indexName="i_exam_question_exam">
+            <column name="exam"/>
+        </createIndex>
+        <createIndex tableName="t_exam_answer" indexName="i_exam_answer_exam">
+            <column name="exam"/>
+        </createIndex>
+        <createIndex tableName="t_exam_answer" indexName="i_exam_answer_question">
+            <column name="question"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
