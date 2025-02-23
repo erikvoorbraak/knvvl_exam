@@ -34,10 +34,11 @@ public class ExamScores
 
     public ExamScores addHistoricScores(List<ExamQuestion> questionsInExam)
     {
-        questionsInExam.stream()
+        List<Integer> questionIds = questionsInExam.stream()
             .map(ExamQuestion::getQuestion)
             .map(Question::getId)
-            .forEach(this::addForQuestion);
+            .toList();
+        addAll(examAnswerRepository.findByExamAnswerKeyQuestionIn(questionIds));
         return this;
     }
 

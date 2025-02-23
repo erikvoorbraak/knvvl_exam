@@ -98,7 +98,7 @@ public class ExamService
         List<Question> altQuestions = new ArrayList<>();
         altQuestions.add(questionForWhichToGetAlt);
         Requirement requirement = questionForWhichToGetAlt.getRequirement();
-        altQuestionsForTopic.stream().filter(q -> q.getRequirement().equals(requirement)).forEach(altQuestions::add);
+        allAltQuestionsForTopic.stream().filter(q -> q.getRequirement().equals(requirement)).forEach(altQuestions::add);
         altQuestionsForTopic.stream().filter(q -> !q.getRequirement().equals(requirement)).forEach(altQuestions::add);
         return altQuestions;
     }

@@ -1,10 +1,15 @@
 package org.knvvl.exam.values;
 
+import static java.util.stream.Collectors.joining;
+
 import static org.apache.commons.lang3.Validate.isTrue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.knvvl.exam.entities.ExamAnswer;
@@ -55,6 +60,20 @@ public class GivenAnswersForQuestion
             return -1;
         }
         return (int)examAnswers.stream().filter(ExamAnswer::isCorrect).count() * 100 / examAnswers.size();
+    }
+
+    public String toStringPerExam()
+    {
+        if (examAnswers.isEmpty()) {
+            return "";
+        }
+        Map<Integer, GivenAnswersForQuestion> perExam = new HashMap<>();
+        examAnswers.forEach(examAnswer -> perExam.computeIfAbsent(examAnswer.getExam(), e -> new GivenAnswersForQuestion(questionId)).add(examAnswer));
+        String perExamPerc = perExam.entrySet().stream()
+            .sorted(Entry.comparingByKey())
+            .map(e -> e.getKey() + ": " + e.getValue().getScorePercentage() + "% (#=" + e.getValue().getNumAnswers() + ")\n")
+            .collect(joining(""));
+        return perExamPerc + "Overall: " + getScorePercentage() + "% (#=" + getNumAnswers() + ")";
     }
 
     public String toString()

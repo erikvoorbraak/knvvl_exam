@@ -31,7 +31,7 @@ public class StudentAnswers
             perTopic.values().stream().allMatch(forTopic ->
                 passedForRequirement(passCriteria.thresholdPerTopic(), forTopic));
         // For debugging
-        System.out.println(studentId + ": " + passed);
+        //System.out.println(studentId + ": " + passed);
         return passed;
     }
 

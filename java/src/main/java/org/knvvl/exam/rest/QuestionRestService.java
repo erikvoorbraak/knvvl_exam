@@ -21,11 +21,11 @@ import org.knvvl.exam.entities.Question;
 import org.knvvl.exam.meta.EntityField;
 import org.knvvl.exam.repos.ExamAnswerRepository;
 import org.knvvl.exam.services.ExamRepositories;
+import org.knvvl.exam.services.QuestionService;
+import org.knvvl.exam.services.UserService;
 import org.knvvl.exam.values.ExamScores;
 import org.knvvl.exam.values.GivenAnswersForQuestion;
 import org.knvvl.exam.values.Languages;
-import org.knvvl.exam.services.QuestionService;
-import org.knvvl.exam.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -92,24 +92,9 @@ public class QuestionRestService
     {
         var question = examRepositories.getQuestionRepository().getReferenceById(questionId);
         var json = getJsonQuestion(question, true, true, false, true);
-        addScores(questionId, json);
-        return GSON.toJson(json);
-    }
-
-    private void addScores(int questionId, JsonObject json)
-    {
         GivenAnswersForQuestion answers = new ExamScores(examAnswerRepository).addForQuestion(questionId).getForQuestion(questionId);
-        int numExams = answers.getNumExams();
-        json.addProperty("numExams", numExams);
-        if (answers.isEmpty())
-        {
-            json.addProperty("scoreLabel", "-");
-        }
-        else {
-            int scorePercentage = answers.getScorePercentage();
-            json.addProperty("score", scorePercentage);
-            json.addProperty("scoreLabel", answers.isEmpty() ? "-" : scorePercentage + "% / " + numExams + " / " + answers.getNumAnswers());
-        }
+        json.addProperty("scoresPerExam", answers.toStringPerExam());
+        return GSON.toJson(json);
     }
 
     @GetMapping(value = "/questions/{questionId}/translated", produces = APPLICATION_JSON_VALUE)
