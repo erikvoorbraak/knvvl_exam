@@ -70,8 +70,8 @@ import TableChanges from "../components/TableChanges.vue";
             </select>
         </td></tr>
         <tr><td>Vertaling van</td><td><input :disabled="loading" type="number" v-model="form.translates"/></td></tr>
-        <tr v-if="questionId"><td><a title="Percentage goed beantwoord na eventuele correctie, aantal examens waarin de vraag voorkwam, aantal keer beantwoord">Score</a></td>
-            <td><input disabled v-model="form.scoreLabel"/></td></tr>
+        <tr v-if="questionId"><td><a title="Percentage goed beantwoord per examen, na eventuele correctie">Scores</a></td>
+            <td><textarea disabled v-model="form.scoresPerExam" rows="2" cols="40"/></td></tr>
       </table>
       <button class="button is-primary">Submit</button>
       </form>
