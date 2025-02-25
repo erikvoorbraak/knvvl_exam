@@ -93,7 +93,7 @@ public class QuestionRestService
         var question = examRepositories.getQuestionRepository().getReferenceById(questionId);
         var json = getJsonQuestion(question, true, true, false, true);
         GivenAnswersForQuestion answers = new ExamScores(examAnswerRepository).addForQuestion(questionId).getForQuestion(questionId);
-        json.addProperty("scoresPerExam", answers.toStringPerExam());
+        json.addProperty("scoresPerExam", answers.toStringPerExam(examRepositories.getExamRepository()));
         return GSON.toJson(json);
     }
 

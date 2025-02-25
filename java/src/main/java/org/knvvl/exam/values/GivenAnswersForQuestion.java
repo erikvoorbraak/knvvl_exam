@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.knvvl.exam.entities.ExamAnswer;
+import org.knvvl.exam.repos.ExamRepository;
 
 public class GivenAnswersForQuestion
 {
@@ -62,7 +63,7 @@ public class GivenAnswersForQuestion
         return (int)examAnswers.stream().filter(ExamAnswer::isCorrect).count() * 100 / examAnswers.size();
     }
 
-    public String toStringPerExam()
+    public String toStringPerExam(ExamRepository examRepository)
     {
         if (examAnswers.isEmpty()) {
             return "";
@@ -71,9 +72,22 @@ public class GivenAnswersForQuestion
         examAnswers.forEach(examAnswer -> perExam.computeIfAbsent(examAnswer.getExam(), e -> new GivenAnswersForQuestion(questionId)).add(examAnswer));
         String perExamPerc = perExam.entrySet().stream()
             .sorted(Entry.comparingByKey())
-            .map(e -> e.getKey() + ": " + e.getValue().getScorePercentage() + "% (#=" + e.getValue().getNumAnswers() + ")\n")
+            .map(e -> e.getKey() + " " + getExamSafe(e.getKey(), examRepository) +
+                ": " + e.getValue().getScorePercentage() + "% (" + e.getValue().getNumAnswers() + " answers)\n")
             .collect(joining(""));
         return perExamPerc + "Overall: " + getScorePercentage() + "% (#=" + getNumAnswers() + ")";
+    }
+
+    private String getExamSafe(int examId, ExamRepository examRepository)
+    {
+        try
+        {
+            return examRepository.getReferenceById(examId).getLabel();
+        }
+        catch (RuntimeException e)
+        {
+            return "";
+        }
     }
 
     public String toString()
