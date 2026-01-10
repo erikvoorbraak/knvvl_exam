@@ -76,7 +76,7 @@ class ExamToDocumentServiceTest
         question1.setAnswerD("Short D");
         picture1.setFileData(getResourceBytes("Aer001.jpg"));
         question1.setPicture(picture1);
-        ExamQuestion eq1 = new ExamQuestion(42, question1, topic, 0);
+        ExamQuestion eq1 = new ExamQuestion(42, question1, topic, 0, "A");
 
         question2.setTopic(topic);
         question2.setRequirement(requirement);
@@ -87,7 +87,7 @@ class ExamToDocumentServiceTest
         question2.setAnswerD("Short D");
         picture2.setFileData(getResourceBytes("Large.jpg"));
         question2.setPicture(picture2);
-        ExamQuestion eq2 = new ExamQuestion(42, question2, topic, 1);
+        ExamQuestion eq2 = new ExamQuestion(42, question2, topic, 1, "A");
 
         exam.setId(examId);
         service.examService = examService;

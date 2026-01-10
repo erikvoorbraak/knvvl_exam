@@ -1,5 +1,7 @@
 package org.knvvl.exam.services;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
 
 import org.knvvl.exam.entities.Change;
@@ -63,20 +65,22 @@ public class ExamRepositories
         PictureRepository pictureRepository,
         ExamRepository examRepository,
         ExamQuestionRepository examQuestionRepository,
+        ExamAnswerRepository examAnswerRepository,
         QuestionRepository questionRepository,
         ChangeRepository changeRepository,
         UserRepository userRepository,
         TextRepository textRepository)
     {
-        this.topicRepository = topicRepository;
-        this.requirementRepository = requirementRepository;
-        this.pictureRepository = pictureRepository;
-        this.examRepository = examRepository;
-        this.examQuestionRepository = examQuestionRepository;
-        this.questionRepository = questionRepository;
-        this.changeRepository = changeRepository;
-        this.userRepository = userRepository;
-        this.textRepository = textRepository;
+        this.topicRepository = requireNonNull(topicRepository);
+        this.requirementRepository = requireNonNull(requirementRepository);
+        this.pictureRepository = requireNonNull(pictureRepository);
+        this.examRepository = requireNonNull(examRepository);
+        this.examQuestionRepository = requireNonNull(examQuestionRepository);
+        this.examAnswerRepository = requireNonNull(examAnswerRepository);
+        this.questionRepository = requireNonNull(questionRepository);
+        this.changeRepository = requireNonNull(changeRepository);
+        this.userRepository = requireNonNull(userRepository);
+        this.textRepository = requireNonNull(textRepository);
     }
 
     public PictureRepository getPictureRepository()

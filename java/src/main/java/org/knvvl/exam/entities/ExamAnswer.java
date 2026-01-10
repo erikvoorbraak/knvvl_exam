@@ -74,6 +74,11 @@ public class ExamAnswer implements KnvvlEntity
         this.answerGiven = answerGiven;
     }
 
+    public ExamAnswerKey getExamAnswerKey()
+    {
+        return examAnswerKey;
+    }
+
     public static ExamAnswer newExamAnswerForJsonImport()
     {
         return new ExamAnswer(new ExamAnswerKey());

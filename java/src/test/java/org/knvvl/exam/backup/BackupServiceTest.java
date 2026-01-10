@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.knvvl.exam.entities.Change;
 import org.knvvl.exam.entities.Exam;
+import org.knvvl.exam.entities.ExamAnswer;
 import org.knvvl.exam.entities.ExamQuestion;
 import org.knvvl.exam.entities.Picture;
 import org.knvvl.exam.entities.Question;
@@ -27,6 +28,7 @@ import org.knvvl.exam.entities.Topic;
 import org.knvvl.exam.entities.User;
 import org.knvvl.exam.meta.IdEntity;
 import org.knvvl.exam.repos.ChangeRepository;
+import org.knvvl.exam.repos.ExamAnswerRepository;
 import org.knvvl.exam.repos.ExamQuestionRepository;
 import org.knvvl.exam.repos.ExamRepository;
 import org.knvvl.exam.repos.PictureRepository;
@@ -47,6 +49,7 @@ class BackupServiceTest
     private final PictureRepository pictureRepository = mock(PictureRepository.class);
     private final ExamRepository examRepository = mock(ExamRepository.class);
     private final ExamQuestionRepository examQuestionRepository = mock(ExamQuestionRepository.class);
+    private final ExamAnswerRepository examAnswerRepository = mock(ExamAnswerRepository.class);
     private final QuestionRepository questionRepository = mock(QuestionRepository.class);
     private final ChangeRepository changeRepository = mock(ChangeRepository.class);
     private final UserRepository userRepository = mock(UserRepository.class);
@@ -59,8 +62,8 @@ class BackupServiceTest
     void setUp()
     {
         examRepositories.setRepositories(
-            topicRepository, requirementRepository, pictureRepository, examRepository, examQuestionRepository, questionRepository,
-            changeRepository, userRepository, textRepository);
+            topicRepository, requirementRepository, pictureRepository, examRepository, examQuestionRepository, examAnswerRepository,
+            questionRepository, changeRepository, userRepository, textRepository);
 
         initRepository(pictureRepository, picture());
         initRepository(topicRepository, topic());
@@ -69,6 +72,7 @@ class BackupServiceTest
         initRepository(questionRepository, question());
         initRepository(examRepository, exam());
         initRepository(examQuestionRepository, examQuestion());
+        initRepository(examAnswerRepository, examAnswer());
         when(changeRepository.findAll()).thenReturn(List.of(change()));
         when(textRepository.findAll()).thenReturn(List.of(text()));
     }
@@ -77,6 +81,12 @@ class BackupServiceTest
     {
         when(repository.findAll()).thenReturn(List.of(entity));
         when(repository.findById(entity.getId())).thenReturn(Optional.of(entity));
+    }
+
+    private <T extends IdEntity> void initRepository(ExamAnswerRepository repository, ExamAnswer entity)
+    {
+        when(repository.findAll()).thenReturn(List.of(entity));
+        when(repository.findById(entity.getExamAnswerKey())).thenReturn(Optional.of(entity));
     }
 
     private Text text()
@@ -151,6 +161,11 @@ class BackupServiceTest
         examQuestion.setQuestion(question());
         examQuestion.setQuestionIndex(42);
         return examQuestion;
+    }
+
+    private ExamAnswer examAnswer()
+    {
+        return new ExamAnswer("s", 1, 2, 3, "AB", "A");
     }
 
     private Change change()

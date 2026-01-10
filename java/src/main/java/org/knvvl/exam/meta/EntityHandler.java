@@ -2,6 +2,7 @@ package org.knvvl.exam.meta;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,11 @@ import com.google.gson.stream.JsonWriter;
 public record EntityHandler<T extends KnvvlEntity>(JpaRepository<T, ?> repository, EntityFields<T> fields, String fieldName, Supplier<T> constructor)
 {
     private static final String FIELD_ID = "id";
+
+    public EntityHandler
+    {
+        Objects.requireNonNull(repository);
+    }
 
     public int exportAll(JsonWriter writer) throws IOException
     {
