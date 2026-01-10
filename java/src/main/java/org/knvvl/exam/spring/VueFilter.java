@@ -37,8 +37,10 @@ public class VueFilter implements Filter
             return true;
         }
         var uri = http.getRequestURI();
-        return SPRING_VIEW_URIS.contains(uri) // See MvcConfig
+        return SPRING_VIEW_URIS.contains(uri) // See MvcConfig and WebSecurityConfig
             || uri.contains(".") // "/index.html", .js, .css, .png, .jpg, etc
+            || uri.startsWith("/public") // public REST endpoints
             || uri.startsWith("/api"); // REST endpoints
+
     }
 }

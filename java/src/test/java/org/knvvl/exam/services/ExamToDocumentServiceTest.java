@@ -41,11 +41,11 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-class ExamToPdfServiceTest
+class ExamToDocumentServiceTest
 {
     private final ExamService examService = mock(ExamService.class);
     private final TextService textService = mock(TextService.class);
-    private final ExamToPdfService service = new ExamToPdfService();
+    private final ExamToDocumentService service = new ExamToDocumentService();
     private static final String longText =
         "Some long text. Some long text. Some long text. Some long text. Some long text. Some long text. " +
             "Some long text. Some long text. Some long text. Some long text. Some long text.";

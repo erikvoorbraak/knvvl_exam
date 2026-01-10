@@ -43,6 +43,7 @@ public class Question implements IdEntity
     public static final String LANG_PREFIX = "Lang:";
     public static final String TRANSLATES_PREFIX = "Translates:";
     public static final List<String> TRANSLATABLE_FIELDS = List.of("question", "answerA", "answerB", "answerC", "answerD");
+    public static final int DEFAULT_CERTIFICATE = 2;
 
     @Id
     @Column(name = "id")

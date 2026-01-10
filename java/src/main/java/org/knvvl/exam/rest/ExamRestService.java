@@ -7,6 +7,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
+import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 import java.io.IOException;
@@ -21,11 +22,10 @@ import org.knvvl.exam.entities.Question;
 import org.knvvl.exam.entities.Topic;
 import org.knvvl.exam.repos.ExamAnswerRepository;
 import org.knvvl.exam.services.ExamCreationService;
-import org.knvvl.exam.services.TextService;
-import org.knvvl.exam.values.ExamException;
 import org.knvvl.exam.services.ExamRepositories;
 import org.knvvl.exam.services.ExamService;
-import org.knvvl.exam.services.ExamToPdfService;
+import org.knvvl.exam.services.ExamToDocumentService;
+import org.knvvl.exam.values.ExamException;
 import org.knvvl.exam.values.ExamScores;
 import org.knvvl.exam.values.Languages;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +52,9 @@ public class ExamRestService
     @Autowired private ExamRepositories examRepositories;
     @Autowired private ExamCreationService examCreationService;
     @Autowired private ExamService examService;
-    @Autowired private ExamToPdfService examToPdfService;
+    @Autowired private ExamToDocumentService examToDocumentService;
     @Autowired private QuestionRestService questionRestService;
     @Autowired private ExamAnswerRepository examAnswerRepository;
-    @Autowired
-    private TextService textService;
 
     @GetMapping(value = "/exams", produces = APPLICATION_JSON_VALUE)
     String getExams()
@@ -223,7 +221,7 @@ public class ExamRestService
             Exam exam = examRepositories.getExamRepository().getReferenceById(examId);
             String filename = exam.getLabel() + ".pdf";
             response.setHeader("Content-Disposition", "attachment; filename=" + filename);
-            byte[] bytes = examToPdfService.generatePdf(exam, withQuestionId);
+            byte[] bytes = examToDocumentService.generatePdf(exam, withQuestionId);
             stream.write(bytes);
             return ResponseEntity.status(OK).build();
         }
@@ -231,5 +229,12 @@ public class ExamRestService
         {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(e.getMessage().getBytes());
         }
+    }
+
+    @GetMapping(value = "/exams/{examId}/html", produces = TEXT_HTML_VALUE)
+    String generateHtml(@PathVariable("examId") int examId)
+    {
+        Exam exam = examRepositories.getExamRepository().getReferenceById(examId);
+        return examToDocumentService.generateHtml(exam);
     }
 }

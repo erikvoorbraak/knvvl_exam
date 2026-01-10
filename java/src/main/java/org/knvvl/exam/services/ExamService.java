@@ -87,7 +87,7 @@ public class ExamService
         Topic topic = questionForWhichToGetAlt.getTopic();
         Exam exam = examRepository.getReferenceById(examId);
         List<Question> allQuestionsForTopic = questionRepository.findByTopicOrderById(topic);
-        List<Question> allAltQuestionsForTopic = ExamCreationService.filterForExam(allQuestionsForTopic, exam, topic).toList();
+        List<Question> allAltQuestionsForTopic = ExamCreationService.filterForExam(allQuestionsForTopic, exam.getLanguage(), exam.getCertificate(), topic).toList();
         List<Question> questionsForTopicInExam = getExamQuestionsForExam(examId).stream()
             .filter(eq -> topic.getId().equals(eq.getTopic().getId()))
             .map(ExamQuestion::getQuestion).toList();
