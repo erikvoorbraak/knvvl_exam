@@ -33,8 +33,8 @@ public class ExamToDocumentService
         return new ExamGeneratorHtml().generateHtml(questions);
     }
 
-    public String checkPracticeExam(List<Question> questions, Map<String, String> questionsToAnswers)
+    public String checkPracticeExam(int topicId, List<Question> questions, Map<String, String> questionsToAnswers)
     {
-        return new ExamGeneratorHtml().checkPracticeExam(questions, questionsToAnswers);
+        return new ExamGeneratorHtml().checkPracticeExam(questions, questionsToAnswers, examService.getPassCriteria());
     }
 }

@@ -1,6 +1,7 @@
 package org.knvvl.exam.services;
 
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
 
 import java.util.Collections;
@@ -11,6 +12,7 @@ import java.util.Objects;
 import org.knvvl.exam.entities.Picture;
 import org.knvvl.exam.entities.Question;
 import org.knvvl.exam.entities.Topic;
+import org.knvvl.exam.values.PassCriteria;
 
 import com.google.common.base.Strings;
 
@@ -231,13 +233,18 @@ class ExamGeneratorHtml
         """;
 
     private static final String SCORE = """
-        <div class="question-container">Jouw score: {score}%
+        <div class="question-container">
+            <strong>Jouw score:</strong>
+            {perTopic}{overall}
         </div>
         """;
+    private static final String SCORE_TOPIC = "<span style=\"color:{color}\">{topic}: {perc}% (min {threshold}%)</span><br/>";
+    private static final String SCORE_OVERALL = "<span style=\"color:{color}\">Overall: {perc}% (min {threshold}%)</span>";
 
     private int qCounter = 1;
     private Topic currentTopic = null;
     private Map<String, String> questionsToAnswers = Collections.emptyMap();
+    private PassCriteria passCriteria;
 
     public String generateHtml(List<Question> questions)
     {
@@ -253,19 +260,42 @@ class ExamGeneratorHtml
 
     private String calculateScore(List<Question> questions)
     {
-        if (questions.isEmpty() || questionsToAnswers.isEmpty()) {
+        if (questions.isEmpty() || questionsToAnswers.isEmpty() || passCriteria == null) {
             return "";
         }
+        StringBuilder b = new StringBuilder();
+        Map<Topic, List<Question>> perTopic = questions.stream().collect(groupingBy(Question::getTopic));
+        perTopic.forEach((topic, questionsForTopic) -> {
+            int percForTopic = getPercentageCorrect(questionsForTopic);
+            b.append(SCORE_TOPIC
+                .replace("{color}", percForTopic >= passCriteria.thresholdPerTopic() ? "green" : "red")
+                .replace("{topic}", topic.getLabel())
+                .replace("{threshold}", String.valueOf(passCriteria.thresholdPerTopic()))
+                .replace("{perc}", String.valueOf(percForTopic)));
+        });
+        int percOverall = getPercentageCorrect(questions);
+        String scoreOverall = SCORE_OVERALL
+            .replace("{color}", percOverall >= passCriteria.thresholdOverall() ? "green" : "red")
+            .replace("{threshold}", String.valueOf(passCriteria.thresholdOverall()))
+            .replace("{perc}", String.valueOf(percOverall));
+
+        return SCORE
+            .replace("{perTopic}", b.toString())
+            .replace("{overall}", scoreOverall);
+    }
+
+    private int getPercentageCorrect(List<Question> questions)
+    {
         long nCorrect = questions.stream()
             .filter(q -> Objects.equals(q.getAnswer(), questionsToAnswers.get(String.valueOf(q.getId()))))
             .count();
-        int perc = (int) (100 * nCorrect / questions.size());
-        return SCORE.replace("{score}", String.valueOf(perc));
+        return (int) (100 * nCorrect / questions.size());
     }
 
-    public String checkPracticeExam(List<Question> questions, Map<String, String> questionsToAnswers)
+    public String checkPracticeExam(List<Question> questions, Map<String, String> questionsToAnswers, PassCriteria passCriteria)
     {
         this.questionsToAnswers = questionsToAnswers;
+        this.passCriteria = passCriteria;
         return generateHtml(questions);
     }
 

@@ -47,7 +47,7 @@ public class PublicRestService
             .map(Integer::parseInt)
             .map(examCreationService::getPracticeQuestion)
             .toList();
-        return examToDocumentService.checkPracticeExam(questions, params);
+        return examToDocumentService.checkPracticeExam(topicId, questions, params);
     }
 
     @GetMapping(value = "/pictures/{pictureId}", produces = IMAGE_JPEG_VALUE)
