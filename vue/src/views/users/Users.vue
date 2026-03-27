@@ -4,6 +4,7 @@
       :headers="headers"
       :items="items">
       <template #item-actions="item">
+        <button @click="editUser(item)" class="edit-button">Edit</button>
         <button @click="deleteUser(item)" class="delete-button">Delete</button>
       </template>
     </EasyDataTable>
@@ -34,6 +35,9 @@
             this.items = response.data
           })
         },
+      editUser: function(user: any) {
+        this.$router.push(`/users/${user.id}`);
+      },
       deleteUser: function(user: any) {
         if (confirm(`Are you sure you want to delete user "${user.username}"?`)) {
           axios
@@ -73,6 +77,18 @@
   });
   </script>
   <style scoped>
+  .edit-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-right: 5px;
+  }
+  .edit-button:hover {
+    background-color: #0056b3;
+  }
   .delete-button {
     background-color: #dc3545;
     color: white;

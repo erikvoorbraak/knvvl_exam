@@ -79,9 +79,13 @@ public class UserService
     }
 
     @Transactional
-    public void saveUser(User user, String rawPassword)
+    public void updateUserPassword(int userId, String rawPassword, String email)
     {
-        setPassword(user, rawPassword);
+        User user = userRepository.getReferenceById(userId);
+        if (!email.isBlank())
+            user.setEmail(email);
+        if (!rawPassword.isBlank())
+            setPassword(user, rawPassword);
         userRepository.save(user);
         changeDetector.changed();
     }

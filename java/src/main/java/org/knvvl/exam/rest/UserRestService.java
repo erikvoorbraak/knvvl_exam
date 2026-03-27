@@ -44,6 +44,14 @@ public class UserRestService
         return GSON.toJson(json);
     }
 
+    @GetMapping(value = "/users/{userId}", produces = APPLICATION_JSON_VALUE)
+    String getUser(@PathVariable int userId)
+    {
+        User user = userService.getById(userId);
+        JsonObject json = toJson(user);
+        return GSON.toJson(json);
+    }
+
     private static JsonObject toJson(User user)
     {
         JsonObject json = new JsonObject();
@@ -75,18 +83,22 @@ public class UserRestService
     @PostMapping(path = "users/me", consumes = APPLICATION_JSON_VALUE, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> updateUser(@RequestBody String body)
     {
-        JsonObject form = GSON.fromJson(body, JsonObject.class);
         User user = userService.getCurrentUser();
+        return updateAnyUser(user.getId(), body);
+    }
+
+    @PostMapping(path = "users/{userId}", consumes = APPLICATION_JSON_VALUE, produces = TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> updateAnyUser(@PathVariable int userId, @RequestBody String body)
+    {
+        JsonObject form = GSON.fromJson(body, JsonObject.class);
         String password = getAsString(form, "password");
         String email = getAsString(form, "email");
-        if (!email.isBlank())
-            user.setEmail(email);
         if (!password.isBlank()) {
             String msg = userService.validatePassword(password);
             if (msg != null)
                 return ResponseEntity.status(BAD_REQUEST).body(msg);
         }
-        userService.saveUser(user, password);
+        userService.updateUserPassword(userId, password, email);
         return ResponseEntity.status(OK).body(null);
     }
 

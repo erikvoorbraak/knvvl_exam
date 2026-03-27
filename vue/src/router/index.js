@@ -27,6 +27,7 @@ const router = createRouter({
     { path: '/pictures/:pictureId', component: () => import('../views/UploadPicture.vue') },
     { path: '/users', component: () => import('../views/users/Users.vue') },
     { path: '/newuser', component: () => import('../views/users/NewUser.vue') },
+    { path: '/users/:id', component: () => import('../views/users/EditUser.vue') },
     { path: '/myaccount', component: () => import('../views/users/MyAccount.vue') },
   ]
 })
