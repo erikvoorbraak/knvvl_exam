@@ -86,6 +86,16 @@ public class UserService
         changeDetector.changed();
     }
 
+    @Transactional
+    public void deleteUser(int userId)
+    {
+        User currentUser = getCurrentUser();
+        if (currentUser.getId() == userId)
+            throw new IllegalArgumentException("Cannot delete the currently logged in user");
+        userRepository.deleteById(userId);
+        changeDetector.changed();
+    }
+
     public void setAuthenticationSupplier(Supplier<Authentication> authenticationSupplier)
     {
         this.authenticationSupplier = authenticationSupplier;

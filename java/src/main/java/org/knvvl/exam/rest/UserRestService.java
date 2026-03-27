@@ -11,7 +11,9 @@ import org.knvvl.exam.entities.User;
 import org.knvvl.exam.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -86,5 +88,19 @@ public class UserRestService
         }
         userService.saveUser(user, password);
         return ResponseEntity.status(OK).body(null);
+    }
+
+    @DeleteMapping(path = "users/{userId}", produces = TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> deleteUser(@PathVariable int userId)
+    {
+        try {
+            userService.deleteUser(userId);
+            return ResponseEntity.status(OK).body(null);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            String message = "Cannot delete user: user is still referenced by other data (e.g., change history)";
+            return ResponseEntity.status(BAD_REQUEST).body(message);
+        }
     }
 }
