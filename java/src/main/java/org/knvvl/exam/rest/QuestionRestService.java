@@ -59,10 +59,11 @@ public class QuestionRestService
         @RequestParam(name = "topic", defaultValue = "0") Integer topicId,
         @RequestParam(name = "requirement", defaultValue = "0") Integer requirementId,
         @RequestParam(name = "exam", defaultValue = "0") Integer examId,
-        @RequestParam(name = "search", defaultValue = "") String search)
+        @RequestParam(name = "search", defaultValue = "") String search,
+        @RequestParam(name = "discuss", defaultValue = "false") boolean discuss)
     {
         JsonArray all = new JsonArray();
-        questionService.queryQuestions(SORT_BY_ID.descending(), handleFilterLanguage(language), topicId, requirementId, examId, search)
+        questionService.queryQuestions(SORT_BY_ID.descending(), handleFilterLanguage(language), topicId, requirementId, examId, search, discuss)
             .map(q -> this.getJsonQuestion(q, true, false, true, false))
             .forEach(all::add);
         return GSON.toJson(all);

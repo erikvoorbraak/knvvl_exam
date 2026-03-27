@@ -15,13 +15,15 @@ document.title = "Vragen";
       @topicSelected="id => topicId = id"
       @examSelected="id => examId = id"
       @requirementSelected="id => requirementId = id"
-      @searchSelected="s => search = s" />
+      @searchSelected="s => search = s"
+      @discussSelected="d => discuss = d" />
     <TableQuestions
      :language="language"
      :topicId="topicId"
      :requirementId="requirementId"
      :examId="examId"
-     :search="search" />
+     :search="search"
+     :discuss="discuss" />
   </main>
 </template>
 <script>
@@ -32,7 +34,8 @@ export default {
           topicId: "0",
           requirementId: "0",
           examId: "0",
-          search: ""
+          search: "",
+          discuss: false
       }
   }
 }

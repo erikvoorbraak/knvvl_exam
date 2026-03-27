@@ -17,6 +17,9 @@
         <option v-for="q in exams" :key="q.id" :value="q.id">{{ q.label }}</option>
     </select>
     <input name="search" @keyup="filterBySearch"/>
+    <label>
+        <input type="checkbox" name="discuss" @change="filterByDiscuss"/> Bespreken
+    </label>
 </template>
 
 <script>
@@ -45,6 +48,9 @@ export default {
         },
         filterBySearch: function(e) {
             this.$emit("searchSelected", e.target.value);
+        },
+        filterByDiscuss: function(e) {
+            this.$emit("discussSelected", e.target.checked);
         },
     },
     mounted() {

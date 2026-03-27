@@ -81,7 +81,7 @@ public class QuestionService
      */
     private static final Map<Integer, Map<String, Integer>> translationsCache = new HashMap<>();
 
-    public Stream<Question> queryQuestions(Sort sort, String language, int topicId, int requirementId, int examId, String search)
+    public Stream<Question> queryQuestions(Sort sort, String language, int topicId, int requirementId, int examId, String search, boolean discuss)
     {
         List<Question> questions;
         if (examId != 0)
@@ -97,7 +97,8 @@ public class QuestionService
         return questions.stream()
             .filter(q -> topicId == 0 || q.getTopic().getId().equals(topicId))
             .filter(q -> requirementId == 0 || q.getRequirement().getId().equals(requirementId))
-            .filter(q -> q.applySearch(searchLower));
+            .filter(q -> q.applySearch(searchLower))
+            .filter(q -> !discuss || q.isDiscuss());
     }
 
     private static void cacheTranslation(Question question)
