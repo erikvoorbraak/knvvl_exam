@@ -1,11 +1,17 @@
 package org.knvvl.exam.services;
 
 import static org.knvvl.exam.meta.Config.EXAM_BACK_COVER;
+import static org.knvvl.exam.meta.Config.EXAM_BACK_COVER_EN;
 import static org.knvvl.exam.meta.Config.EXAM_BACK_TITLE;
+import static org.knvvl.exam.meta.Config.EXAM_BACK_TITLE_EN;
 import static org.knvvl.exam.meta.Config.EXAM_COVER_B2;
+import static org.knvvl.exam.meta.Config.EXAM_COVER_B2_EN;
 import static org.knvvl.exam.meta.Config.EXAM_COVER_B3;
+import static org.knvvl.exam.meta.Config.EXAM_COVER_B3_EN;
 import static org.knvvl.exam.meta.Config.EXAM_TITLE_B2;
+import static org.knvvl.exam.meta.Config.EXAM_TITLE_B2_EN;
 import static org.knvvl.exam.meta.Config.EXAM_TITLE_B3;
+import static org.knvvl.exam.meta.Config.EXAM_TITLE_B3_EN;
 
 import static com.itextpdf.text.Chunk.NEWLINE;
 import static com.itextpdf.text.Element.ALIGN_CENTER;
@@ -27,6 +33,7 @@ import org.knvvl.exam.entities.Question;
 import org.knvvl.exam.entities.Topic;
 import org.knvvl.exam.meta.Config;
 import org.knvvl.exam.values.ExamException;
+import org.knvvl.exam.values.Languages;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -53,6 +60,7 @@ class ExamGenerator
 
     private final TextService textService;
     private final Exam exam;
+    private final boolean isEN;
     private final List<ExamQuestion> questions;
     private final boolean withQuestionId;
     private final Font titleFont;
@@ -66,6 +74,7 @@ class ExamGenerator
     {
         this.textService = textService;
         this.exam = exam;
+        this.isEN = Languages.LANGUAGE_EN.id().equals(exam.getLanguage());
         this.questions = questions;
         this.withQuestionId = withQuestionId;
         this.titleFont = getTitleFont();
@@ -102,14 +111,38 @@ class ExamGenerator
 
     private void addFrontCover()
     {
-        String title = textService.get(exam.getCertificate() == 2 ? EXAM_TITLE_B2 : EXAM_TITLE_B3);
+        String title = textService.get(getTitleKey());
         addToDocument(getHeader(title, titleFont));
         addToDocument(NEWLINE);
         addToDocument(getHeader(exam.getLabel(), bodyFont));
         addToDocument(NEWLINE);
         addToDocument(NEWLINE);
-        String cover = textService.get(exam.getCertificate() == 2 ? EXAM_COVER_B2 : EXAM_COVER_B3);
+        String cover = textService.get(getCoverKey());
         doInTable(cell -> cell.addElement(new Paragraph(cover, bodyFont)));
+    }
+
+    private Config getCoverKey()
+    {
+        return exam.getCertificate() == 2
+            ? isEN ? EXAM_COVER_B2_EN : EXAM_COVER_B2
+            : isEN ? EXAM_COVER_B3_EN : EXAM_COVER_B3;
+    }
+
+    private Config getTitleKey()
+    {
+        return exam.getCertificate() == 2
+            ? isEN ? EXAM_TITLE_B2_EN : EXAM_TITLE_B2
+            : isEN ? EXAM_TITLE_B3_EN : EXAM_TITLE_B3;
+    }
+
+    private Config getBackTitleKey()
+    {
+        return isEN ? EXAM_BACK_TITLE_EN : EXAM_BACK_TITLE;
+    }
+
+    private Config getBackCoverKey()
+    {
+        return isEN ? EXAM_BACK_COVER_EN : EXAM_BACK_COVER;
     }
 
     private void addBackCover()
@@ -118,10 +151,10 @@ class ExamGenerator
         addToDocument(NEWLINE);
         addToDocument(NEWLINE);
         addToDocument(NEWLINE);
-        addToDocument(getHeader(textService.get(EXAM_BACK_TITLE), titleFont));
+        addToDocument(getHeader(textService.get(getBackTitleKey()), titleFont));
         addToDocument(NEWLINE);
         addToDocument(NEWLINE);
-        doInTable(cell -> cell.addElement(new Paragraph(textService.get(EXAM_BACK_COVER), bodyFont)));
+        doInTable(cell -> cell.addElement(new Paragraph(textService.get(getBackCoverKey()), bodyFont)));
     }
 
     private void addQuestions()

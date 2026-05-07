@@ -49,6 +49,14 @@ public record Config(@Nonnull String key, String defaultValue, String label)
     public static final Config EXAM_COVER_B3 = add("exam.cover.b3", INTRO.replace("brevet 2", "brevet 3"), "B3 Exam cover page text");
     public static final Config EXAM_BACK_TITLE = add("exam.back.title", "Einde examenvragen", "Header to indicate the end of the exam");
     public static final Config EXAM_BACK_COVER = add("exam.back.cover", "", "Additional plain text placed at the end of the exam");
+
+    public static final Config EXAM_TITLE_B2_EN = add("exam.title.b2.en", "B2 Exam title EN", "B2 Exam title English");
+    public static final Config EXAM_COVER_B2_EN = add("exam.cover.b2.en", "B2 Exam cover page text EN", "B2 Exam cover page text English");
+    public static final Config EXAM_TITLE_B3_EN = add("exam.title.b3.en", "B3 Exam title EN", "B3 Exam title English");
+    public static final Config EXAM_COVER_B3_EN = add("exam.cover.b3.en", "B3 Exam cover page text EN", "B3 Exam cover page text English");
+    public static final Config EXAM_BACK_TITLE_EN = add("exam.back.title.en", "", "Header to indicate the end of the exam English");
+    public static final Config EXAM_BACK_COVER_EN = add("exam.back.cover.en", "", "Additional plain text placed at the end of the exam English");
+
     public static final Config EXAM_TITLE_FONTNAME = add("exam.title.fontname", "calibri", "Title font name used for PDF exam");
     public static final Config EXAM_TITLE_FONTSIZE = add("exam.title.fontsize", "14", "Title font size used for PDF exam");
     public static final Config EXAM_BODY_FONTNAME = add("exam.body.fontname", "calibri", "Paragraph font name used for PDF exam");

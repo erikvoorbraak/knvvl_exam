@@ -197,3 +197,13 @@ During the process, I had to enable some services and add some roles.
 * Enable service: sqladmin.googleapis.com
 * Enable services: sqladmin
 * Find Google's identity management "IAM & Admin", you may need to add the role "Cloud SQL Access" to your service account(s).
+
+### Useful SQL statements
+Add exam questions to create an identical copy of an existing exam. Example for copying exam 174 to 176 (note that you first have to
+`delete from public.t_exam_question where exam=176`)
+```
+insert into public.t_exam_question (id,exam,question,topic,question_index,answer)
+select id+2000,exam+2,question,topic,question_index,answer
+from public.t_exam_question
+where exam=174
+```
