@@ -73,14 +73,14 @@ public record Config(@Nonnull String key, String defaultValue, String label)
         "Translate to {0} in the context of paragliding, not placing quotes around the result: \n{1}",
         "The prompt sent to ChatGPT for translating, parameters are: 0 = language, 1 = text to translate");
 
-    public static final Config LPLUS_URL = add("exam.lplus.url", "https://knvvl.lplus-teststudio.de", "Base URL of the LPlus TestStudio API");
+    public static final Config LPLUS_URL = add("exam.lplus.url", "", "Base URL of the LPlus TestStudio API, example: 'https://knvvl.lplus-teststudio.de'");
     public static final Config LPLUS_USERNAME = add("exam.lplus.username", "", "Username for LPlus TestStudio authentication");
     public static final Config LPLUS_PASSWORD = add("exam.lplus.password", "", "Password for LPlus TestStudio authentication");
     public static final Config LPLUS_CATALOG_ID_NL = add("exam.lplus.catalog-id.nl", "", "Catalog ID in LPlus TestStudio for Dutch (nl) questions (e.g. 131)");
     public static final Config LPLUS_CATALOG_ID_EN = add("exam.lplus.catalog-id.en", "", "Catalog ID in LPlus TestStudio for English (en) questions (e.g. 132)");
     public static final Config LPLUS_TARGET_GROUP_B2 = add("exam.lplus.target-group-b2", "", "LPlus target group ID for brevet B2 (e.g. 706)");
     public static final Config LPLUS_TARGET_GROUP_B3 = add("exam.lplus.target-group-b3", "", "LPlus target group ID for brevet B3 (e.g. 707)");
-    public static final Config LPLUS_LANG_ID = add("exam.lplus.lang-id", "40", "LPlus language ID used for question/answer text (e.g. 40 for Dutch)");
+    public static final Config LPLUS_LANG_ID = add("exam.lplus.lang-id", "", "LPlus language ID used for question/answer text (e.g. 40 for Dutch)");
 
     public static final List<Config> READ_ONLY_CONFIGS = List.of(EXAM_LAST_CHANGED, EXAM_LAST_BACKUP);
     public static final List<Config> WRITE_ONLY_CONFIGS = List.of(EXAM_CHATGPT_APIKEY, LPLUS_PASSWORD);

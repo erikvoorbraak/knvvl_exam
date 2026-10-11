@@ -72,7 +72,7 @@ public class EntitiesRestService
     }
 
     @PostMapping(value = "/texts/{textKey}", consumes = TEXT_PLAIN_VALUE)
-    void saveText(@PathVariable("textKey") String textKey, @RequestBody String body)
+    void saveText(@PathVariable("textKey") String textKey, @RequestBody(required = false) String body)
     {
         textService.save(textKey, body);
     }

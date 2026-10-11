@@ -29,7 +29,7 @@
                 this.$router.go(-1);
               } catch (error) {
                   if (error.response) {
-                    alert(error.response.data);
+                    alert(error.response.data?.message ?? error.response.data);
                   }
               }
           }
