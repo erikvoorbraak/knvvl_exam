@@ -1,0 +1,259 @@
+{    "id": 31290,
+    "catalogId": 131,
+    "revisionNumber": 2,
+    "isLastRevision": true,
+    "topic": {
+        "completeName": "1.01.05.2 Vochtig of nat scherm",
+        "id": 11003,
+        "name": "Vochtig of nat scherm",
+        "number": "1.01.05.2"
+    },
+    "number": 393,
+    "type": "MultipleChoiceResponsiveLayout",
+    "questionType": 100,
+    "isResponsiveLayoutAvailable": true,
+    "locked": false,
+    "isInvalid": false,
+    "isAllLanguageContentValid": true,
+    "languageStates": [
+        {
+            "isInvalid": false,
+            "id": 40,
+            "isoLanguageCode": "nl",
+            "languageName": "Dutch,Flemish",
+            "nativeName": "Nederlands,Vlaams"
+        }
+    ],
+    "attachmentsAnyIsDeleted": null,
+    "errorMessage": null,
+    "text": {
+        "40": "<p><span style=\"font-weight: normal; color: #000000; font-family: Arial; font-size: 12pt; font-style: normal; text-decoration: none\">Een nat scherm kun je het beste.</span></p>"
+    },
+    "options": {
+        "evaluationMode": "Default",
+        "points": 1.0000,
+        "pointsReason": 0.0000,
+        "timeTarget": 7200,
+        "externFileRequired": false,
+        "multipleChoiceOptions": {
+            "forceSingleChoice": true,
+            "pairingAnswerChoices": false,
+            "randomizeAnswerChoices": true,
+            "partMatrixScoring": null
+        },
+        "textOnlyOptions": null,
+        "ordinalScaleOptions": null
+    },
+    "leftPosition": 0,
+    "topPosition": 0,
+    "questionTextHeight": 0,
+    "questionTextWidth": 0,
+    "answers": [
+        {
+            "number": 1,
+            "leftPosition": 0,
+            "topPosition": 0,
+            "answerHeight": 0,
+            "answerWidth": 0,
+            "answerHiddenTextHeight": null,
+            "answerHiddenTextWidth": null,
+            "text": {
+                "40": "<p><span style=\"font-weight: normal; color: #0066CC; font-family: Arial; font-size: 12pt; font-style: normal; text-decoration: none\">In de zon drogen.</span></p>"
+            },
+            "feedbackText": {},
+            "feedbackLink": {},
+            "inlineImage": {},
+            "options": {
+                "correctAnswerChoice": false,
+                "points": 0.0000,
+                "hideAnswerText": false
+            },
+            "ordinalScaleOptions": {
+                "columnsOptions": [],
+                "rowHeight": null
+            },
+            "clozeMarkers": null,
+            "textOnlyOptions": null,
+            "dragDropTextSettings": null,
+            "dragDropPictureSettings": null,
+            "specialAnswer": null,
+            "hotSpotSettings": null
+        },
+        {
+            "number": 2,
+            "leftPosition": 0,
+            "topPosition": 0,
+            "answerHeight": 0,
+            "answerWidth": 0,
+            "answerHiddenTextHeight": null,
+            "answerHiddenTextWidth": null,
+            "text": {
+                "40": "<p><span style=\"font-weight: normal; color: #0066CC; font-family: Arial; font-size: 12pt; font-style: normal; text-decoration: none\">Drogen door ermee te vliegen.</span></p>"
+            },
+            "feedbackText": {},
+            "feedbackLink": {},
+            "inlineImage": {},
+            "options": {
+                "correctAnswerChoice": false,
+                "points": 0.0000,
+                "hideAnswerText": false
+            },
+            "ordinalScaleOptions": {
+                "columnsOptions": [],
+                "rowHeight": null
+            },
+            "clozeMarkers": null,
+            "textOnlyOptions": null,
+            "dragDropTextSettings": null,
+            "dragDropPictureSettings": null,
+            "specialAnswer": null,
+            "hotSpotSettings": null
+        },
+        {
+            "number": 3,
+            "leftPosition": 0,
+            "topPosition": 0,
+            "answerHeight": 0,
+            "answerWidth": 0,
+            "answerHiddenTextHeight": null,
+            "answerHiddenTextWidth": null,
+            "text": {
+                "40": "<p><span style=\"font-weight: normal; color: #0066CC; font-family: Arial; font-size: 12pt; font-style: normal; text-decoration: none\">Op een schaduwrijke plek drogen.</span></p>"
+            },
+            "feedbackText": {},
+            "feedbackLink": {},
+            "inlineImage": {},
+            "options": {
+                "correctAnswerChoice": true,
+                "points": 1.0000,
+                "hideAnswerText": false
+            },
+            "ordinalScaleOptions": {
+                "columnsOptions": [],
+                "rowHeight": null
+            },
+            "clozeMarkers": null,
+            "textOnlyOptions": null,
+            "dragDropTextSettings": null,
+            "dragDropPictureSettings": null,
+            "specialAnswer": null,
+            "hotSpotSettings": null
+        },
+        {
+            "number": 4,
+            "leftPosition": 0,
+            "topPosition": 0,
+            "answerHeight": 0,
+            "answerWidth": 0,
+            "answerHiddenTextHeight": null,
+            "answerHiddenTextWidth": null,
+            "text": {
+                "40": "<p><span style=\"font-weight: normal; color: #0066CC; font-family: Arial; font-size: 12pt; font-style: normal; text-decoration: none\">B en C zijn juist.</span></p>"
+            },
+            "feedbackText": {},
+            "feedbackLink": {},
+            "inlineImage": {},
+            "options": {
+                "correctAnswerChoice": false,
+                "points": 0.0000,
+                "hideAnswerText": false
+            },
+            "ordinalScaleOptions": {
+                "columnsOptions": [],
+                "rowHeight": null
+            },
+            "clozeMarkers": null,
+            "textOnlyOptions": null,
+            "dragDropTextSettings": null,
+            "dragDropPictureSettings": null,
+            "specialAnswer": null,
+            "hotSpotSettings": null
+        }
+    ],
+    "answersColumns": [],
+    "inlineImage": {
+        "40": {
+            "data": "/9j/4AAQSkZ <bytes omitted> iigAooooA//9k=",
+            "id": 668,
+            "description": "test",
+            "fileSize": 14540,
+            "revisionNumber": 0,
+            "isLastRevision": false,
+            "itemType": "Image",
+            "lastEditedDateUTC": "2026-10-09T16:19:42.403",
+            "lastEditedDate": "2026-10-09T18:19:42.403",
+            "mediaType": "image/jpeg",
+            "metadata": {
+                "dimensions": "301 x 469",
+                "height": 469,
+                "heightUnit": "Pixels",
+                "numPages": null,
+                "width": 301,
+                "widthUnit": "Pixels",
+                "length": ""
+            },
+            "name": "4.jpg",
+            "isDeleted": false,
+            "parentName": null,
+            "parentId": null,
+            "printable": false,
+            "questions": null,
+            "templates": null,
+            "thumbnailContentValueHash": null,
+            "thumbnailData": null,
+            "thumbnailMediaType": null
+        }
+    },
+    "questionPictures": [],
+    "questionMedias": [],
+    "questionLabels": [],
+    "questionReasons": [],
+    "attachments": {},
+    "questionWorkFiles": {},
+    "questionSolutionFiles": {},
+    "targetGroups": [
+        {
+            "id": 706,
+            "name": "PGL B2",
+            "type": "Examination",
+            "color": {
+                "r": 184,
+                "g": 233,
+                "b": 134,
+                "a": 255
+            },
+            "tag": null,
+            "lastEditedDateUTC": "2025-04-15T09:41:57.623",
+            "lastEditedDate": "2025-04-15T11:41:57.623",
+            "questionsCount": 0,
+            "templatesCount": 0,
+            "globalTargetGroupId": "d9940698-50b7-44de-816e-082320dd950e"
+        },
+        {
+            "id": 707,
+            "name": "PGL B3",
+            "type": "Examination",
+            "color": {
+                "r": 245,
+                "g": 166,
+                "b": 35,
+                "a": 1
+            },
+            "tag": null,
+            "lastEditedDateUTC": "2025-04-15T09:42:28.1",
+            "lastEditedDate": "2025-04-15T11:42:28.1",
+            "questionsCount": 0,
+            "templatesCount": 0,
+            "globalTargetGroupId": "0a659dee-5123-41ea-b6a0-6cc7a7e7cd2a"
+        }
+    ],
+    "disassociationQuestions": [],
+    "hintText": {},
+    "remarks": {},
+    "reference": {},
+    "importKey": "",
+    "source": "© KNVvL - Section Paragliding - Exan Committee",
+    "globalQuestionId": "b9d0c484-5422-4163-a6d3-42d471c66495",
+    "lastEditedDateUTC": "2026-02-23T13:44:15.7",
+    "lastEditedDate": "2026-02-23T14:44:15.7"
+}

@@ -1,0 +1,66 @@
+{
+  "catalogId": 131,
+  "topics": [
+    {
+      "id": 10984,
+      "level": 1,
+      "number": "1",
+      "name": "Materiaalkennis",
+      "type": 1,
+      "path": null,
+      "alternativeText": null,
+      "isCluster": false
+    },
+    {
+      "id": 10985,
+      "level": 2,
+      "number": "1.01",
+      "name": "Scherm",
+      "type": 1,
+      "path": [
+        {
+          "id": 10984,
+          "level": 1,
+          "next": null,
+          "number": "1",
+          "name": "Materiaalkennis",
+          "type": 1,
+          "alternativeText": null,
+          "isCluster": false
+        }
+      ],
+      "alternativeText": null,
+      "isCluster": false
+    },
+    {
+      "id": 11244,
+      "level": 3,
+      "number": "5.09.02",
+      "name": "Acties ter afwikkeling van een ongeval",
+      "type": 1,
+      "path": [
+        {
+          "id": 11173,
+          "level": 1,
+          "next": {
+            "id": 11242,
+            "level": 2,
+            "next": null,
+            "number": "5.09",
+            "name": "Ongevallen",
+            "type": 1,
+            "alternativeText": null,
+            "isCluster": false
+          },
+          "number": "5",
+          "name": "Vliegpraktijk",
+          "type": 1,
+          "alternativeText": null,
+          "isCluster": false
+        }
+      ],
+      "alternativeText": null,
+      "isCluster": false
+    }
+  ]
+}

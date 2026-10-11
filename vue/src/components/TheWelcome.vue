@@ -9,9 +9,7 @@ import SupportIcon from './icons/IconSupport.vue'
 
 <template>
   <WelcomeItem>
-    <template #icon>
-      <DocumentationIcon />
-    </template>
+    <template #icon><DocumentationIcon /></template>
     <template #heading>Documentation</template>
 
     This tool is built to manage multiple-choice questions in order to create a 100-question theoretical exam
@@ -20,13 +18,23 @@ import SupportIcon from './icons/IconSupport.vue'
   </WelcomeItem>
 
   <WelcomeItem>
-    <template #icon>
-      <ToolingIcon />
-    </template>
+    <template #icon><ToolingIcon /></template>
     <template #heading>Tooling</template>
 
     See this page for some admin-only actions:
     <a href="/api/admin" target="_blank">/api/admin</a>.
+  </WelcomeItem>
+
+  <WelcomeItem>
+    <template #icon>\<CommunityIcon /></template>
+    <template #heading>Community</template>
+
+    Created by Erik Voorbraak in February 2023.<br/>
+    For more information about taking the exam, go to
+    <a href="https://www.brevet.aero/paragliding">Kei website</a>.
+    For information about paragliding in the Netherlands, visit
+    <a href="https://www.knvvl.nl/paragliding">KNVvL website</a>.
+    You should also find relevant contact information on these sites.
   </WelcomeItem>
 
 </template>

@@ -1,0 +1,129 @@
+{
+  "count": 2,
+  "data": [
+    {
+      "id": 31179,
+      "revisionNr": 3,
+      "number": 407,
+      "type": "MultipleChoiceResponsiveLayout",
+      "layout": "Responsive",
+      "partEvaluation": false,
+      "qtyOfAnswers": 4,
+      "hasAttachments": false,
+      "hasDisassociation": false,
+      "excludedQuestionsNumbers": "",
+      "points": 1.0000,
+      "reasonPoints": 0.0000,
+      "totalPoints": 1.0000,
+      "timeTarget": 7200,
+      "locked": true,
+      "isInvalid": false,
+      "isAllLanguageContentValid": true,
+      "status": "Locked, Valid",
+      "targetGroups": [
+        {
+          "color": {
+            "r": 184,
+            "g": 233,
+            "b": 134,
+            "a": 255
+          },
+          "id": 706,
+          "name": "PGL B2",
+          "type": "0",
+          "tag": "[PGL B2]"
+        },
+        {
+          "color": {
+            "r": 245,
+            "g": 166,
+            "b": 35,
+            "a": 1
+          },
+          "id": 707,
+          "name": "PGL B3",
+          "type": "0",
+          "tag": "[PGL B3]"
+        }
+      ],
+      "targetGroupsNames": "PGL B2,PGL B3",
+      "targetGroupsTags": "[PGL B2],[PGL B3]",
+      "topicNumberName": "4.05.02 Algemeen",
+      "topic": {
+        "completeName": "4.05.02 Algemeen",
+        "id": 11163,
+        "name": "Algemeen",
+        "number": "4.05.02"
+      },
+      "questionText": "Welke documenten dien je volgens het Reglement Schermvliegen tijdens of kort na het paragliden bij je te hebben ?",
+      "questionTextLangId": 40,
+      "importKey": "",
+      "source": "© KNVvL - Section Paragliding - Exan Committee",
+      "globalQuestionId": "7e307cee-b273-4466-b80a-8f59fab7c9ed",
+      "lastEditedDateUTC": "2026-06-18T20:01:45.367",
+      "lastEditedDate": "2026-06-18T22:01:45.367"
+    },
+    {
+      "id": 31180,
+      "revisionNr": 2,
+      "number": 433,
+      "type": "MultipleChoiceResponsiveLayout",
+      "layout": "Responsive",
+      "partEvaluation": false,
+      "qtyOfAnswers": 4,
+      "hasAttachments": false,
+      "hasDisassociation": false,
+      "excludedQuestionsNumbers": "",
+      "points": 1.0000,
+      "reasonPoints": 0.0000,
+      "totalPoints": 1.0000,
+      "timeTarget": 7200,
+      "locked": true,
+      "isInvalid": false,
+      "isAllLanguageContentValid": true,
+      "status": "Locked, Valid",
+      "targetGroups": [
+        {
+          "color": {
+            "r": 184,
+            "g": 233,
+            "b": 134,
+            "a": 255
+          },
+          "id": 706,
+          "name": "PGL B2",
+          "type": "0",
+          "tag": "[PGL B2]"
+        },
+        {
+          "color": {
+            "r": 245,
+            "g": 166,
+            "b": 35,
+            "a": 1
+          },
+          "id": 707,
+          "name": "PGL B3",
+          "type": "0",
+          "tag": "[PGL B3]"
+        }
+      ],
+      "targetGroupsNames": "PGL B2,PGL B3",
+      "targetGroupsTags": "[PGL B2],[PGL B3]",
+      "topicNumberName": "3.01.03 Begrippen t.a.v. de standaardatmosfeer",
+      "topic": {
+        "completeName": "3.01.03 Begrippen t.a.v. de standaardatmosfeer",
+        "id": 11076,
+        "name": "Begrippen t.a.v. de standaardatmosfeer",
+        "number": "3.01.03"
+      },
+      "questionText": "In de standaard atmosfeer is de temperatuur op zeeniveau:",
+      "questionTextLangId": 40,
+      "importKey": "",
+      "source": "© KNVvL - Section Paragliding - Exan Committee",
+      "globalQuestionId": "8667357b-6b13-487e-8edb-5e0b38920329",
+      "lastEditedDateUTC": "2026-02-23T13:44:10.8",
+      "lastEditedDate": "2026-02-23T14:44:10.8"
+    }
+  ]
+}

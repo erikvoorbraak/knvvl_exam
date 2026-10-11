@@ -1,0 +1,102 @@
+{
+  "answers": [
+    {
+      "answerNumber": 1,
+      "answerText": {
+        "40": "<p><span style=\"font-size: 12pt; font-family: Arial; color: #0066CC; line-height: 1;\">Je brevet, medische verklaring en logboek</span></p>"
+      },
+      "feedbackLink": {},
+      "feedbackText": {},
+      "inlineImage": {},
+      "options": {
+        "correctAnswerChoice": true,
+        "points": 1,
+        "hideAnswerText": false
+      }
+    },
+    {
+      "answerNumber": 2,
+      "answerText": {
+        "40": "<p><span style=\"font-size: 12pt; font-family: Arial; color: #0066CC; line-height: 1\">Je brevet en een ICAO kaart van het gebied waarin je vliegt.</span></p>"
+      },
+      "feedbackLink": {},
+      "feedbackText": {},
+      "inlineImage": {},
+      "options": {
+        "correctAnswerChoice": false,
+        "points": 0,
+        "hideAnswerText": false
+      }
+    },
+    {
+      "answerNumber": 3,
+      "answerText": {
+        "40": "<p><span style=\"font-size: 12pt; font-family: Arial; color: #0066CC; line-height: 1\">Je brevet, medische verklaring en verzekeringsbewijs.</span></p>"
+      },
+      "feedbackLink": {},
+      "feedbackText": {},
+      "inlineImage": {},
+      "options": {
+        "correctAnswerChoice": false,
+        "points": 0,
+        "hideAnswerText": false
+      }
+    },
+    {
+      "answerNumber": 4,
+      "answerText": {
+        "40": "<p><span style=\"font-size: 12pt; font-family: Arial; color: #0066CC; line-height: 1\">Geen van bovenstaande antwoorden is correct.</span></p>"
+      },
+      "feedbackLink": {},
+      "feedbackText": {},
+      "inlineImage": {},
+      "options": {
+        "correctAnswerChoice": false,
+        "points": 0,
+        "hideAnswerText": false
+      }
+    }
+  ],
+  "attachments": {},
+  "disassociationIds": [],
+  "hintText": {},
+  "importKey": "",
+  "inlineImage": {
+    "40": 668
+  },
+  "isOverlapInvalid": false,
+  "locked": true,
+  "options": {
+    "evaluationMode": "Default",
+    "points": 1,
+    "pointsReason": 0,
+    "timeTarget": 7200,
+    "externFileRequired": false,
+    "multipleChoiceOptions": {
+      "forceSingleChoice": true,
+      "pairingAnswerChoices": false,
+      "randomizeAnswerChoices": true,
+      "partMatrixScoring": null
+    },
+    "textOnlyOptions": null,
+    "ordinalScaleOptions": null
+  },
+  "questionNumber": 407,
+  "questionText": {
+    "40": "<p><span style=\"font-size: 12pt; font-family: Arial; color: #000000; line-height: 1\">Welke documenten dien je volgens het Reglement Schermvliegen tijdens of kort na het paragliden bij je te hebben ?</span></p>"
+  },
+  "questionType": "MultipleChoiceResponsiveLayout",
+  "reference": {},
+  "remarks": {
+    "40": "TODO reglement en/of vraag aanpassen"
+  },
+  "solutionFiles": {},
+  "source": "© KNVvL - Section Paragliding - Exan Committee",
+  "targetGroups": [
+    706,
+    707
+  ],
+  "topicId": 11163,
+  "workFiles": {},
+  "revisionNumber": null
+}

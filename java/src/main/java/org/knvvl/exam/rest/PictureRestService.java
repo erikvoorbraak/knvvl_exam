@@ -2,6 +2,7 @@ package org.knvvl.exam.rest;
 
 import static org.knvvl.exam.rest.QuestionRestService.GSON;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -14,6 +15,7 @@ import java.io.IOException;
 
 import org.knvvl.exam.entities.Picture;
 import org.knvvl.exam.services.ExamRepositories;
+import org.knvvl.exam.services.PictureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +44,8 @@ public class PictureRestService
 
     @Autowired
     private ExamRepositories examRepositories;
+    @Autowired
+    private PictureService pictureService;
 
     @GetMapping(value = "/pictures", produces = APPLICATION_JSON_VALUE)
     String getPictures()
@@ -86,6 +90,7 @@ public class PictureRestService
         picture.setFilename(retrieveFilename(file));
         picture.setFileData(resized);
         examRepositories.addPicture(picture);
+        pictureService.uploadToLPlus(picture);
         return ResponseEntity.status(OK).body(null);
     }
 
@@ -109,18 +114,24 @@ public class PictureRestService
         String filename = file.getOriginalFilename();
         if (filename == null)
             filename = file.getName();
-        if (filename.toLowerCase().endsWith(".jpg"))
-            filename = filename.substring(0, filename.length() - 4);
         return filename;
     }
 
     @PostMapping(value = "/pictures/{pictureId}", produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> updatePicture(@PathVariable("pictureId") int pictureId, @RequestParam("file") MultipartFile file) throws IOException
     {
-        Picture picture = examRepositories.getPictureRepository().getReferenceById(pictureId);
-        picture.setFileData(file.getBytes());
-        examRepositories.savePicture(picture);
-        return ResponseEntity.status(OK).body(null);
+        try
+        {
+            pictureService.validateNoLPlusOnUpdate();
+            Picture picture = examRepositories.getPictureRepository().getReferenceById(pictureId);
+            picture.setFileData(file.getBytes());
+            examRepositories.savePicture(picture);
+            return ResponseEntity.status(OK).body(null);
+        }
+        catch (RuntimeException e)
+        {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @DeleteMapping(path = "pictures/{pictureId}", produces = TEXT_PLAIN_VALUE)

@@ -22,6 +22,7 @@ import org.knvvl.exam.entities.Change;
 import org.knvvl.exam.entities.Change.ChangedByAt;
 import org.knvvl.exam.entities.ExamQuestion;
 import org.knvvl.exam.entities.Question;
+import org.knvvl.exam.lplus.LPlusQuestionService;
 import org.knvvl.exam.meta.EntityField;
 import org.knvvl.exam.meta.EntityFields;
 import org.knvvl.exam.repos.ChangeRepository;
@@ -29,9 +30,9 @@ import org.knvvl.exam.repos.PictureRepository;
 import org.knvvl.exam.repos.QuestionRepository;
 import org.knvvl.exam.repos.RequirementRepository;
 import org.knvvl.exam.repos.TopicRepository;
+import org.knvvl.exam.values.CreateEntityResult;
 import org.knvvl.exam.values.Languages;
 import org.knvvl.exam.values.Languages.Language;
-import org.knvvl.exam.values.CreateEntityResult;
 import org.knvvl.tools.chatgpt.ChatGptConfig;
 import org.knvvl.tools.chatgpt.Message;
 import org.knvvl.tools.chatgpt.Model;
@@ -74,8 +75,11 @@ public class QuestionService
     private UserService userService;
     @Autowired
     private ChangeDetector changeDetector;
+    @Autowired
+    private LPlusQuestionService lPlusQuestionService;
 
     private EntityFields<Question> questionFields;
+
     /**
      * Given a question, which languages is it translated to?
      */
@@ -161,6 +165,7 @@ public class QuestionService
         changeRepository.saveAll(changes);
         changeDetector.changed();
         cacheTranslation(question);
+        lPlusQuestionService.exportToLPlus(question, new ChangedByAt(userService.getCurrentUser()));
         return new CreateEntityResult(question, null);
     }
 
@@ -173,7 +178,6 @@ public class QuestionService
 
         uncacheTranslation(question);
         applyAndLogChanges(form, changedByAt, question, changes);
-        // Verify that "translates" field points to an existing question
         Integer translates = question.getTranslates();
         if (translates != null && !questionRepository.existsById(translates))
             return "Field 'Translates question' does not refer to an existing question: " + translates;
@@ -182,6 +186,7 @@ public class QuestionService
         questionRepository.save(question);
         changeRepository.saveAll(changes);
         changeDetector.changed();
+        lPlusQuestionService.exportToLPlus(question, new ChangedByAt(userService.getCurrentUser()));
         return null;
     }
 

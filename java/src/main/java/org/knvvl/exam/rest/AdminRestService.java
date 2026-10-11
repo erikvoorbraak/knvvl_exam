@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import org.knvvl.exam.ExamApplication;
+import org.knvvl.exam.lplus.LPlusPictureService;
+import org.knvvl.exam.lplus.LPlusQuestionService;
 import org.knvvl.exam.services.BackupService;
 import org.knvvl.exam.services.ChangeDetector;
 import org.knvvl.exam.services.ExamAnswersImportService;
@@ -66,6 +68,8 @@ public class AdminRestService
         </form>
 
         {googleCloudStorageService}
+        {lplusPictureService}
+        {lplusQuestionService}
         <h2>About</h2>
         Created by Erik Voorbraak in 2023, to be used for KNVvL "Examencommissie".
         </body></html>""";
@@ -137,6 +141,10 @@ public class AdminRestService
     private UserDetailsServiceImpl userDetailsService;
     @Autowired
     private GoogleCloudStorageService googleCloudStorageService;
+    @Autowired
+    private LPlusPictureService lPlusPictureService;
+    @Autowired
+    private LPlusQuestionService lPlusQuestionService;
 
     @GetMapping(value = "/admin", produces = TEXT_HTML_VALUE)
     ResponseEntity<String> getAdminPage()
@@ -147,7 +155,9 @@ public class AdminRestService
             .replace("{lastChanged}", lastChanged == null ? "(no changes since startup)" : lastChanged.toString())
             .replace("{numChanges}", String.valueOf(changeDetector.getNumChanges()))
             .replace("{userLogons}", userDetailsService.getUserLogons().stream().map(UserLogon::toString).collect(joining("<br/>")))
-            .replace("{googleCloudStorageService}", googleCloudStorageService.getAdminSectionHtml());
+            .replace("{googleCloudStorageService}", googleCloudStorageService.getAdminSectionHtml())
+            .replace("{lplusPictureService}",       lPlusPictureService.getAdminSectionHtml())
+            .replace("{lplusQuestionService}",      lPlusQuestionService.getAdminSectionHtml());
         return ResponseEntity.ok(page);
     }
 
@@ -206,6 +216,35 @@ public class AdminRestService
         String message = googleCloudStorageService.exportNow(file);
         Files.delete(file);
         return ResponseEntity.ok(message);
+    }
+
+    @PostMapping(value = "/exportQuestionsToLPlus", produces = TEXT_PLAIN_VALUE)
+    ResponseEntity<String> exportQuestionsToLPlus()
+    {
+        LPlusQuestionService.ExportResult result = lPlusQuestionService.exportMissing();
+        StringBuilder sb = new StringBuilder();
+        sb.append("Exported ").append(result.exported()).append(" question(s) to LPlus, ")
+          .append(result.skipped()).append(" already up-to-date.");
+        if (!result.errors().isEmpty())
+        {
+            sb.append("\n\nFailed to export ").append(result.errors().size()).append(" question(s):");
+            result.errors().forEach(e -> sb.append("\n  - ").append(e));
+        }
+        return ResponseEntity.ok(sb.toString());
+    }
+
+    @PostMapping(value = "/exportPicturesToLPlus", produces = TEXT_PLAIN_VALUE)
+    ResponseEntity<String> exportPicturesToLPlus()
+    {
+        LPlusPictureService.UploadResult result = lPlusPictureService.uploadMissing();
+        StringBuilder sb = new StringBuilder();
+        sb.append("Exported ").append(result.uploaded()).append(" picture(s) to LPlus.");
+        if (!result.errors().isEmpty())
+        {
+            sb.append("\n\nFailed to upload ").append(result.errors().size()).append(" picture(s):");
+            result.errors().forEach(e -> sb.append("\n  - ").append(e));
+        }
+        return ResponseEntity.ok(sb.toString());
     }
 
     @PostMapping(value = "/importAnswersJson", produces = TEXT_PLAIN_VALUE)

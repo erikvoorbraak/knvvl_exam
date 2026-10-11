@@ -1,0 +1,90 @@
+{
+  "answers": [
+    {
+      "answerNumber": 1,
+      "answerText": {
+        "40": "<p><span style=\"font-size: 12pt; font-family: Arial; color: rgb(0, 102, 204);\">aa</span></p>"
+      },
+      "feedbackLink": {},
+      "feedbackText": {},
+      "inlineImage": {},
+      "options": {
+        "correctAnswerChoice": false,
+        "points": 0
+      }
+    },
+    {
+      "answerNumber": 2,
+      "answerText": {
+        "40": "<p><span style=\"font-size: 12pt; font-family: Arial; color: rgb(0, 102, 204);\">bb</span></p>"
+      },
+      "feedbackLink": {},
+      "feedbackText": {},
+      "inlineImage": {},
+      "options": {
+        "correctAnswerChoice": true,
+        "points": 1
+      }
+    },
+    {
+      "answerNumber": 3,
+      "answerText": {
+        "40": "<p><span style=\"font-size: 12pt; font-family: Arial; color: rgb(0, 102, 204);\">cc</span></p>"
+      },
+      "feedbackLink": {},
+      "feedbackText": {},
+      "inlineImage": {},
+      "options": {
+        "correctAnswerChoice": false,
+        "points": 0
+      }
+    },
+    {
+      "answerNumber": 4,
+      "answerText": {
+        "40": "<p><span style=\"font-size: 12pt; font-family: Arial; color: rgb(0, 102, 204);\">dd</span></p>"
+      },
+      "feedbackLink": {},
+      "feedbackText": {},
+      "inlineImage": {},
+      "options": {
+        "correctAnswerChoice": false,
+        "points": 0
+      }
+    }
+  ],
+  "attachments": {},
+  "disassociationIds": [],
+  "hintText": {},
+  "importKey": "",
+  "inlineImage": {},
+  "isOverlapInvalid": false,
+  "locked": false,
+  "options": {
+    "evaluationMode": "Default",
+    "externFileRequired": false,
+    "multipleChoiceOptions": {
+      "forceSingleChoice": true,
+      "pairingAnswerChoices": false,
+      "partMatrixScoring": null,
+      "randomizeAnswerChoices": false
+    },
+    "points": 1,
+    "timeTarget": 60
+  },
+  "questionNumber": 1824,
+  "questionText": {
+    "40": "<p><span style=\"font-size: 12pt; font-family: Arial; color: rgb(0, 0, 0);\">test</span></p>"
+  },
+  "questionType": "MultipleChoiceResponsiveLayout",
+  "reference": {},
+  "remarks": {},
+  "solutionFiles": {},
+  "source": "asource",
+  "targetGroups": [
+    706
+  ],
+  "topicId": 10987,
+  "workFiles": {},
+  "revisionNumber": null
+}
