@@ -107,6 +107,7 @@ This will build by default into `C:/github/knvvl_exam/vue/dist`.<br/>
 To make Java aware of the frontend build, first move everything 
 from `C:/github/knvvl_exam/vue/dist`
 into `C:/github/knvvl_exam/java/src/main/resources/static`.
+After this operation, you could already run the Java application and see the Vue changes.
 
 Now we can create the JAR file. Open a command prompt on `C:/github/knvvl_exam/java` and run `mvn clean`, then `mvn package`.
 Alternatively, use your IDE to run Maven's package command.

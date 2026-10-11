@@ -45,15 +45,21 @@ public class EntitiesRestService
         JsonArray all = new JsonArray();
         textService.findAll().stream()
             .sorted(comparing(Text::getKey))
-            .forEach(t -> all.add(toJson(t)));
+            .forEach(t -> all.add(toJson(t, true)));
         return GSON.toJson(all);
     }
 
-    private static JsonObject toJson(Text text)
+    private static JsonObject toJson(Text text, boolean forOverview)
     {
         JsonObject json = new JsonObject();
+        String value = text.getValueToEdit();
+        if (forOverview)
+        {
+            int max = 50;
+            value = value.length() <= max ? value : value.substring(0, max) + "...";
+        }
         json.addProperty("key", text.getKey());
-        json.addProperty("value", text.getValueToEdit());
+        json.addProperty("value", value);
         json.addProperty("label", text.getLabel());
         return json;
     }
@@ -62,7 +68,7 @@ public class EntitiesRestService
     String getText(@PathVariable("textKey") String textKey)
     {
         Text text = textService.getReferenceById(textKey);
-        return GSON.toJson(toJson(text));
+        return GSON.toJson(toJson(text, false));
     }
 
     @PostMapping(value = "/texts/{textKey}", consumes = TEXT_PLAIN_VALUE)

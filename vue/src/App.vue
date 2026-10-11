@@ -6,7 +6,6 @@ import { RouterLink, RouterView } from "vue-router";
   <table style="width: 100%;">
   <tr><td><nav>
         <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/login">Login</RouterLink>
         <RouterLink to="/questions">Vragen</RouterLink>
         <RouterLink to="/topics">Vakken</RouterLink>
         <RouterLink to="/requirements">Exameneisen</RouterLink>
